@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% comment %} {%load crispy_forms_tags %} {% endcomment %}
+{% block content %}
+
+<div class="flex justify-between">
+    <div class="w-1/2 items-center shadow-lg rounded-lg m-10">
+        <div class="flex">
+            <div class="text-grey-300 text-xl font-bold m-10">Add Configuration</div>
+        </div>
+        <div class="flex">
+            <div class="w-full">
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="mb-1">
+                            <div class="flex w-full">
+                                <label class="w-1/2 text-sm ml-10">{{ field.label_tag }}</label>
+                                {% comment %} <div class="w-1/2 border border-gray-300 rounded-lg mr-10 px-2"> {% endcomment %}
+                                <div class="w-1/2 border border-gray-300 rounded-lg mr-10 px-2">
+                                    {{ field }}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    {{ form.errors }}
+                    <div class="w-1/4 bg-green-500 px-2 py-2 text-white text-center font-bold mt-4 ml-10">
+                        <input type="submit" value="Submit">
+                        {% comment %} <button id="{{p.id}}" class="btn atc btn-warning">Add to cart</button> {% endcomment %}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% comment %} <!-- Rest of your HTML content -->
+<iframe src="{{ success_url }}" width="100%" height="400"></iframe>
+<!-- Rest of your HTML content --> {% endcomment %}
+
+{% endblock content %}
