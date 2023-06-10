@@ -1,0 +1,13 @@
+version: '3'
+services:
+  web:
+    # image: shadow:0.0.1.RELEASE
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver"
+    container_name: shadow
+    ports:
+      - 8000:8000
+    volumes:
+      - .:/shadow

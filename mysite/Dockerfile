@@ -6,11 +6,14 @@ ENV PYTHONBUFFERED=1
 WORKDIR /app
 
 # Copy and install requirements.txt
-COPY ./requirements.txt /app
+# COPY ./requirements.txt /app
+COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
 # Copy the scripts to folder
-COPY . /app
+COPY . .
+
+EXPOSE 8000
 
 # Start the server
-CMD ["manage.py", "runserver"]
+CMD ["python", "manage.py", "runserver"]
