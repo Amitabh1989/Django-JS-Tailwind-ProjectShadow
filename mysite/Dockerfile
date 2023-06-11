@@ -13,7 +13,7 @@ RUN pip install --no-cache-dir --upgrade -r requirements.txt
 # Copy the scripts to folder
 COPY . .
 
-EXPOSE 8000
+# EXPOSE 8000
 
 # Start the server
-CMD ["python", "manage.py", "runserver"]
+# CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
