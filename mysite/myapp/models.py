@@ -16,7 +16,7 @@ class ConfigModel(models.Model):
     NUM_PDS = [(i, str(i)) for i in range(0, 241)]
     NUM_VDS = [(i, str(i)) for i in range(0, 32)]
 
-
+    # testcase = models.
     raid = models.CharField(max_length=20, choices=RAIDS)
     num_pds = models.IntegerField(choices=NUM_PDS)
     size = models.CharField(max_length=10)
