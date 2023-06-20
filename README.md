@@ -1,8 +1,6 @@
 # Django JavaScript Tailwind Docker : "ProjectShadow"
 A custom website to generate custom JSON data. Personal project. More details to follow.
 
-Django + Docker configuration : https://blog.devgenius.io/django-docker-setup-tutorial-4c3e5f8d6def
-=======
 **Project Summary**
 
 This project is a web application built using Django, a Python web framework. The application allows users to create test cases by selecting modules and submitting test steps. Each module represents a feature, and users can toggle values and submit steps using Django forms.
@@ -34,4 +32,3 @@ Please note that this summary provides a high-level overview of the project. For
 - Tailwind CSS
 - JavaScript
 - Docker
-- Python
