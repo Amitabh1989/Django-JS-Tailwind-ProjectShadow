@@ -21,9 +21,7 @@
 
 $(document).ready(function() {
     $(document).on('click', '.submit-step', function() {
-        console.log("The submit-step button is clicked");
-        var item_id = this.id.toString();
-        console.log("Item added is : " + item_id);
+        console.log("The submit-step button is clicked now");
 
         // Retrieve the form and its values
         var form = $(this).closest('form');
@@ -31,17 +29,17 @@ $(document).ready(function() {
         form.serializeArray().forEach(function(field) {
             formValues[field.name] = field.value;
         });
-
+        console.log("Form Values : " + formValues);
         // Retrieve the testSteps from localStorage
         var testSteps = JSON.parse(localStorage.getItem('testSteps')) || {};
 
         // Check if 'formValues' property exists
-        if (!testSteps.hasOwnProperty('formValues')) {
-            testSteps.formValues = [];
-        }
+        if (!testSteps.hasOwnProperty('moduleForm')) {
+            testSteps.moduleForm = [];
+        };
 
         // Append the form values to the 'formValues' array
-        testSteps["formValues"].push(formValues);
+        testSteps.moduleForm.push(formValues);
 
         // Update the 'testSteps' in localStorage
         localStorage.setItem('testSteps', JSON.stringify(testSteps));
