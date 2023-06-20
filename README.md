@@ -1,4 +1,4 @@
-# Django-JS-Tailwind-ProjectShadow
+# Django JavaScript Tailwind Docker : "ProjectShadow"
 A custom website to generate custom JSON data. Personal project. More details to follow.
 
 **Project Summary**
@@ -32,4 +32,3 @@ Please note that this summary provides a high-level overview of the project. For
 - Tailwind CSS
 - JavaScript
 - Docker
-- Python
