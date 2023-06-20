@@ -19,7 +19,7 @@ function getTestStep() {
 getTestStep();
 
 
-/* TO STORE A JSON IN CART
+/* TO STORE A JSON IN CART, below is the code
 var cart = {
   test: {
     name: "amitabh"
