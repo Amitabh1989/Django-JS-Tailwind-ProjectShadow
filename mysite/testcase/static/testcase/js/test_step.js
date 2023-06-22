@@ -17,6 +17,30 @@ function getTestStep() {
     return testSteps;
 }
 
+function displayTestSteps() {
+    let testStepsAll = getTestStep();
+    let testSteps = testStepsAll.moduleForm;
+    let testStepCart = document.getElementsByClassName("tc-cart");
+    console.log("TC cart fetched");
+    testStepCart[0].innerHTML = "";
+    for (var i = 0;  i < testSteps.length; i++) {
+        step = testSteps[i];
+        stepNo = i + 1;
+        var stepString = `<div class="border border-grey-600 mr-4 ml-4 mb-1 rounded-sm">
+            Test Step ${stepNo}
+        </div>`;
+
+        // if (lastStep) {
+        //     if (i = testSteps.length - 1) {
+        //         testStepCart[0].innerHTML 
+        //     }
+        // }
+        testStepCart[0].innerHTML += stepString;
+    }
+}
+
+// Send the test step list to display submitted steps in Test Step area
+displayTestSteps();
 
 $(document).ready(function () {
     $(document).on('click', '.submit-step', function () {
@@ -50,10 +74,11 @@ $(document).ready(function () {
         // Append the form values to the 'formValues' array
         testSteps.moduleForm.push(formValues);
 
-        // Update the 'testSteps' in localStorage
-        // localStorage.setItem('testSteps', JSON.stringify(testSteps));
-        localStorage.setItem('testSteps', JSON.stringify(testSteps));
+        // Send the test step list to display submitted steps in Test Step area
+        displayTestSteps();
 
+        // Update the 'testSteps' in localStorage
+        localStorage.setItem('testSteps', JSON.stringify(testSteps));
         console.log("Updated cart : ");
         console.log(testSteps);
     });

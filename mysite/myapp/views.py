@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (
-    CreateView, DetailView, ListView, UpdateView, DeleteView, TemplateView)
+    CreateView, DetailView, ListView, UpdateView, DeleteView, TemplateView, View)
 from .models import ConfigModel
 from .forms import ConfigModelForm
 
@@ -30,3 +30,5 @@ class ConfigView(CreateView):
     # def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
     #     context = super().get_context_data(**kwargs)
     #     context["success_url"] = self.success_url
+
+
