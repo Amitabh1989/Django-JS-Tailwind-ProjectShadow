@@ -18,12 +18,12 @@ function getTestStep() {
 }
 
 function displayTestSteps() {
-    let testStepsAll = getTestStep();
-    let testSteps = testStepsAll.moduleForm;
-    let testStepCart = document.getElementsByClassName("tc-cart");
+    var testStepsAll = getTestStep();
+    var testSteps = testStepsAll.moduleForm;
+    var testStepCart = document.getElementsByClassName("tc-cart");
     console.log("TC cart fetched");
     testStepCart[0].innerHTML = "";
-    for (var i = 0;  i < testSteps.length; i++) {
+    for (let i = 0;  i < testSteps.length; i++) {
         step = testSteps[i];
         stepNo = i + 1;
         var stepString = `<div class="border border-grey-600 mr-4 ml-4 mb-1 rounded-sm">
@@ -83,3 +83,16 @@ $(document).ready(function () {
         console.log(testSteps);
     });
 });
+
+$("submit-to-db").click(submitToDB);
+
+function submitToDB() {
+    submit = document.getElementById("submit-to-db");
+    console.log("Got the Submit button");
+    // Get the Values from testSetCart
+
+    // make a AJAX request
+
+    // Log to console that the data has been submitted
+    console.log("Data has been submitted")
+}
