@@ -1,4 +1,5 @@
 /* global console */
+"use strict";
 // Check if localStorage variable exists.
 // If no, create it...else use it.
 // Take the length of the dictionary and keep adding step number to it.
@@ -23,6 +24,8 @@ function displayTestSteps() {
     var testStepCart = document.getElementsByClassName("tc-cart");
     console.log("TC cart fetched");
     testStepCart[0].innerHTML = "";
+    let step = null;
+    let stepNo = null;
     for (let i = 0;  i < testSteps.length; i++) {
         step = testSteps[i];
         stepNo = i + 1;
@@ -84,15 +87,44 @@ $(document).ready(function () {
     });
 });
 
-$("submit-to-db").click(submitToDB);
-
 function submitToDB() {
-    submit = document.getElementById("submit-to-db");
+    var xhttp = new XMLHttpRequest();
+    // Below has been commented as we can either use the submit variable 
+    // directly instead of using the jquery below iwth # or like this. as below.
+    // submit = document.getElementById("submit-to-db");
     console.log("Got the Submit button");
-    // Get the Values from testSetCart
+
+    // Get the Values from testStepCart
+    var testSteps = getTestStep();
+    console.log("Test Steps are : " + JSON.stringify(testSteps));
 
     // make a AJAX request
+    $.ajax({
+        url: '/testcase/success/',
+        method: "POST",
+        data: JSON.stringify(testSteps),
+        success: function(response) {
+            // Can add additional data handling here upon success
+            console.log(response);
+        },
+        error: function(xhr, status, error) {
+            console.log("Error  : " + error);
+            console.log("Status : " + status);
+            console.log("XHR    : " + xhr);
+        },
+        dataType: 'json',
+        beforeSend: function(xhr) {
+            console.log("Data is ready to be send : " + xhr);
+            xhr.setRequestHeader("X-CSRFToken", JSON.stringify(testSteps)[0]["csrfmiddlewaretoken"]);
+        },
+        complete: function() {
+            console.log("Request Complete");
+        },
+        timeout: 5000
+    });
 
     // Log to console that the data has been submitted
     console.log("Data has been submitted")
 }
+
+$("#submit-to-db").click(submitToDB);
