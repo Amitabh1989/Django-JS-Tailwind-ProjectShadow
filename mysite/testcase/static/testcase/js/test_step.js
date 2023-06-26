@@ -82,6 +82,21 @@ $(document).ready(function () {
     });
 });
 
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
 function submitToDB() {
     var xhttp = new XMLHttpRequest();
     // Below has been commented as we can either use the submit variable 
@@ -91,16 +106,16 @@ function submitToDB() {
 
     // Get the Values from testStepCart
     var testSteps = getTestStep();
-    console.log("Test Steps are : " + JSON.stringify(testSteps));
+    // console.log("Test Steps are : " + JSON.stringify(testSteps));
 
-    // make a AJAX request
+    // // make a AJAX request
     $.ajax({
         url: '/testcase/success/',
         method: "POST",
         data: JSON.stringify(testSteps),
         success: function(response) {
             // Can add additional data handling here upon success
-            console.log(response);
+            console.log(response.resp);
         },
         error: function(xhr, status, error) {
             console.log("Error  : " + error);
@@ -110,7 +125,7 @@ function submitToDB() {
         dataType: 'json',
         beforeSend: function(xhr) {
             console.log("Data is ready to be send : " + xhr);
-            xhr.setRequestHeader("X-CSRFToken", JSON.stringify(testSteps)[0]["csrfmiddlewaretoken"]);
+            xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
         },
         complete: function() {
             console.log("Request Complete");
