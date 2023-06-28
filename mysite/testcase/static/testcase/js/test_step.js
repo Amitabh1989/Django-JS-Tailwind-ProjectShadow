@@ -33,11 +33,6 @@ function displayTestSteps() {
             Test Step ${stepNo}
         </div>`;
 
-        // if (lastStep) {
-        //     if (i = testSteps.length - 1) {
-        //         testStepCart[0].innerHTML 
-        //     }
-        // }
         testStepCart[0].innerHTML += stepString;
     }
 }
