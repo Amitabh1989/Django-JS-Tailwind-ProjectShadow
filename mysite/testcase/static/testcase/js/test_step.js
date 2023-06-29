@@ -77,8 +77,17 @@ $(document).ready(function () {
             testSteps.moduleForm = [];
         }
 
+        // Check if the value being submitted is edited or new. And act accordingly
+        const submitType = document.getElementById("submit-step");
+        if (submitType.value === 'Save Edited Step') {
+            console.log("Saving Edited Step");
+            const stepNo = parseInt(document.querySelector(".module-name").innerHTML.split(" ")[2]);
+            console.log("Step number is : " + stepNo);
+            testSteps.moduleForm[stepNo-1] = formValues;
+        } else {
         // Append the form values to the 'formValues' array
-        testSteps.moduleForm.push(formValues);
+            testSteps.moduleForm.push(formValues);
+        }
 
         // Send the test step list to display submitted steps in Test Step area
         displayTestSteps();
@@ -89,10 +98,7 @@ $(document).ready(function () {
         console.log(testSteps);
     });
 
-    // $(document).on('click', '.edit-step input[type="button"]', function(event) {
-    //     console.log("Edit button clicked");
-    //     const testStepId = $(event.target).data('test-step')
-    // });
+
     document.addEventListener('click', function(event) {
         console.log("Edit button clicked");
         if (event.target.matches(".edit-step input[type='button']")) {
@@ -102,11 +108,16 @@ $(document).ready(function () {
 
 
             // Go to Index in the localStorage testStepList and get the module name
+            // let tcDict = JSON.stringify(getTestStep(false));
             let tcDict = getTestStep(false);
-            let stepDict = tcDict[testStepId-1];
+            console.log("TcDict : " + tcDict);
+            let moduleDict = tcDict["moduleForm"];
+            let stepDict = moduleDict[testStepId-1];
+            stepDict["stepNo"] = testStepId;
+            console.log("StepDict : " + JSON.stringify(stepDict));
 
             // Compose an Ajax request and fetch the values from Database
-            ajaxRequest(stepDict);
+            ajaxRequest(JSON.stringify(stepDict));
             // Populate the page with the request
         }
     });
@@ -174,7 +185,7 @@ function edit() {
 }
 
 
-function ajaxRequest(testStep) {
+function ajaxRequest(stepDict) {
     console.log("Creating AJAX request now");
     const xhttp = new XMLHttpRequest();
     xhttp.onload = function() {
@@ -182,15 +193,31 @@ function ajaxRequest(testStep) {
         // console.log("Response : " + xhttp.responseText);
         if (xhttp.status >= 200 && xhttp.status < 300) {
             const context_data = JSON.parse(xhttp.responseText);
-            // console.log("Successfull : " + context_data);
             const formToLoad = context_data.form;
-            console.log("Successfull : " + formToLoad);
+
+            console.log("Successfull : ");
             document.getElementById('config-form').form = formToLoad;
             document.getElementById('submit-step').value = 'Save Edited Step';
-        } else {
-            console.log("Status from fail  : " + xhttp.status);
-            // console.log("Response : " + xhttp.responseText);
-        }
+            console.log("FInding the Edit the step DOM : " + document.querySelector('.module-name').innerHTML);
+            const stepDictParsed = JSON.parse(stepDict);
+            document.querySelector('.module-name').innerHTML = `Edit Step ${stepDictParsed["stepNo"]}`;
+            console.log("Step Dict : " + stepDict);
+
+            // for (const fieldName in JSON.parse(stepDict)) {
+            for (const fieldName in stepDictParsed) {
+                console.log("Field Name : " + fieldName);
+                const fieldValue = stepDictParsed[fieldName];
+                const fieldElement = document.getElementById("id_" + fieldName);
+                console.log("FiledValue : " + fieldValue + "  FiledElement : " + fieldElement);
+
+                if (fieldElement) {
+                    fieldElement.value = fieldValue;
+                    }
+                }
+
+            } else {
+                console.log("Status from fail  : " + xhttp.status);
+            }
     }
     // Modify the URL by appending query parameters
     const url = '/myapp/?is_ajax=True&send_data=True';
