@@ -5,7 +5,7 @@
 // Take the length of the dictionary and keep adding step number to it.
 // When a step is deleted or inserted, handle that accordingly.
 
-function getTestStep() {
+function getTestStep(log=true) {
     var testSteps = localStorage.getItem('testSteps');
     if (testSteps === null) {
         testSteps = {};
@@ -13,8 +13,10 @@ function getTestStep() {
         // testSteps = JSON.parse(JSON.stringify(testSteps));
         testSteps = JSON.parse(testSteps);
     }
-    console.log("Test Case dictionary : ");
-    console.log(testSteps);
+    if (log) {
+        console.log("Test Case dictionary : ");
+        console.log(testSteps);
+    }
     return testSteps;
 }
 
@@ -29,9 +31,15 @@ function displayTestSteps() {
     for (let i = 0;  i < testSteps.length; i++) {
         step = testSteps[i];
         stepNo = i + 1;
-        var stepString = `<div class="border border-grey-600 mr-4 ml-4 mb-1 rounded-sm">
-            Test Step ${stepNo}
-        </div>`;
+        var stepString = `
+            <div class="border border-grey-600 mr-4 ml-4 mb-1 rounded-sm">
+                <div class="flex items-center">
+                    <span>Test Step ${stepNo}</span>
+                    <div class="w-1/10 edit-step bg-grey-400 p-1 text-sm text-black text-center font-bold m-2">
+                        <input type="button" value="Edit" data-test-step="${stepNo}">
+                    </div>
+                </div>
+            </div>`;
 
         testStepCart[0].innerHTML += stepString;
     }
@@ -79,6 +87,28 @@ $(document).ready(function () {
         localStorage.setItem('testSteps', JSON.stringify(testSteps));
         console.log("Updated cart : ");
         console.log(testSteps);
+    });
+
+    // $(document).on('click', '.edit-step input[type="button"]', function(event) {
+    //     console.log("Edit button clicked");
+    //     const testStepId = $(event.target).data('test-step')
+    // });
+    document.addEventListener('click', function(event) {
+        console.log("Edit button clicked");
+        if (event.target.matches(".edit-step input[type='button']")) {
+            // Get the step number from click
+            let testStepId = event.target.getAttribute('data-test-step');
+            console.log("Test Step " + testStepId + " selected to be edited");
+
+
+            // Go to Index in the localStorage testStepList and get the module name
+            let tcDict = getTestStep(false);
+            let stepDict = tcDict[testStepId-1];
+
+            // Compose an Ajax request and fetch the values from Database
+            ajaxRequest(stepDict);
+            // Populate the page with the request
+        }
     });
 });
 
@@ -138,3 +168,32 @@ function submitToDB() {
 }
 
 $("#submit-to-db").click(submitToDB);
+
+function edit() {
+
+}
+
+
+function ajaxRequest(testStep) {
+    console.log("Creating AJAX request now");
+    const xhttp = new XMLHttpRequest();
+    xhttp.onload = function() {
+        console.log("Status   : " + xhttp.status);
+        // console.log("Response : " + xhttp.responseText);
+        if (xhttp.status >= 200 && xhttp.status < 300) {
+            const context_data = JSON.parse(xhttp.responseText);
+            // console.log("Successfull : " + context_data);
+            const formToLoad = context_data.form;
+            console.log("Successfull : " + formToLoad);
+            document.getElementById('config-form').form = formToLoad;
+            document.getElementById('submit-step').value = 'Save Edited Step';
+        } else {
+            console.log("Status from fail  : " + xhttp.status);
+            // console.log("Response : " + xhttp.responseText);
+        }
+    }
+    // Modify the URL by appending query parameters
+    const url = '/myapp/?is_ajax=True&send_data=True';
+    xhttp.open('GET', url);
+    xhttp.send();
+}
