@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.urls import reverse
 from django.http import HttpResponse
-from django.views.generic import View
+from django.views.generic import View, DeleteView, UpdateView
 from .models import TestStep, TestCase
 import time, json
 from django.http import JsonResponse
@@ -36,13 +36,10 @@ from django.http import JsonResponse
 class TestCaseView(View):
     template_name = 'testcase/success.html'
     def post(self, request, *args, **kwargs):
-        # print("Steps received is : {}".format(request.__dict__))
-        # steps = request.POST.getlist('moduleForm')
         body = request.body.decode('utf-8')
         data = json.loads(body)
         steps = data["moduleForm"]
         print("Steps received is : {}".format(steps))
-        # cqid = request.POST.get("cqid")
         cqid = 1
         title = "Dummy_TC_"
         summary = "Testing Model"

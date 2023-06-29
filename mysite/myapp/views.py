@@ -1,6 +1,8 @@
 from typing import Any, Dict
 from django.forms.models import BaseModelForm
 from django.http import HttpResponse
+from django.http.request import HttpRequest
+from django.http.response import HttpResponseBase
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (
@@ -8,6 +10,7 @@ from django.views.generic import (
     DeleteView, TemplateView, View)
 from .models import ConfigModel
 from .forms import ConfigModelForm
+from django.http import JsonResponse
 
 # from crispy_forms.helper import FormHelper
 # from crispy_forms.mixin import CrispyFormMixin
@@ -26,10 +29,21 @@ class ConfigView(CreateView):
         print(f"Cleaned data : {form.cleaned_data}")
         self.object = form.save()
         return super().form_valid(form)
-    
 
-    # def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
-    #     context = super().get_context_data(**kwargs)
-    #     context["success_url"] = self.success_url
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
+        print("In dispatch : {}".format(request.META))
+        if request.META.get('QUERY_STRING', False):
+            q_str = request.META.get("QUERY_STRING").split('&')
+            if q_str[0].split("=")[1] == "True":
+                # print("Context data : {}".format(self.get_context_data()))
+                form = self.get_form()
+                # print("Form is : {}".format(form))
+                request.META["form"] = form
+                return self.ajax_get(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
+    def ajax_get(self, request, *args, **kwargs):
+        print("Got the ajax request")
+        context_data = {"key1": [1, 2, 3]}
+        return JsonResponse({"form": request.META["form"].as_table()})
 
