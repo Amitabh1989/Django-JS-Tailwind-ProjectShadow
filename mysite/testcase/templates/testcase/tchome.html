@@ -10,16 +10,23 @@
     <!-- ===================================== -->
     <!--     Block for Showing Modules List    -->
     <!-- ===================================== -->
-    <div class="w-1/5 items-center shadow-lg ml-10">
-        <div class="text-grey-300 text-xl font-bold m-10">Test Modules</div>
+    <div class="flex h-screen w-1/6">
+        <div class="items-left shadow-lg">
+            <div class="text-grey-300 text-xl text-left font-bold p-5 mr-5">Wingman Dashboard</div>
+                <!-- Sidebar content goes here -->
+                <ul class="py-4">
+                    <li class="px-4 py-2 hover:bg-gray-300 hover:font-bold">Test Modules</li>
+                    <li class="px-4 py-2 hover:bg-gray-300 hover:font-bold">My Test Cases</li>
+                    <li class="px-4 py-2 hover:bg-gray-300 hover:font-bold">Settings</li>
+                    <!-- Add more menu items as needed -->
+                </ul>
+        </div>
     </div>
-
-
-
     <!-- ===================================== -->
     <!--      Block for Showing Module Form    -->
     <!-- ===================================== -->
-    <div class='w-3/5 items-center shadow-lg m-4'>
+    {% comment %} <div class='w-2/6 items-center shadow-lg m-4'> {% endcomment %}
+    <div class='w-2/6'>
         {% block tchome %}
 
         {% endblock tchome %}
@@ -28,21 +35,25 @@
     <!-- ===================================== -->
     <!--    Block for Showing Test Step Cart   -->
     <!-- ===================================== -->
-    <div class='w-1/5 items-center shadow-lg mr-10'>
-        <div class="text-grey-300 text-xl font-bold m-10">Test Case</div>
-        <div class="grid tc-cart grid-cols-1 gap-4">
-            <div class="grid justify-items-stretch">
-                <div class="border border-grey-600 m-4 rounded-sm">
+    <div class='w-1/6'>
+        <div class="text-xl font-bold mt-4 mb-2 px-5 py-5 bg-gradient-to-r from-indigo-600 to-pink-500 text-white text-center">
+            Test Case
+        </div>
+        
+        <div class="max-h-[300px] overflow-y-auto border-0">
+            <div class="tc-cart p-4">
                     So empty here...submit your first test step!
-                </div>
             </div>
         </div>
+
         <div class="text-bold">
-            <div class="bg-green-500 text-white text-center rounded-lg m-4 font-bold px-2 py-3 submit-to-db" id="submit-to-db">
+            <div class="bg-green-500 text-white text-center rounded-sm m-4 font-bold px-2 py-3 submit-to-db" id="submit-to-db">
                 <input type="submit" value="Submit to DB">
             </div>
-
         </div>
+    </div>
+    <div class='w-2/6'>
+        <h1>Dummy Space</h1>    
     </div>
 
 </div>

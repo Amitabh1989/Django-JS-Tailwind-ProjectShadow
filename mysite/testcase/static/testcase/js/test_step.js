@@ -1,16 +1,15 @@
 /* global console */
 "use strict";
-// Check if localStorage variable exists.
-// If no, create it...else use it.
-// Take the length of the dictionary and keep adding step number to it.
-// When a step is deleted or inserted, handle that accordingly.
 
+/** 
+ * Gets the localStorage content and returns the JSON object
+ * @param {boolean} [log=true] - If we want to log the content of the cart
+*/
 function getTestStep(log=true) {
     var testSteps = localStorage.getItem('testSteps');
     if (testSteps === null) {
         testSteps = {};
     } else {
-        // testSteps = JSON.parse(JSON.stringify(testSteps));
         testSteps = JSON.parse(testSteps);
     }
     if (log) {
@@ -20,6 +19,9 @@ function getTestStep(log=true) {
     return testSteps;
 }
 
+/**
+ * Takes the content of the cart and displays it in test step pane
+ */
 function displayTestSteps() {
     var testStepsAll = getTestStep();
     var testSteps = testStepsAll.moduleForm;
@@ -28,21 +30,23 @@ function displayTestSteps() {
     testStepCart[0].innerHTML = "";
     let step = null;
     let stepNo = null;
+    var stepString = `<div class="mr-1 ml-1 mb-1 rounded-sm">
+                        <div class="flex flex-col rounded-sm">`;
     for (let i = 0;  i < testSteps.length; i++) {
         step = testSteps[i];
         stepNo = i + 1;
-        var stepString = `
-            <div class="border border-grey-600 mr-4 ml-4 mb-1 rounded-sm">
-                <div class="flex items-center">
-                    <span>Test Step ${stepNo}</span>
-                    <div class="w-1/10 edit-step bg-grey-400 p-1 text-sm text-black text-center font-bold m-2">
-                        <input type="button" value="Edit" data-test-step="${stepNo}">
+        stepString += `
+                <div class="flex flex-row hover:scale-105 hover:bg-sky-100">
+                    <div class="flex-initial w-64 text-blue-400 text-sm font-bold px-5 ml-auto"><span>Test Step ${stepNo}</span></div>
+                    <div class="w-16">
+                        <div class="edit-step text-yellow-500 px-5 text-xs text-center font-bold cursor-pointer mr-auto">
+                            <input type="button" value="Edit" data-test-step="${stepNo}">
+                        </div>
                     </div>
-                </div>
-            </div>`;
-
-        testStepCart[0].innerHTML += stepString;
+                </div>`;
     }
+    stepString += `</div> </div>`;
+    testStepCart[0].innerHTML += stepString;
 }
 
 // Send the test step list to display submitted steps in Test Step area
