@@ -247,15 +247,51 @@ function onLoadHandler(xhttp, stepDict) {
 function autoReloadDetailView() {
     const xhr = new XMLHttpRequest();
     console.log("Inside the autoreload")
-    xhr.open('GET', '/testcase/teststep_detail/2/', true);
+    xhr.open('GET', '/testcase/teststep_detail/38/', true);
     xhr.onreadystatechange = function() {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status === 200) {
-                document.getElementById('teststep-container').innerHTML = xhr.responseText;
+                const jsonResponse = JSON.parse(xhr.responseText);
+                document.getElementById('teststep-container').innerHTML = "JS return " + xhr.responseText + "====";
+                testStepDetails(jsonResponse);
             } else {
                 console.log('Status : ' + xhr.status);
             }
         }
     }
     xhr.send()
+}
+
+autoReloadDetailView();
+
+/**
+ * Display the statos for the test step submitted
+ */
+function testStepDetails(jsonResponse) {
+    console.log("Response received : " + jsonResponse)
+    const ctx = document.getElementById('myChart');
+    const testCases = jsonResponse.test_cases;
+    const cqIDSet = new Set();
+    testCases.forEach(testCase => {
+        cqIDSet.add(testCase.cqid);
+    });
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+        labels: dates_data,
+        datasets: [{
+            label: '# of Votes',
+            data: [12, 19, 3, 5, 2, 3],
+            borderWidth: 1
+        }]
+        },
+        options: {
+        scales: {
+            y: {
+            beginAtZero: true
+            }
+        }
+        }
+    });
+    Chart();
 }

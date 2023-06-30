@@ -1,9 +1,10 @@
-{% block analytics %}
+{% comment %} {% block analytics %}
 
 <div class="container">
     <p>Analytics</p>
     {{ teststep_detail }}
-    {{ teststep_detail.test_cases.all }}
+    {{ teststep_detail.step }}
+    {{ teststep_detail.test_cases }}
     {% for tc in teststep_detail.test_cases.all %}
         <h1>{{ tc.cqid }}</h1>
         <p>{{ tc.title }}</p>
@@ -14,4 +15,30 @@
 
 {% endblock analytics %}
 
+ {% endcomment %}
 
+
+ {% block analytics %}
+
+<div class="container">
+    <p>Analytics</p>
+    Test Step detail : {{ teststep_detail }}
+    Test Case : {{ teststep_detail.test_cases.all.0.cqid }}
+    Test Case : {{ teststep_detail.test_cases.all.0.title }}
+    Test Case : {{ teststep_detail.test_cases.all.0.summary }}
+    {% comment %} Printing list here
+    {% for teststep in teststep_detail_list %}
+        <h1>{{ teststep.step }}</h1>
+        <h1>{{ teststep.created_on }}</h1>
+    {% endfor %} {% endcomment %}
+    <!-- Chart -->
+    <div class="w-1/2 shadow-lg shadow hover:shadow-2xl m-10">
+        <div>
+            <canvas id="myChart"></canvas>
+        </div>
+    </div>
+    
+    <!-- Add other fields or content as needed -->
+</div>
+
+{% endblock analytics %}
