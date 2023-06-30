@@ -160,7 +160,7 @@ function submitToDB() {
         data: JSON.stringify(testSteps),
         success: function(response) {
             // Can add additional data handling here upon success
-            console.log(response.resp);
+            console.log("Test Case is saved buddy : " + response.resp);
         },
         error: function(xhr, status, error) {
             console.log("Error  : " + error);
@@ -188,43 +188,74 @@ function edit() {
 
 }
 
-
-function ajaxRequest(stepDict) {
+/**
+ * Sends AJAX request to the backend and fetches the form for the module to be edited.
+*/
+ function ajaxRequest(stepDict) {
     console.log("Creating AJAX request now");
     const xhttp = new XMLHttpRequest();
     xhttp.onload = function() {
-        console.log("Status   : " + xhttp.status);
-        // console.log("Response : " + xhttp.responseText);
-        if (xhttp.status >= 200 && xhttp.status < 300) {
-            const context_data = JSON.parse(xhttp.responseText);
-            const formToLoad = context_data.form;
-
-            console.log("Successfull : ");
-            document.getElementById('config-form').form = formToLoad;
-            document.getElementById('submit-step').value = 'Save Edited Step';
-            console.log("FInding the Edit the step DOM : " + document.querySelector('.module-name').innerHTML);
-            const stepDictParsed = JSON.parse(stepDict);
-            document.querySelector('.module-name').innerHTML = `Edit Step ${stepDictParsed["stepNo"]}`;
-            console.log("Step Dict : " + stepDict);
-
-            // for (const fieldName in JSON.parse(stepDict)) {
-            for (const fieldName in stepDictParsed) {
-                console.log("Field Name : " + fieldName);
-                const fieldValue = stepDictParsed[fieldName];
-                const fieldElement = document.getElementById("id_" + fieldName);
-                console.log("FiledValue : " + fieldValue + "  FiledElement : " + fieldElement);
-
-                if (fieldElement) {
-                    fieldElement.value = fieldValue;
-                    }
-                }
-
-            } else {
-                console.log("Status from fail  : " + xhttp.status);
-            }
-    }
+        onLoadHandler(xhttp, stepDict);
+        autoReloadDetailView();
+    };
     // Modify the URL by appending query parameters
     const url = '/myapp/?is_ajax=True&send_data=True';
     xhttp.open('GET', url);
     xhttp.send();
+}
+
+
+/**
+ * Handles the ajaxRequest onload functionality
+ * @param {*} xhttp : The XMLHttpRequest object
+ * @param {*} stepDict : The step dict of the selectec step
+ */
+function onLoadHandler(xhttp, stepDict) {
+    console.log("Status   : " + xhttp.status);
+    // console.log("Response : " + xhttp.responseText);
+    if (xhttp.status >= 200 && xhttp.status < 300) {
+        const context_data = JSON.parse(xhttp.responseText);
+        const formToLoad = context_data.form;
+
+        console.log("Successfull : ");
+        document.getElementById('config-form').form = formToLoad;
+        document.getElementById('submit-step').value = 'Save Edited Step';
+        console.log("Finding the Edit the step DOM : " + document.querySelector('.module-name').innerHTML);
+        const stepDictParsed = JSON.parse(stepDict);
+        document.querySelector('.module-name').innerHTML = `Edit Step ${stepDictParsed["stepNo"]}`;
+        console.log("Step Dict : " + stepDict);
+
+        // for (const fieldName in JSON.parse(stepDict)) {
+        for (const fieldName in stepDictParsed) {
+            console.log("Field Name : " + fieldName);
+            const fieldValue = stepDictParsed[fieldName];
+            const fieldElement = document.getElementById("id_" + fieldName);
+            console.log("FiledValue : " + fieldValue + "  FiledElement : " + fieldElement);
+
+            if (fieldElement) {
+                fieldElement.value = fieldValue;
+                }
+            }
+        } else {
+            console.log("Status from fail  : " + xhttp.status);
+        }
+    }
+
+// Once the test step is submitted, then call the analytics on the test step
+// Also, refresh the other analytics
+
+function autoReloadDetailView() {
+    const xhr = new XMLHttpRequest();
+    console.log("Inside the autoreload")
+    xhr.open('GET', '/testcase/teststep_detail/2/', true);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) {
+                document.getElementById('teststep-container').innerHTML = xhr.responseText;
+            } else {
+                console.log('Status : ' + xhr.status);
+            }
+        }
+    }
+    xhr.send()
 }
