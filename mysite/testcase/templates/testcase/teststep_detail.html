@@ -1,0 +1,17 @@
+{% block analytics %}
+
+<div class="container">
+    <p>Analytics</p>
+    {{ teststep_detail }}
+    {{ teststep_detail.test_cases.all }}
+    {% for tc in teststep_detail.test_cases.all %}
+        <h1>{{ tc.cqid }}</h1>
+        <p>{{ tc.title }}</p>
+        <p>{{ tc.summary }}</p>
+    {% endfor %}
+    <!-- Add other fields or content as needed -->
+</div>
+
+{% endblock analytics %}
+
+

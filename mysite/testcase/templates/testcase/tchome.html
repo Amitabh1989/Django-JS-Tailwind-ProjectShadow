@@ -5,31 +5,48 @@
 
 <h2>Welcome to tchome</h2>
 
-<div class="flex justify-between">
+<div class="flex justify-between items-stretch space-x-5">
 
     <!-- ===================================== -->
     <!--     Block for Showing Modules List    -->
     <!-- ===================================== -->
-    <div class="flex h-screen w-1/6">
-        <div class="items-left shadow-lg">
-            <div class="text-grey-300 text-xl text-left font-bold p-5 mr-5">Wingman Dashboard</div>
-                <!-- Sidebar content goes here -->
-                <ul class="py-4">
-                    <li class="px-4 py-2 hover:bg-gray-300 hover:font-bold">Test Modules</li>
-                    <li class="px-4 py-2 hover:bg-gray-300 hover:font-bold">My Test Cases</li>
-                    <li class="px-4 py-2 hover:bg-gray-300 hover:font-bold">Settings</li>
-                    <!-- Add more menu items as needed -->
-                </ul>
+    <div class="flex h-screen w-0.75/6">
+        <div class="flex flex-col h-screen bg-purple-400 w-full">
+            <div class="items-left">
+                <div class="text-grey-300 text-xl text-left font-bold p-5 mr-5">Wingman Dashboard</div>
+                    <!-- Sidebar content goes here -->
+                    <ul class="py-4 grow">
+                        <li class="px-4 py-2 hover:bg-yellow-300 hover:font-bold">Test Modules</li>
+                        <li class="px-4 py-2 hover:bg-yellow-300 hover:font-bold">My Test Cases</li>
+                        <li class="px-4 py-2 hover:bg-yellow-300 hover:font-bold">Settings</li>
+                        <!-- Add more menu items as needed -->
+                    </ul>
+                    <div class="grow h-20"></div> <!-- This creates empty space to push the next items to the bottom -->
+                    <div class="p-4 self-auto">
+                        <ul class="space-y-2">
+                        <li class="p-2 bg-white rounded shadow">Profile</li>
+                        <li class="p-2 bg-white rounded shadow">Settings</li>
+                        </ul>
+                    </div>
+            </div>
         </div>
     </div>
     <!-- ===================================== -->
     <!--      Block for Showing Module Form    -->
     <!-- ===================================== -->
     {% comment %} <div class='w-2/6 items-center shadow-lg m-4'> {% endcomment %}
-    <div class='w-2/6'>
-        {% block tchome %}
+    <div class='w-2/6 float-left'>
+        <div class="p-2 shadow-lg rounded-lg m-10">
+            {% block tchome %}{% endblock tchome %}
 
-        {% endblock tchome %}
+            {% block analytics %}
+            
+            <div id="teststep-container">
+                {% include 'testcase/teststep_detail.html' %}
+            </div>
+            
+            {% endblock analytics %}
+        </div>
     </div>
 
     <!-- ===================================== -->
