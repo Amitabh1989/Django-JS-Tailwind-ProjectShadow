@@ -1,4 +1,5 @@
 from django.db import models
+import json
 
 # Create your models here.
 
@@ -31,9 +32,10 @@ class TestCase(models.Model):
 
 class TestStep(models.Model):
     test_cases = models.ManyToManyField(TestCase, related_name='test_case')
-    step = models.CharField(max_length=3000)
+    # step = models.CharField(max_length=3000)
+    step = models.JSONField(null=True)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.step
+        return json.dumps(self.step) if self.step else ""

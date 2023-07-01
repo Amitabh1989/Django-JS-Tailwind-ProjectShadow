@@ -6,6 +6,8 @@ from django.views.generic import View, DeleteView, UpdateView, ListView, DetailV
 from .models import TestStep, TestCase
 import time, json
 from django.http import JsonResponse
+from django.core.serializers import serialize
+from django.db.models import Q
 
 # Create your views here.
 
@@ -17,7 +19,7 @@ class TestCaseView(View):
         steps = data["moduleForm"]
         print("Steps received is : {}".format(steps))
         cqid = 1
-        title = "Dummy_TC_0"
+        title = "Dummy_TC_2"
         summary = "Testing Model"
         tcid, created = TestCase.objects.get_or_create(cqid=cqid, title=title, summary=summary)
         print("Created : {}".format(created))
@@ -34,6 +36,41 @@ class TestCaseView(View):
             print(test_step.step)
         return JsonResponse(response)
 
+class TestStepStats(View):
+    def get(self, request, *args, **kwargs):
+        print("Request for stats : {}".format(request.GET))
+        print("Self.Request for stats : {}".format(self.request.GET))
+        request_data = self.request.GET
+        print("Self.Request num_pds : {}".format(self.request.GET["num_pds"]))
+        step = {
+            "num_pds": request_data.get("num_pds", "2"),
+            "num_vds": request_data.get("num_vds", "2"),
+            "raid": request_data.get("raid", "R0"),
+            "size": request_data.get("size", "12")
+        }
+        print("Fetching Test Step Stats : step {}".format(step))
+        fetched = False
+        try:
+            # test_step = TestStep.objects.filter(step=step).first()
+            all = TestStep.objects.all()
+            test_step = TestStep.objects.filter(step=step)
+            print("Test step : {}".format(test_step))
+            fetched = bool(test_step)
+        except (TestStep.DoesNotExist, AttributeError):
+            test_step = None
+        print("Test step fetched : {}".format(test_step))
+        print("Test steps all : {}".format(all))
+        # Extract testcases details if fetched
+        # test_case_details = self.get_test_case_details(test_step)
+
+        serialized_test_step = serialize('json', [test_step]) if fetched else {}
+        response = {"fetched": fetched, "data": serialized_test_step, "pk": getattr(test_step, 'pk', None)}
+        return JsonResponse(response)
+
+
+    # def get_test_case_details(self, test_step):
+    #     return test_step.test
+    
 class TestCaseList(ListView):
     model = TestCase
     queryset = TestCase.objects.order_by('updated_on')
@@ -63,6 +100,8 @@ class TestStepDetail(DetailView):
 
     def render_to_response(self, context, **response_kwargs):
         teststep_detail = context.get(self.context_object_name)
+        print("Test Step Details : {}".format(teststep_detail))
+        print("All TC Step Details : {}".format(teststep_detail.test_cases.all()))
         data = {
             'step': teststep_detail.step,
             'test_cases': [
@@ -75,6 +114,7 @@ class TestStepDetail(DetailView):
                 for testcase in teststep_detail.test_cases.all()
             ]
         }
+        print("Data being sent : {}".format(data))
         return JsonResponse(data, **response_kwargs)
 
     # def get_context_data(self, **kwargs):

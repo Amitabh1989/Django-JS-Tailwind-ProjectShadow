@@ -21,6 +21,7 @@ class ConfigModel(models.Model):
     num_pds = models.IntegerField(choices=NUM_PDS)
     size = models.CharField(max_length=10)
     num_vds = models.IntegerField(choices=NUM_VDS)
+    
 
     def __str__(self) -> str:
         return f'{self.raid} ( {self.num_pds} VD ) with {self.num_pds} \
