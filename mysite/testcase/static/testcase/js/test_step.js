@@ -37,10 +37,13 @@ function displayTestSteps() {
         stepNo = i + 1;
         stepString += `
                 <div class="flex flex-row hover:scale-105 hover:bg-sky-100">
-                    <div class="flex-initial w-64 text-blue-400 text-sm font-bold px-5 ml-auto"><span>Test Step ${stepNo}</span></div>
-                    <div class="w-16">
-                        <div class="edit-step text-yellow-500 px-5 text-xs text-center font-bold cursor-pointer mr-auto">
-                            <input type="button" value="Edit" data-test-step="${stepNo}">
+                    <div class="flex-initial w-96 text-blue-400 text-left text-sm font-bold ml-auto"><span>Test Step ${stepNo}</span></div>
+                    <div class="flex w-32">
+                        <div class="edit-step text-yellow-500 px-1 text-xs text-right font-bold cursor-pointer mr-1">
+                            <input type="button" value="Edit" edit-test-step="${stepNo}">
+                        </div>
+                        <div class="delete-step text-yellow-500 px-1 text-xs text-right font-bold cursor-pointer mr-1">
+                            <input type="button" value="Delete" delete-test-step="${stepNo}">
                         </div>
                     </div>
                 </div>`;
@@ -52,6 +55,11 @@ function displayTestSteps() {
 // Send the test step list to display submitted steps in Test Step area
 displayTestSteps();
 
+
+/**
+ * Add an ajz here, as soon as the step is submitted, run a query and get the PK of the 
+ * Step being submitted
+ */
 $(document).ready(function () {
     $(document).on('click', '.submit-step', function () {
 
@@ -96,6 +104,10 @@ $(document).ready(function () {
         // Send the test step list to display submitted steps in Test Step area
         displayTestSteps();
 
+        // Send Ajax request to get the PK of the step. If step is not found
+        // in the DB, its a new step. never tried
+        getTestStepStats(formValues);
+
         // Update the 'testSteps' in localStorage
         localStorage.setItem('testSteps', JSON.stringify(testSteps));
         console.log("Updated cart : ");
@@ -107,7 +119,7 @@ $(document).ready(function () {
         console.log("Edit button clicked");
         if (event.target.matches(".edit-step input[type='button']")) {
             // Get the step number from click
-            let testStepId = event.target.getAttribute('data-test-step');
+            let testStepId = event.target.getAttribute('edit-test-step');
             console.log("Test Step " + testStepId + " selected to be edited");
 
 
@@ -120,12 +132,35 @@ $(document).ready(function () {
             stepDict["stepNo"] = testStepId;
             console.log("StepDict : " + JSON.stringify(stepDict));
 
-            // Compose an Ajax request and fetch the values from Database
+            // Compose an Ajax request and fetch the module form - from Database
             ajaxRequest(JSON.stringify(stepDict));
             // Populate the page with the request
         }
     });
 });
+
+function getTestStepStats(formValues) {
+    delete formValues["csrfmiddlewaretoken"];
+    let queryString = "";
+    Object.keys(formValues).forEach(function(key) {
+        queryString += key + "=" + formValues[key] + '&';
+    });
+    console.log("Fetching step data : " + queryString);
+    // const url = '/testcase/teststep_stats/?' + new URLSearchParams(queryString);
+    const url = '/testcase/teststep_stats/?' + queryString;
+    console.log('Get Request : ' + url)
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) {
+                const response = JSON.parse(xhr.responseText);
+                console.log("Response received : " + JSON.stringify(xhr.responseText));
+            }
+        }
+    }
+    xhr.send();
+}
 
 function getCookie(name) {
     var cookieValue = null;
@@ -184,10 +219,6 @@ function submitToDB() {
 
 $("#submit-to-db").click(submitToDB);
 
-function edit() {
-
-}
-
 /**
  * Sends AJAX request to the backend and fetches the form for the module to be edited.
 */
@@ -195,7 +226,7 @@ function edit() {
     console.log("Creating AJAX request now");
     const xhttp = new XMLHttpRequest();
     xhttp.onload = function() {
-        onLoadHandler(xhttp, stepDict);
+        editStepFormHandler(xhttp, stepDict);
         autoReloadDetailView();
     };
     // Modify the URL by appending query parameters
@@ -208,9 +239,9 @@ function edit() {
 /**
  * Handles the ajaxRequest onload functionality
  * @param {*} xhttp : The XMLHttpRequest object
- * @param {*} stepDict : The step dict of the selectec step
+ * @param {*} stepDict : The step dict of the selected step
  */
-function onLoadHandler(xhttp, stepDict) {
+function editStepFormHandler(xhttp, stepDict) {
     console.log("Status   : " + xhttp.status);
     // console.log("Response : " + xhttp.responseText);
     if (xhttp.status >= 200 && xhttp.status < 300) {
@@ -244,16 +275,16 @@ function onLoadHandler(xhttp, stepDict) {
 // Once the test step is submitted, then call the analytics on the test step
 // Also, refresh the other analytics
 
-function autoReloadDetailView() {
+function autoReloadDetailView(callback = () => {}) {
     const xhr = new XMLHttpRequest();
-    console.log("Inside the autoreload")
+    console.log("Inside the autoreload");
     xhr.open('GET', '/testcase/teststep_detail/38/', true);
     xhr.onreadystatechange = function() {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status === 200) {
                 const jsonResponse = JSON.parse(xhr.responseText);
                 document.getElementById('teststep-container').innerHTML = "JS return " + xhr.responseText + "====";
-                testStepDetails(jsonResponse);
+                callback(jsonResponse);
             } else {
                 console.log('Status : ' + xhr.status);
             }
@@ -263,6 +294,12 @@ function autoReloadDetailView() {
 }
 
 autoReloadDetailView();
+document.addEventListener('DOMContentLoaded', function() {
+    autoReloadDetailView(function(jsonResponse) {
+        testStepDetails(jsonResponse);
+    });
+});
+
 
 /**
  * Display the statos for the test step submitted
@@ -271,17 +308,25 @@ function testStepDetails(jsonResponse) {
     console.log("Response received : " + jsonResponse)
     const ctx = document.getElementById('myChart');
     const testCases = jsonResponse.test_cases;
+    console.log("Test Case : " + JSON.stringify(testCases));
     const cqIDSet = new Set();
-    testCases.forEach(testCase => {
+    const dateSet = new Set();
+    const dataValues = testCases.map(testCase => {
+        console.log("Element: " + JSON.stringify(testCase.cqid));
         cqIDSet.add(testCase.cqid);
+        dateSet.add(new Date(testCase.updated_on).toLocaleDateString());
+        return 1; // or any other value you want to assign to each test case
     });
+    console.log("CQIDSET : " + [...cqIDSet]);
+    console.log("DATESET : " + [...dateSet]);
+    console.log("DATEVALUES : " + [...dataValues]);
     new Chart(ctx, {
         type: 'bar',
         data: {
-        labels: dates_data,
+        labels: [...dateSet],
         datasets: [{
-            label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 3],
+            label: '# of Test Cases',
+            data: dataValues,
             borderWidth: 1
         }]
         },
@@ -293,5 +338,4 @@ function testStepDetails(jsonResponse) {
         }
         }
     });
-    Chart();
 }
