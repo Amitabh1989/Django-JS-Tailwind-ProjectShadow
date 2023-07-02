@@ -5,79 +5,169 @@
 
 <h2>Welcome to tchome</h2>
 
-<div class="flex justify-between items-stretch space-x-5">
+
+{% comment %} <div class="flex justify-between items-stretch space-x-5"> {% endcomment %}
 
     <!-- ===================================== -->
     <!--     Block for Showing Modules List    -->
     <!-- ===================================== -->
-    <div class="flex h-screen w-0.75/6">
-        <div class="flex flex-col h-screen bg-purple-400 w-full">
-            <div class="items-left">
-                <div class="text-grey-300 text-xl text-left font-bold p-5 mr-5">Wingman Dashboard</div>
-                    <!-- Sidebar content goes here -->
-                    <ul class="py-4 grow">
-                        <li class="px-4 py-2 hover:bg-yellow-300 hover:font-bold">Test Modules</li>
-                        <li class="px-4 py-2 hover:bg-yellow-300 hover:font-bold">My Test Cases</li>
-                        <li class="px-4 py-2 hover:bg-yellow-300 hover:font-bold">Settings</li>
-                        <!-- Add more menu items as needed -->
-                    </ul>
-                    <div class="grow h-20"></div> <!-- This creates empty space to push the next items to the bottom -->
-                    <div class="p-4 self-auto">
-                        <ul class="space-y-2">
-                        <li class="p-2 bg-white rounded shadow">Profile</li>
-                        <li class="p-2 bg-white rounded shadow">Settings</li>
+    <div class="flex h-screen">
+        <!-- NAVBAR -->
+        <div class="bg-gray-900 text-white w-1/8">
+            <div class="flex justify-between items-center py-4 px-6">
+                <div class="items-left">
+                    <div class="text-gray-300 text-xl text-left font-bold p-5 mr-5">Wingman Dashboard</div>
+                        <!-- Sidebar content goes here -->
+                        <ul class="py-4 grow">
+                            <li class="px-4 py-2 hover:bg-yellow-300 hover:font-bold">Test Modules</li>
+                            <li class="px-4 py-2 hover:bg-yellow-300 hover:font-bold">My Test Cases</li>
+                            <li class="px-4 py-2 hover:bg-yellow-300 hover:font-bold">Settings</li>
+                            {% comment %} <ul class="space-y-2"> {% endcomment %}
+                            <li class="px-4 py-2 mt-2 bg-gray-400 rounded shadow">Profile</li>
+                            <li class="px-4 py-2 mt-2 bg-gray-400 rounded shadow">Settings</li>
+                            <!-- Add more menu items as needed -->
                         </ul>
+                        {% comment %} <div class="grow h-20"></div> <!-- This creates empty space to push the next items to the bottom -->
+                        <div class="p-4 self-auto">
+                            <ul class="space-y-2">
+                            <li class="p-2 bg-gray-400 rounded shadow">Profile</li>
+                            <li class="p-2 bg-gray-400 rounded shadow">Settings</li>
+                            </ul>
+                        </div> {% endcomment %}
+                </div>
+            </div>
+        </div>
+    
+        <!-- MAIN SCREEN -->
+        <div class="w-7/8 p-6">
+            <div class="flex flex-wrap justify-center">
+                <!-- ===================================== -->
+                <!--      Block for Showing Module Form    -->
+                <!-- ===================================== -->
+                
+                <div class="flex-item w-full h-3/4">
+                    {% comment %} <div class="grid grid-rows-4 grid-flow-col gap-4 h-full"> {% endcomment %}
+                    <div class="grid grid-rows-4 grid-cols-5 gap-4 h-full">
+
+                        <!-- MODULE FORM -->
+                        <div class="row-span-4 col-span-2 p-2 shadow-lg rounded-sm">
+                            {% block tchome %}
+                            {% comment %} All forms will be rendered here {% endcomment %}
+                            {% endblock tchome %}
+                        </div>
+                    
+                        <!-- TS STATS -->
+                        <div class="row-span-2 col-span-3 p-2 shadow-lg rounded-sm">
+                            
+                            <div class="grid grid-rows-10 gap-1 w-full h-full">
+                                <div class="row-span-1 p-2 col-span-3 rounded-sm">
+                                    <div class="text-xl font-bold px-2 py-1 bg-gradient-to-r from-indigo-600 to-pink-500 text-white text-center rounded-lg">
+                                        Step Analytics
+                                    </div>
+                                </div>
+
+                                <div class="row-span-9 p-2 col-span-3 rounded-sm">
+                                    {% block analytics %}
+
+                                        <div class="grid grid-cols-2 grid-rows-2 gap-1 w-full h-full max-w-5xl rounded-sm">
+                                            <div class="row-span-1 col-span-1 rounded-sm">
+                                                <div id="chart-container" class="h-full shadow hover:shadow-2xl m-1">
+                                                    {% comment %} {% include 'testcase/teststep_detail.html' %} {% endcomment %}
+                                                    <canvas id="myChart-0"></canvas>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="row-span-1 col-span-1 rounded-sm">
+                                                <div id="chart-container-2" class="h-full shadow hover:shadow-2xl m-1">
+                                                    <canvas id="myChart-2"></canvas>
+                                                </div>            
+                                            </div>
+
+                                            <div class="row-span-1 col-span-1 rounded-sm">
+                                                <div id="teststep-container" class="h-full shadow hover:shadow-2xl m-1 text-center p-2">
+                                                    <p id="myp-1"></p>
+                                                </div>            
+                                            </div>
+                                            
+                                            <div class="row-span-1 col-span-1 rounded-sm">
+                                                <div id="chart-container-3" class="h-full shadow hover:shadow-2xl m-1 text-left p-2">
+                                                    <p>List of Test cases with exact step</p>
+                                                    <p id="myp-2"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    {% endblock analytics %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- TC CART -->
+                        <div class="row-span-2 p-2 col-span-3 shadow-lg rounded-sm">
+                            
+                            <div class="grid grid-rows-10 grid-flow-row gap-1 w-full h-full">
+                                
+                                <!-- TC CART HEADER -->
+                                <div class="row-span-1 p-2 col-span-2 rounded-sm">
+                                    <div class="text-xl font-bold px-2 py-1 bg-gradient-to-r from-indigo-600 to-pink-500 text-white text-center rounded-lg">
+                                        Test Case Cart
+                                    </div>
+                                </div>
+                                
+                                <!-- TC CART LEFT PANE -->
+                                <div class="row-span-8 p-2 col-span-1 rounded-sm">
+                                    {% comment %} <div class="max-h-[200px] overflow-y-auto border-0 tc-cart-left h-full"> {% endcomment %}
+                                        So empty here...submit your first test step!
+                                    {% comment %} </div> {% endcomment %}
+                                </div>
+                                
+                                <!-- TC CART RIGHT PANE -->
+                                <div class="row-span-8 p-2 col-span-1 rounded-sm">
+                                    <div class="max-h-[250px] overflow-y-auto border-1 tc-cart h-full">                                        
+                                        So empty here...submit your first test step!
+                                    </div>
+                                </div>
+
+                                <!-- TC CART BOTTOM PANE -->
+                                <div class="row-span-1 p-2 col-span-2 rounded-sm">
+                                    <div class="flex flex-row-reverse justify-stretch gap-4">
+                                        <div class="bg-green-500 text-white text-center rounded-sm font-bold text-sm px-2 py-2 submit-to-db" id="submit-to-db">
+                                            <input type="submit" value="Save in DB">
+                                        </div>
+
+                                        <div class="bg-green-500 text-white text-center rounded-sm font-bold text-sm px-2 py-2 submit-to-db" id="download-tc">
+                                            <input type="submit" value="Download TC">
+                                        </div>
+                                    </div>
+                                </div>
+                            
+                            <div>
+                        </div>
+
                     </div>
+                </div>
+                
+                {% comment %} <!-- ===================================== -->
+                <!--    Block for Showing Test Step Cart   -->
+                <!-- ===================================== -->
+                <div class="text-xl font-bold mt-4 mb-2 px-5 py-5 bg-gradient-to-r from-indigo-600 to-pink-500 text-white text-center">
+                    Test Case
+                </div>
+                
+                <div class="max-h-[300px] overflow-y-auto border-0">
+                    <div class="tc-cart p-4">
+                            So empty here...submit your first test step!
+                    </div>
+                </div>
+
+                <div class="text-bold">
+                    <div class="bg-green-500 text-white text-center rounded-sm m-4 font-bold px-2 py-3 submit-to-db" id="submit-to-db">
+                        <input type="submit" value="Submit to DB">
+                    </div>
+                </div> {% endcomment %}
             </div>
         </div>
     </div>
-    <!-- ===================================== -->
-    <!--      Block for Showing Module Form    -->
-    <!-- ===================================== -->
-    {% comment %} <div class='w-2/6 items-center shadow-lg m-4'> {% endcomment %}
-    <div class='w-2/6 float-left'>
-        <div class="p-2 shadow-lg rounded-lg m-10">
-            {% block tchome %}
-            {% comment %} All forms will be rendered here {% endcomment %}
-            {% endblock tchome %}
-        </div>
-
-        <div class="p-2 shadow-lg rounded-lg m-10">
-            {% block analytics %}
-                <div id="teststep-container"></div>
-                    <h3>Rendering the chart</h3>
-                <div id="chart-container">
-                    {% include 'testcase/teststep_detail.html' %}
-                </div>            
-            {% endblock analytics %}
-        </div>
-    </div>
-
-    <!-- ===================================== -->
-    <!--    Block for Showing Test Step Cart   -->
-    <!-- ===================================== -->
-    <div class='w-1.5/6'>
-        <div class="text-xl font-bold mt-4 mb-2 px-5 py-5 bg-gradient-to-r from-indigo-600 to-pink-500 text-white text-center">
-            Test Case
-        </div>
-        
-        <div class="max-h-[300px] overflow-y-auto border-0">
-            <div class="tc-cart p-4">
-                    So empty here...submit your first test step!
-            </div>
-        </div>
-
-        <div class="text-bold">
-            <div class="bg-green-500 text-white text-center rounded-sm m-4 font-bold px-2 py-3 submit-to-db" id="submit-to-db">
-                <input type="submit" value="Submit to DB">
-            </div>
-        </div>
-    </div>
-    <div class='w-1.5/6'>
-        <h1>Dummy Space</h1>    
-    </div>
-
-</div>
 
 <script src="{% static 'testcase/js/test_step.js' %}"></script>
 

@@ -48,10 +48,18 @@ class TestStepStats(View):
             "raid": request_data.get("raid", "R0"),
             "size": request_data.get("size", "12")
         }
+        response = {
+            "fetched": False,
+            "step_stats": {},  # this has been changed from data
+            "pk": False,
+            "total_raid_hits": 0,
+            "num_tc_associated": 0, 
+        }
         print("Fetching Test Step Stats : step {}".format(step))
         fetched = False
         total_raid_hits = 0
         pk = False
+        num_tc_associated = 0
         try:
             # test_step = TestStep.objects.filter(step=step).first()
             # all = TestStep.objects.all()
@@ -70,21 +78,37 @@ class TestStepStats(View):
             test_step = TestStep.objects.filter(Q(step__raid=step["raid"]))
             total_raid_hits = len(test_step)
             exact_step = test_step.filter(Q(step__num_pds=step["num_pds"]) & Q(step__num_vds=step["num_vds"]) & Q(step__size=step["size"]))
-            print("Test step : {}".format(test_step))
-            print("Exact Test step : {}".format(exact_step))
+            # num_tcs = exact_step.first().test_cases.all().count()   # Use the related name
+            num_tcs = TestCase.objects.filter(test_steps_list__in=exact_step)   # Use the related name
             fetched = exact_step.exists()
             if fetched:
                 pk = getattr(exact_step.first(), 'pk', None)
+                num_tc_associated = exact_step.first()
             else:
                 pk = False
-        except (TestStep.DoesNotExist, AttributeError):
+            print("Test Cases : {}".format(total_raid_hits))
+            print("Test step : {}".format(test_step))
+            print("Exact Test step : {}".format(exact_step))
+            print("Exact Test num_tcs : {}".format(num_tcs))
+            print("Exact Test step num_tc_associate : {}".format(num_tc_associated))
+        # except (TestStep.DoesNotExist, AttributeError):
+        except Exception as e:
+            print("Exception is : {}".format(e))
             test_step = None
         print("Test step fetched PK : {}".format(pk))
         # Extract testcases details if fetched
         # test_case_details = self.get_test_case_details(test_step)
 
         serialized_test_step = serialize('json', list(exact_step)) if fetched else {}
-        response = {"fetched": fetched, "data": serialized_test_step, "pk": pk}
+        num_tcs_serial = serialize('json', list(num_tcs)) if fetched else {}
+        response = {
+            "fetched": fetched,
+            "data": serialized_test_step,
+            "pk": pk,
+            "total_raid_hits": total_raid_hits,
+            "num_tc_associated": num_tcs_serial
+        }
+        print("Response is : {}".format(response))
         return JsonResponse(response)
 
 

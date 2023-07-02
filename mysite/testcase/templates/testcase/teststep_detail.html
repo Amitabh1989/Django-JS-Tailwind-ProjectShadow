@@ -32,11 +32,12 @@
         <h1>{{ teststep.created_on }}</h1>
     {% endfor %} {% endcomment %}
     <!-- Chart -->
-    <div class="w-1/2 shadow-lg shadow hover:shadow-2xl m-10">
-        <div>
-            <canvas id="myChart"></canvas>
-        </div>
-    </div>
+    {% comment %} <div class="w-full h-4/6 shadow-lg rounded-sm shadow hover:shadow-2xl m-1"> {% endcomment %}
+        
+        {% comment %} <div class="h-auto shadow hover:shadow-2xl m-1">
+            <canvas id="myChart-0"></canvas>
+        </div> {% endcomment %}
+    {% comment %} </div> {% endcomment %}
     
     <!-- Add other fields or content as needed -->
 </div>
