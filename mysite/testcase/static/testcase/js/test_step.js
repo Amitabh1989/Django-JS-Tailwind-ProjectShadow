@@ -104,14 +104,15 @@ $(document).ready(function () {
         // Send the test step list to display submitted steps in Test Step area
         displayTestSteps();
 
-        // Send Ajax request to get the PK of the step. If step is not found
-        // in the DB, its a new step. never tried
-        getTestStepStats(formValues);
-
         // Update the 'testSteps' in localStorage
         localStorage.setItem('testSteps', JSON.stringify(testSteps));
         console.log("Updated cart : ");
         console.log(testSteps);
+
+        // Send Ajax request to get the PK of the step. If step is not found
+        // in the DB, its a new step. never tried
+        getTestStepStats(formValues);
+        console.log("getTestStepStats called ");
     });
 
 
@@ -139,28 +140,84 @@ $(document).ready(function () {
     });
 });
 
+// function getTestStepStats(formValues, handleTestStepStatsResponse= () => {}) {
+// // function getTestStepStats(formValues) {
+//     console.log("Inside getTestStepStats : " + formValues);
+//     delete formValues["csrfmiddlewaretoken"];
+//     let queryString = "";
+//     Object.keys(formValues).forEach(function(key) {
+//         queryString += key + "=" + formValues[key] + '&';
+//     });
+//     console.log("Fetching step data : " + queryString);
+//     // const url = '/testcase/teststep_stats/?' + new URLSearchParams(queryString);
+//     const url = '/testcase/teststep_stats/?' + queryString;
+//     console.log('Get Request : ' + url)
+//     const xhr = new XMLHttpRequest();
+//     xhr.open('GET', url, true);
+//     xhr.onreadystatechange = function() {
+//         if (xhr.readyState === XMLHttpRequest.DONE) {
+//             console.log("XHR status if : " + xhr.status);
+//             if (xhr.status === 200) {
+//                 const response = JSON.parse(xhr.responseText);
+//                 console.log("Response received parsed : " + response);
+//                 console.log("Response received string : " + JSON.stringify(response));
+//                 if (typeof handleTestStepStatsResponse === 'function') {
+//                     handleTestStepStatsResponse(response);
+//                 }
+//                 // handleTestStepStatsResponse(response);
+//             }
+//         } else {
+//             console.log("XHR status else : " + xhr.status);
+//         }
+//     };
+//     xhr.send();
+// };
+
+
+// function handleTestStepStatsResponse(response) {
+//     console.log("Callback for testStepDetails invoked from getTestStepStats: " + response);
+//     console.log("Response PK: " + response.pk);
+//     autoReloadDetailView(response.pk);
+// };
+
+
+
 function getTestStepStats(formValues) {
-    delete formValues["csrfmiddlewaretoken"];
-    let queryString = "";
-    Object.keys(formValues).forEach(function(key) {
-        queryString += key + "=" + formValues[key] + '&';
-    });
-    console.log("Fetching step data : " + queryString);
-    // const url = '/testcase/teststep_stats/?' + new URLSearchParams(queryString);
-    const url = '/testcase/teststep_stats/?' + queryString;
-    console.log('Get Request : ' + url)
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', url, true);
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState === XMLHttpRequest.DONE) {
-            if (xhr.status === 200) {
-                const response = JSON.parse(xhr.responseText);
-                console.log("Response received : " + JSON.stringify(xhr.responseText));
+    // function getTestStepStats(formValues) {
+        console.log("Inside getTestStepStats : " + formValues);
+        delete formValues["csrfmiddlewaretoken"];
+        let queryString = "";
+        Object.keys(formValues).forEach(function(key) {
+            queryString += key + "=" + formValues[key] + '&';
+        });
+        console.log("Fetching step data : " + queryString);
+        // const url = '/testcase/teststep_stats/?' + new URLSearchParams(queryString);
+        const url = '/testcase/teststep_stats/?' + queryString;
+        console.log('Get Request : ' + url)
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', url, true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                console.log("XHR status if : " + xhr.status);
+                if (xhr.status === 200) {
+                    const response = JSON.parse(xhr.responseText);
+                    console.log("Response received parsed : " + response);
+                    handleTestStepStatsResponse(response);
+                }
+            } else {
+                console.log("XHR status else : " + xhr.status);
             }
-        }
-    }
-    xhr.send();
-}
+        };
+        xhr.send();
+    };
+
+
+function handleTestStepStatsResponse(response) {
+    console.log("Callback for testStepDetails invoked from getTestStepStats: " + response);
+    console.log("Response PK: " + response.pk);
+    autoReloadDetailView(response.pk);
+};
+
 
 function getCookie(name) {
     var cookieValue = null;
@@ -227,7 +284,7 @@ $("#submit-to-db").click(submitToDB);
     const xhttp = new XMLHttpRequest();
     xhttp.onload = function() {
         editStepFormHandler(xhttp, stepDict);
-        autoReloadDetailView();
+        // autoReloadDetailView();
     };
     // Modify the URL by appending query parameters
     const url = '/myapp/?is_ajax=True&send_data=True';
@@ -275,40 +332,42 @@ function editStepFormHandler(xhttp, stepDict) {
 // Once the test step is submitted, then call the analytics on the test step
 // Also, refresh the other analytics
 
-function autoReloadDetailView(callback = () => {}) {
+function autoReloadDetailView(pk) {
+// function autoReloadDetailView(pk) {
     const xhr = new XMLHttpRequest();
     console.log("Inside the autoreload");
-    xhr.open('GET', '/testcase/teststep_detail/38/', true);
+    const url = '/testcase/teststep_detail/' + pk + '/'
+    xhr.open('GET', url, true);
     xhr.onreadystatechange = function() {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status === 200) {
                 const jsonResponse = JSON.parse(xhr.responseText);
                 document.getElementById('teststep-container').innerHTML = "JS return " + xhr.responseText + "====";
-                callback(jsonResponse);
+                testStepDetails(jsonResponse);
             } else {
                 console.log('Status : ' + xhr.status);
             }
         }
     }
-    xhr.send()
+    xhr.send();
 }
-
-autoReloadDetailView();
-document.addEventListener('DOMContentLoaded', function() {
-    autoReloadDetailView(function(jsonResponse) {
-        testStepDetails(jsonResponse);
-    });
-});
 
 
 /**
- * Display the statos for the test step submitted
+ * Display the status for the test step submitted
  */
 function testStepDetails(jsonResponse) {
-    console.log("Response received : " + jsonResponse)
-    const ctx = document.getElementById('myChart');
+    console.log("Response received in teststepdetails: " + jsonResponse);
+    const ctx = document.getElementById('myChart').getContext('2d');
+
+    console.log("Chart: " + ctx.chart);
+    // Check if a chart already exists
+    if (ctx && ctx.chart) {
+        // Destroy the existing chart
+        ctx.chart.destroy();
+    }
     const testCases = jsonResponse.test_cases;
-    console.log("Test Case : " + JSON.stringify(testCases));
+    console.log("Test Cases: " + JSON.stringify(testCases));
     const cqIDSet = new Set();
     const dateSet = new Set();
     const dataValues = testCases.map(testCase => {
@@ -317,25 +376,27 @@ function testStepDetails(jsonResponse) {
         dateSet.add(new Date(testCase.updated_on).toLocaleDateString());
         return 1; // or any other value you want to assign to each test case
     });
-    console.log("CQIDSET : " + [...cqIDSet]);
-    console.log("DATESET : " + [...dateSet]);
-    console.log("DATEVALUES : " + [...dataValues]);
-    new Chart(ctx, {
+    console.log("CQIDSET: " + [...cqIDSet]);
+    console.log("DATESET: " + [...dateSet]);
+    console.log("DATAVALUES: " + [...dataValues]);
+
+    // Assign the chart instance to ctx.chart property
+    ctx.chart = new Chart(ctx, {
         type: 'bar',
         data: {
-        labels: [...dateSet],
-        datasets: [{
-            label: '# of Test Cases',
-            data: dataValues,
-            borderWidth: 1
-        }]
+            labels: [...dateSet],
+            datasets: [{
+                label: '# of Test Cases',
+                data: dataValues,
+                borderWidth: 1
+            }]
         },
         options: {
-        scales: {
-            y: {
-            beginAtZero: true
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
             }
-        }
         }
     });
 }

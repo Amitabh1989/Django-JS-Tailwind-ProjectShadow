@@ -7,7 +7,7 @@ from .models import TestStep, TestCase
 import time, json
 from django.http import JsonResponse
 from django.core.serializers import serialize
-from django.db.models import Q
+from django.db.models import Q, Value
 
 # Create your views here.
 
@@ -50,21 +50,41 @@ class TestStepStats(View):
         }
         print("Fetching Test Step Stats : step {}".format(step))
         fetched = False
+        total_raid_hits = 0
+        pk = False
         try:
             # test_step = TestStep.objects.filter(step=step).first()
-            all = TestStep.objects.all()
-            test_step = TestStep.objects.filter(step=step)
+            # all = TestStep.objects.all()
+            # test_step = TestStep.objects.filter(step=Value(step)
+            """
+            # Assuming you have a queryset named `queryset`
+            first_instance = queryset.first()  # Get the first model instance from the queryset
+            pk = getattr(first_instance, 'pk', None)  # Retrieve the primary key (pk) attribute
+
+            # You can also directly access the `pk` attribute
+            pk = first_instance.pk
+
+            # If you want to retrieve the primary keys of all instances in the queryset
+            pks = queryset.values_list('pk', flat=True)  # Returns a list of primary keys            
+            """
+            test_step = TestStep.objects.filter(Q(step__raid=step["raid"]))
+            total_raid_hits = len(test_step)
+            exact_step = test_step.filter(Q(step__num_pds=step["num_pds"]) & Q(step__num_vds=step["num_vds"]) & Q(step__size=step["size"]))
             print("Test step : {}".format(test_step))
-            fetched = bool(test_step)
+            print("Exact Test step : {}".format(exact_step))
+            fetched = exact_step.exists()
+            if fetched:
+                pk = getattr(exact_step.first(), 'pk', None)
+            else:
+                pk = False
         except (TestStep.DoesNotExist, AttributeError):
             test_step = None
-        print("Test step fetched : {}".format(test_step))
-        print("Test steps all : {}".format(all))
+        print("Test step fetched PK : {}".format(pk))
         # Extract testcases details if fetched
         # test_case_details = self.get_test_case_details(test_step)
 
-        serialized_test_step = serialize('json', [test_step]) if fetched else {}
-        response = {"fetched": fetched, "data": serialized_test_step, "pk": getattr(test_step, 'pk', None)}
+        serialized_test_step = serialize('json', list(exact_step)) if fetched else {}
+        response = {"fetched": fetched, "data": serialized_test_step, "pk": pk}
         return JsonResponse(response)
 
 
