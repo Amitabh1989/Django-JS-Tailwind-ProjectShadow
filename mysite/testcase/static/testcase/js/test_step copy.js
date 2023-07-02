@@ -216,9 +216,7 @@ function getTestStepStats(formValues) {
 function handleTestStepStatsResponse(response) {
     console.log("Callback for testStepDetails invoked from getTestStepStats: " + response);
     console.log("Response PK: " + response.pk);
-    // autoReloadDetailView(response.pk);
-    // autoReloadDetailView(response);
-    testStepDetails(response);
+    autoReloadDetailView(response.pk);
 };
 
 
@@ -361,9 +359,8 @@ function autoReloadDetailView(pk) {
  */
 function testStepDetails(jsonResponse) {
     console.log("Response received in teststepdetails: " + jsonResponse);
-    console.log("Type teststepdetails: " + typeof jsonResponse);
-    // console.log("Response received in teststepdetails: " + JSON.stringify(jsonResponse));
-    const ctx = document.getElementById('myChart-0');
+    console.log("Response received in teststepdetails: " + JSON.stringify(jsonResponse));
+    const ctx = document.getElementById('myChart').getContext('2d');
 
     console.log("Chart: " + ctx.chart);
     // Check if a chart already exists
@@ -371,25 +368,14 @@ function testStepDetails(jsonResponse) {
         // Destroy the existing chart
         ctx.chart.destroy();
     }
-    const testCases = jsonResponse;
+    const testCases = jsonResponse.test_cases;
     console.log("Test Cases: " + JSON.stringify(testCases));
-    console.log("Tets Case type : " + typeof testCases);
-    console.log("Test Cases: " + typeof testCases.num_tc_associated);
-    console.log("Test Cases type: " + typeof JSON.parse(testCases.num_tc_associated));
-
-    // ##############################
-    // CHART 1
-    // ##############################
     const cqIDSet = new Set();
     const dateSet = new Set();
-
-    const numTCs = JSON.parse(testCases.num_tc_associated);
-    console.log("numTCs type: " + typeof numTCs);
-    const dataValues = numTCs.map(testCase => {
-        console.log("Element: " + JSON.stringify(testCase));
-        console.log("Element: " + typeof testCase.fields.cqid);
-        cqIDSet.add(testCase.fields.cqid);
-        dateSet.add(new Date(testCase.fields.updated_on).toLocaleDateString());
+    const dataValues = testCases.map(testCase => {
+        console.log("Element: " + JSON.stringify(testCase.cqid));
+        cqIDSet.add(testCase.cqid);
+        dateSet.add(new Date(testCase.updated_on).toLocaleDateString());
         return 1; // or any other value you want to assign to each test case
     });
     console.log("CQIDSET: " + [...cqIDSet]);
@@ -402,7 +388,7 @@ function testStepDetails(jsonResponse) {
         data: {
             labels: [...dateSet],
             datasets: [{
-                label: '# of Test Cases using this step',
+                label: '# of Test Cases',
                 data: dataValues,
                 borderWidth: 1
             }]
@@ -415,34 +401,4 @@ function testStepDetails(jsonResponse) {
             }
         }
     });
-
-    // ##############################
-    // CHART 2
-    // ##############################
-    const configType = JSON.parse(jsonResponse.data);
-    const tcHitInfo = jsonResponse.total_raid_hits + " other Test Cases uses " + configType[0].fields.step.raid;
-    console.log("String to print : " + tcHitInfo);
-    const tcHitInfoHtml = `<ul><li><strong>${jsonResponse.total_raid_hits}</strong> other Test Cases have <strong>${configType[0].fields.step.raid}</strong></li></ul>`;
-    const ctx1 = document.getElementById('myp-1');
-    ctx1.innerHTML = "";
-    ctx1.innerHTML = tcHitInfoHtml;
-
-
-    // ##############################
-    // CHART 3
-    // ##############################
-    const cqTitle = [];
-    const tcIds = numTCs.forEach(tc => {
-        cqTitle.push(tc.fields.title + " (" + tc.fields.cqid + ")");
-    });
-
-    console.log("String to print : " + cqTitle);
-    let strPrint = "<ul>";
-    let cqData = cqTitle.forEach(id => {
-        strPrint += `<li># <strong>${id}</strong></li>`;
-    });
-    strPrint += "</ul>";
-    const ctx2 = document.getElementById('myp-2');
-    ctx2.innerHTML = "";
-    ctx2.innerHTML = strPrint;
 }
