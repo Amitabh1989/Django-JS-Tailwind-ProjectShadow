@@ -71,26 +71,34 @@
 
                                         <div class="grid grid-cols-2 grid-rows-2 gap-1 w-full h-full max-w-5xl rounded-sm">
                                             <div class="row-span-1 col-span-1 rounded-sm">
-                                                <div id="chart-container" class="h-full shadow hover:shadow-2xl m-1">
+                                                <div id="chart-container" class="h-full shadow hover:shadow-2xl m-1 hover:scale-110">
                                                     {% comment %} {% include 'testcase/teststep_detail.html' %} {% endcomment %}
                                                     <canvas id="myChart-0"></canvas>
                                                 </div>
                                             </div>
                                             
+                                            {% comment %} <!-- Modal -->
+                                            <div id="canvasModal" class="modal">
+                                                <div class="modal-content">
+                                                <span class="close">&times;</span>
+                                                <canvas id="modalCanvas"></canvas>
+                                                </div>
+                                            </div> {% endcomment %}
+
                                             <div class="row-span-1 col-span-1 rounded-sm">
-                                                <div id="chart-container-2" class="h-full shadow hover:shadow-2xl m-1">
+                                                <div id="chart-container-2" class="h-full shadow hover:shadow-2xl m-1 hover:scale-110">
                                                     <canvas id="myChart-2"></canvas>
                                                 </div>            
                                             </div>
 
                                             <div class="row-span-1 col-span-1 rounded-sm">
-                                                <div id="teststep-container" class="h-full shadow hover:shadow-2xl m-1 text-center p-2">
+                                                <div id="teststep-container" class="h-full shadow hover:shadow-2xl m-1 text-center p-2 hover:scale-110">
                                                     <p id="myp-1"></p>
                                                 </div>            
                                             </div>
                                             
                                             <div class="row-span-1 col-span-1 rounded-sm">
-                                                <div id="chart-container-3" class="h-full shadow hover:shadow-2xl m-1 text-left p-2">
+                                                <div id="chart-container-3" class="h-full shadow hover:shadow-2xl m-1 text-left p-2 hover:scale-110">
                                                     <p>List of Test cases with exact step</p>
                                                     <p id="myp-2"></p>
                                                 </div>
