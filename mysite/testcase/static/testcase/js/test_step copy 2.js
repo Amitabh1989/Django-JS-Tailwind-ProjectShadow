@@ -362,6 +362,7 @@ function autoReloadDetailView(pk) {
 function testStepDetails(jsonResponse) {
     console.log("Response received in teststepdetails: " + jsonResponse);
     console.log("Type teststepdetails: " + typeof jsonResponse);
+    // console.log("Response received in teststepdetails: " + JSON.stringify(jsonResponse));
     const ctx = document.getElementById('myChart-0');
 
     console.log("Chart: " + ctx.chart);
@@ -414,36 +415,6 @@ function testStepDetails(jsonResponse) {
             }
         }
     });
-
-    // Get the modal element
-    // const modal = document.getElementById('canvasModal');
-    // // Get the canvas elements
-    // // const canvas = document.getElementById('myChart-1');
-    // const modalCanvas = document.getElementById('modalCanvas');
-    // // Get the close button element
-    // const closeButton = document.getElementsByClassName('close')[0];
-
-    // // Function to open the modal and display the canvas
-    // function openModal() {
-    // modal.style.display = 'block';
-    // modalCanvas.getContext('2d').drawImage(ctx.chart.canvas, 0, 0);
-    // }
-    // Function to open the modal and display the canvas
-    // function openModal() {
-    //     const modalWindow = window.open("", "Chart Window", "width=800, height=600");
-    //     modalWindow.document.write(`<img src="${ctx.chart.canvas.toDataURL()}" alt="Chart">`);
-    // }
-
-    // // Function to close the modal
-    // function closeModal() {
-    // modal.style.display = 'none';
-    // }
-
-    // Event listener for canvas click
-    // ctx.chart.canvas.addEventListener('click', openModal);
-
-    // // Event listener for close button click
-    // closeButton.addEventListener('click', closeModal);
 
     // ##############################
     // CHART 2
