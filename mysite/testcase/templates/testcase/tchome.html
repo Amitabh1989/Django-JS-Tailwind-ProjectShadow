@@ -61,7 +61,8 @@
                             
                             <div class="grid grid-rows-10 gap-1 w-full h-full">
                                 <div class="row-span-1 p-2 col-span-3 rounded-sm">
-                                    <div class="text-xl font-bold px-2 py-1 bg-gradient-to-r from-indigo-600 to-pink-500 text-white text-center rounded-lg">
+                                    {% comment %} <div class="text-xl font-bold px-2 py-1 bg-gradient-to-r from-indigo-600 to-pink-500 text-white text-center rounded-lg"> {% endcomment %}
+                                    <div class="text-xl font-bold px-2 py-1 bg-gray-900 text-white text-center rounded-lg">
                                         Step Analytics
                                     </div>
                                 </div>
@@ -71,7 +72,7 @@
 
                                         <div class="grid grid-cols-2 grid-rows-2 gap-1 w-full h-full max-w-5xl rounded-sm">
                                             <div class="row-span-1 col-span-1 rounded-sm">
-                                                <div id="chart-container" class="h-full shadow hover:shadow-2xl m-1 hover:scale-110">
+                                                <div id="chart-container" class="h-full shadow hover:shadow-2xl m-1 hover:scale-125 hover:opacity-100">
                                                     {% comment %} {% include 'testcase/teststep_detail.html' %} {% endcomment %}
                                                     <canvas id="myChart-0"></canvas>
                                                 </div>
@@ -86,20 +87,19 @@
                                             </div> {% endcomment %}
 
                                             <div class="row-span-1 col-span-1 rounded-sm">
-                                                <div id="chart-container-2" class="h-full shadow hover:shadow-2xl m-1 hover:scale-110">
+                                                <div id="chart-container-2" class="h-full shadow hover:shadow-2xl m-1 hover:scale-125 hover:opacity-100">
                                                     <canvas id="myChart-2"></canvas>
                                                 </div>            
                                             </div>
 
                                             <div class="row-span-1 col-span-1 rounded-sm">
-                                                <div id="teststep-container" class="h-full shadow hover:shadow-2xl m-1 text-center p-2 hover:scale-110">
+                                                <div id="teststep-container" class="h-full shadow hover:shadow-2xl m-1 text-center p-2 hover:scale-125 hover:opacity-100">
                                                     <p id="myp-1"></p>
                                                 </div>            
                                             </div>
                                             
                                             <div class="row-span-1 col-span-1 rounded-sm">
-                                                <div id="chart-container-3" class="h-full shadow hover:shadow-2xl m-1 text-left p-2 hover:scale-110">
-                                                    <p>List of Test cases with exact step</p>
+                                                <div id="chart-container-3" class="h-full shadow hover:shadow-2xl m-1 text-left p-2 hover:scale-125 hover:opacity-100">
                                                     <p id="myp-2"></p>
                                                 </div>
                                             </div>
@@ -117,7 +117,8 @@
                                 
                                 <!-- TC CART HEADER -->
                                 <div class="row-span-1 p-2 col-span-2 rounded-sm">
-                                    <div class="text-xl font-bold px-2 py-1 bg-gradient-to-r from-indigo-600 to-pink-500 text-white text-center rounded-lg">
+                                    {% comment %} <div class="text-xl font-bold px-2 py-1 bg-gradient-to-r from-indigo-600 to-pink-500 text-white text-center rounded-lg"> {% endcomment %}
+                                    <div class="text-xl font-bold px-2 py-1 bg-gray-900 text-white text-center rounded-lg">
                                         Test Case Cart
                                     </div>
                                 </div>
@@ -125,7 +126,7 @@
                                 <!-- TC CART LEFT PANE -->
                                 <div class="row-span-8 p-2 col-span-1 rounded-sm">
                                     {% comment %} <div class="max-h-[200px] overflow-y-auto border-0 tc-cart-left h-full"> {% endcomment %}
-                                        So empty here...submit your first test step!
+                                        Cool things in making. Hold my &#127866;
                                     {% comment %} </div> {% endcomment %}
                                 </div>
                                 

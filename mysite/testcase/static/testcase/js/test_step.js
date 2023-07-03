@@ -37,12 +37,12 @@ function displayTestSteps() {
         stepNo = i + 1;
         stepString += `
                 <div class="flex flex-row hover:scale-105 hover:bg-sky-100">
-                    <div class="flex-initial w-96 text-blue-400 text-left text-sm font-bold ml-auto"><span>Test Step ${stepNo}</span></div>
+                    <div class="flex-initial w-96 text-blue-400 text-left text-sm font-bold ml-auto px-5"><span>Test Step ${stepNo}</span></div>
                     <div class="flex w-32">
-                        <div class="edit-step text-yellow-500 px-1 text-xs text-right font-bold cursor-pointer mr-1">
+                        <div class="edit-step text-yellow-500 px-1 text-xs text-right font-bold pr-2">
                             <input type="button" value="Edit" edit-test-step="${stepNo}">
                         </div>
-                        <div class="delete-step text-yellow-500 px-1 text-xs text-right font-bold cursor-pointer mr-1">
+                        <div class="delete-step text-yellow-500 px-1 text-xs text-right font-bold pr-2">
                             <input type="button" value="Delete" delete-test-step="${stepNo}">
                         </div>
                     </div>
@@ -71,18 +71,18 @@ $(document).ready(function () {
         // Stop the form from submitting to the Database
         form.on('submit', function (e) {
             e.preventDefault();
-            console.log("Form submission behaviour altered");
+            console.log("Form submission behavior altered");
         });
 
         var formValues = {};
         form.serializeArray().forEach(function (field) {
             formValues[field.name] = field.value;
         });
-        console.log("Form Values : " + JSON.stringify(formValues));
+        console.log("Form Values: " + JSON.stringify(formValues));
 
         // Retrieve the testSteps from localStorage
         var testSteps = getTestStep();
-        console.log("Before Update, cart : ", testSteps);
+        console.log("Before Update, cart: ", testSteps);
 
         // Check if 'formValues' property exists
         if (!testSteps.hasOwnProperty('moduleForm')) {
@@ -94,52 +94,72 @@ $(document).ready(function () {
         if (submitType.value === 'Save Edited Step') {
             console.log("Saving Edited Step");
             const stepNo = parseInt(document.querySelector(".module-name").innerHTML.split(" ")[2]);
-            console.log("Step number is : " + stepNo);
-            testSteps.moduleForm[stepNo-1] = formValues;
+            console.log("Step number is: " + stepNo);
+            testSteps.moduleForm[stepNo - 1] = formValues;
         } else {
-        // Append the form values to the 'formValues' array
+            // Append the form values to the 'formValues' array
             testSteps.moduleForm.push(formValues);
         }
 
-        // Send the test step list to display submitted steps in Test Step area
-        displayTestSteps();
-
         // Update the 'testSteps' in localStorage
         localStorage.setItem('testSteps', JSON.stringify(testSteps));
-        console.log("Updated cart : ");
+        console.log("Updated cart: ");
         console.log(testSteps);
 
         // Send Ajax request to get the PK of the step. If step is not found
-        // in the DB, its a new step. never tried
+        // in the DB, it's a new step. never tried
         getTestStepStats(formValues);
         console.log("getTestStepStats called ");
+        // Send the test step list to display submitted steps in Test Step area
+        displayTestSteps();
     });
 
-
-    document.addEventListener('click', function(event) {
+    $(document).on('click', function (event) {
         console.log("Edit button clicked");
-        if (event.target.matches(".edit-step input[type='button']")) {
+        if ($(event.target).is(".edit-step input[type='button']")) {
             // Get the step number from click
-            let testStepId = event.target.getAttribute('edit-test-step');
+            let testStepId = $(event.target).attr('edit-test-step');
             console.log("Test Step " + testStepId + " selected to be edited");
 
-
             // Go to Index in the localStorage testStepList and get the module name
-            // let tcDict = JSON.stringify(getTestStep(false));
             let tcDict = getTestStep(false);
             console.log("TcDict : " + tcDict);
             let moduleDict = tcDict["moduleForm"];
-            let stepDict = moduleDict[testStepId-1];
+            let stepDict = moduleDict[testStepId - 1];
             stepDict["stepNo"] = testStepId;
             console.log("StepDict : " + JSON.stringify(stepDict));
 
             // Compose an Ajax request and fetch the module form - from Database
             ajaxRequest(JSON.stringify(stepDict));
             // Populate the page with the request
+
+        } else if ($(event.target).is(".delete-step input[type='button']")) {
+            // Get the step number from click
+            let testStepId = $(event.target).attr('delete-test-step');
+            console.log("Test Step " + testStepId + " selected to be deleted");
+
+            // Go to Index in the localStorage testStepList and get the module name
+            let tcDict = getTestStep(false);
+            console.log("TcDict : " + tcDict);
+            let moduleDict = tcDict["moduleForm"];
+            let stepDict = moduleDict[testStepId - 1];
+            console.log("Deleting elements from index: " + (testStepId - 1));
+            moduleDict.splice(testStepId - 1);
+            localStorage.setItem('testSteps', JSON.stringify(tcDict));
+            console.log("Items deleted");
+            // Send the test step list to display submitted steps in Test Step area
+            displayTestSteps();
         }
     });
 });
 
+
+
+/**
+ * Will use this to create hyperlinks to the test cases that are displayed in the
+ * Card. ==> List of test cases with exact step
+ * @param {*} formValues 
+ */
 // function getTestStepStats(formValues, handleTestStepStatsResponse= () => {}) {
 // // function getTestStepStats(formValues) {
 //     console.log("Inside getTestStepStats : " + formValues);
@@ -379,7 +399,7 @@ function testStepDetails(jsonResponse) {
     // ##############################
     // CHART 1
     // ##############################
-    const cqIDSet = new Set();
+    const cqIDSet = [];
     const dateSet = new Set();
 
     const numTCs = JSON.parse(testCases.num_tc_associated);
@@ -387,13 +407,26 @@ function testStepDetails(jsonResponse) {
     const dataValues = numTCs.map(testCase => {
         console.log("Element: " + JSON.stringify(testCase));
         console.log("Element: " + typeof testCase.fields.cqid);
-        cqIDSet.add(testCase.fields.cqid);
+        cqIDSet.push(testCase.fields.cqid);
         dateSet.add(new Date(testCase.fields.updated_on).toLocaleDateString());
-        return 1; // or any other value you want to assign to each test case
+        return cqIDSet.length; // or any other value you want to assign to each test case
     });
     console.log("CQIDSET: " + [...cqIDSet]);
     console.log("DATESET: " + [...dateSet]);
     console.log("DATAVALUES: " + [...dataValues]);
+
+    const options = {
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              stepSize: 1, // Control the step size between ticks
+              min: 0, // Minimum value of the y-axis
+              max: 10, // Maximum value of the y-axis
+            },
+          },
+        },
+      };
 
     // Assign the chart instance to ctx.chart property
     ctx.chart = new Chart(ctx, {
@@ -403,16 +436,34 @@ function testStepDetails(jsonResponse) {
             datasets: [{
                 label: '# of Test Cases using this step',
                 data: dataValues,
-                borderWidth: 1
+                borderWidth: 1,
+                barPercentage: 1,
+                barThickness: 20,
+                maxBarThickness: 30,
             }]
         },
         options: {
             scales: {
                 y: {
-                    beginAtZero: true
-                }
-            }
-        }
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1,
+                    },
+                },
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: (context) => {
+                            const index = context.dataIndex;
+                            const cqID = cqIDSet[index];
+                            const length = dataValues[index];
+                            return `CQID: ${cqID} | Total TCs : ${length}`;
+                        },
+                    },
+                },
+            },
+        },
     });
 
     // Get the modal element
@@ -451,7 +502,7 @@ function testStepDetails(jsonResponse) {
     const configType = JSON.parse(jsonResponse.data);
     const tcHitInfo = jsonResponse.total_raid_hits + " other Test Cases uses " + configType[0].fields.step.raid;
     console.log("String to print : " + tcHitInfo);
-    const tcHitInfoHtml = `<ul><li><strong>${jsonResponse.total_raid_hits}</strong> other Test Cases have <strong>${configType[0].fields.step.raid}</strong></li></ul>`;
+    const tcHitInfoHtml = `<ul><li> 🚀 <strong>${jsonResponse.total_raid_hits}</strong> other Test Cases have <strong>${configType[0].fields.step.raid}</strong><br>with same <strong>and/or</strong> other configurations</li></ul>`;
     const ctx1 = document.getElementById('myp-1');
     ctx1.innerHTML = "";
     ctx1.innerHTML = tcHitInfoHtml;
@@ -464,11 +515,11 @@ function testStepDetails(jsonResponse) {
     const tcIds = numTCs.forEach(tc => {
         cqTitle.push(tc.fields.title + " ( CQ ID : " + tc.fields.cqid + ")");
     });
-
+ 
     console.log("String to print : " + cqTitle);
-    let strPrint = "<ul>";
+    let strPrint = "<p><strong>List of Test cases with exact step</strong><br></p><ul>";
     let cqData = cqTitle.forEach(id => {
-        strPrint += `<li># <strong>${id}</strong></li>`;
+        strPrint += `<li> ⭐ <strong>${id}</strong></li>`;
     });
     strPrint += "</ul>";
     const ctx2 = document.getElementById('myp-2');
