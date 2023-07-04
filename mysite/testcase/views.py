@@ -19,7 +19,7 @@ class TestCaseView(View):
         steps = data["moduleForm"]
         print("Steps received is : {}".format(steps))
         cqid = 1
-        title = "Dummy_TC_2"
+        title = "Dummy_TC_3"
         summary = "Testing Model"
         tcid, created = TestCase.objects.get_or_create(cqid=cqid, title=title, summary=summary)
         print("Created : {}".format(created))
@@ -30,6 +30,8 @@ class TestCaseView(View):
             test_step, _ = TestStep.objects.get_or_create(step=step)
             test_step.test_cases.set([tcid])
             tcid.test_steps_list.add(test_step)
+            test_step.save()
+        tcid.save()
         response = {"resp": "Submit successful from testcase view"}
         test_steps = tcid.test_steps_list.all()
         for test_step in test_steps:
