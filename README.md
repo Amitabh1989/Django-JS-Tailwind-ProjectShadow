@@ -1,4 +1,4 @@
-# Django JavaScript Ajax jQuery Tailwind Docker : "ProjectShadow"
+# Django JavaScript Ajax jQuery Tailwind React Docker : "ProjectShadow"
 
 A custom website to generate custom JSON data. Personal project. More details to follow.
 
@@ -26,6 +26,8 @@ The project utilizes various technologies and tools:
 
 - **Python**: The primary programming language used in Django, providing the backend logic and driving the application's functionality.
 
+- **React**: Using React to design responsive elements
+
 The project aims to provide an efficient and user-friendly environment for creating and managing test cases within a web application. It leverages Django's powerful features, integrates JavaScript and jQuery for enhanced interactivity, uses Ajax for seamless server communication, and employs Docker for easy deployment and scalability.
 
 Please note that this summary provides a high-level overview of the project. For more detailed information, refer to the project's documentation and source code.
@@ -38,4 +40,5 @@ Please note that this summary provides a high-level overview of the project. For
 - JavaScript
 - Ajax
 - jQuery
+- React
 - Docker
