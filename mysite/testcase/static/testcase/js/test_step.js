@@ -384,12 +384,12 @@ function testStepDetails(jsonResponse) {
     console.log("Type teststepdetails: " + typeof jsonResponse);
     const ctx = document.getElementById('myChart-0');
 
-    console.log("Chart: " + ctx.chart);
-    // Check if a chart already exists
-    if (ctx && ctx.chart) {
-        // Destroy the existing chart
-        ctx.chart.destroy();
-    }
+    // console.log("Chart: " + ctx.chart);
+    // // Check if a chart already exists
+    // if (ctx && ctx.chart) {
+    //     // Destroy the existing chart
+    //     ctx.chart.destroy();
+    // }
     const testCases = jsonResponse;
     console.log("Test Cases: " + JSON.stringify(testCases));
     console.log("Tets Case type : " + typeof testCases);
@@ -427,7 +427,12 @@ function testStepDetails(jsonResponse) {
           },
         },
       };
-
+    console.log("Chart: " + ctx.chart);
+    // Check if a chart already exists
+    if (ctx && ctx.chart) {
+        // Destroy the existing chart
+        ctx.chart.destroy();
+    }
     // Assign the chart instance to ctx.chart property
     ctx.chart = new Chart(ctx, {
         type: 'bar',
