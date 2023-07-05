@@ -43,12 +43,19 @@ class TestStepStats(View):
         print("Request for stats : {}".format(request.GET))
         print("Self.Request for stats : {}".format(self.request.GET))
         request_data = self.request.GET
-        print("Self.Request num_pds : {}".format(self.request.GET["num_pds"]))
+        print("Self.Request num_pds : {}".format(self.request.GET["pdcount"]))
         step = {
-            "num_pds": request_data.get("num_pds", "2"),
-            "num_vds": request_data.get("num_vds", "2"),
-            "raid": request_data.get("raid", "R0"),
-            "size": request_data.get("size", "12")
+            "pdcount": request_data.get("pdcount"),
+            "vdcount": request_data.get("vdcount"),
+            "raid": request_data.get("raid"),
+            "size": request_data.get("size", ""),
+            "spans": request_data.get("spans"),
+            "stripe": request_data.get("stripe"),
+            "dtabcount": request_data.get("dtabcount"),
+            "hotspare": request_data.get("hotspare"),
+            "init": request_data.get("init"),
+            "readpolicy": request_data.get("readpolicy"),
+            "repeat": request_data.get("repeat"),
         }
         response = {
             "fetched": False,
@@ -79,7 +86,7 @@ class TestStepStats(View):
             """
             test_step = TestStep.objects.filter(Q(step__raid=step["raid"]))
             total_raid_hits = len(test_step)
-            exact_step = test_step.filter(Q(step__num_pds=step["num_pds"]) & Q(step__num_vds=step["num_vds"]) & Q(step__size=step["size"]))
+            exact_step = test_step.filter(Q(step__num_pds=step["pdcount"]) & Q(step__num_vds=step["vdcount"]) & Q(step__size=step["size"]))
             # num_tcs = exact_step.first().test_cases.all().count()   # Use the related name
             num_tcs = TestCase.objects.filter(test_steps_list__in=exact_step)   # Use the related name
             fetched = exact_step.exists()
@@ -140,28 +147,28 @@ class TestStepDetail(DetailView):
     `ListView`, etc.) and can be further customized based on your requirements.
     """
     model = TestStep
-    context_object_name = "teststep_detail"
-    queryset = TestStep.objects.prefetch_related('test_cases').order_by('updated_on')
-    print("Returning QuerySet : {}".format(queryset))
+    # context_object_name = "teststep_detail"
+    # queryset = TestStep.objects.prefetch_related('test_cases').order_by('updated_on')
+    # print("Returning QuerySet : {}".format(queryset))
 
-    def render_to_response(self, context, **response_kwargs):
-        teststep_detail = context.get(self.context_object_name)
-        print("Test Step Details : {}".format(teststep_detail))
-        print("All TC Step Details : {}".format(teststep_detail.test_cases.all()))
-        data = {
-            'step': teststep_detail.step,
-            'test_cases': [
-                {
-                    'cqid': testcase.cqid,
-                    'title': testcase.title,
-                    'summary': testcase.summary,
-                    "updated_on": testcase.updated_on
-                }
-                for testcase in teststep_detail.test_cases.all()
-            ]
-        }
-        print("Data being sent : {}".format(data))
-        return JsonResponse(data, **response_kwargs)
+    # def render_to_response(self, context, **response_kwargs):
+    #     teststep_detail = context.get(self.context_object_name)
+    #     print("Test Step Details : {}".format(teststep_detail))
+    #     print("All TC Step Details : {}".format(teststep_detail.test_cases.all()))
+    #     data = {
+    #         'step': teststep_detail.step,
+    #         'test_cases': [
+    #             {
+    #                 'cqid': testcase.cqid,
+    #                 'title': testcase.title,
+    #                 'summary': testcase.summary,
+    #                 "updated_on": testcase.updated_on
+    #             }
+    #             for testcase in teststep_detail.test_cases.all()
+    #         ]
+    #     }
+    #     print("Data being sent : {}".format(data))
+    #     return JsonResponse(data, **response_kwargs)
 
     # def get_context_data(self, **kwargs):
     #     context = super().get_context_data(**kwargs)
