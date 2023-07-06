@@ -66,6 +66,7 @@ TEMPLATES = [
             os.path.join(BASE_DIR, "myapp", "templates"),
             os.path.join(BASE_DIR, "testcase", "templates"),
             os.path.join(BASE_DIR, "io_module", "templates"),
+            os.path.join(BASE_DIR, "react-shadow", "build"),
         ],
         "APP_DIRS": True,
         "OPTIONS": {
@@ -131,6 +132,7 @@ STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'testcase', 'static'),
+    os.path.join(BASE_DIR, 'react-shadow', 'build', 'static'),
 ]
 
 # Default primary key field type
