@@ -47,3 +47,8 @@ class ConfigView(CreateView):
         context_data = {"key1": [1, 2, 3]}
         return JsonResponse({"form": request.META["form"].as_table()})
 
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context['module_name'] = self.model.module_type.field.get_default()
+        return context
+
