@@ -8,6 +8,7 @@ class ConfigModelForm(ModelForm):
 
     class Meta:
         model = ConfigModel
+        name = model.module_type
         fields = "__all__"
     
     def __init__(self, *args, **kwargs):
@@ -24,7 +25,6 @@ class ConfigModelForm(ModelForm):
                 self.fields[field.name] = form_field
 
         css_class = 'module-model-form-class'
-        # css_attrs = {'class': css_class}
 
         for field_name, field in self.fields.items():
             print("ConfigForm : Field_name : {}   ==>  Field : {}".format(field_name, field))

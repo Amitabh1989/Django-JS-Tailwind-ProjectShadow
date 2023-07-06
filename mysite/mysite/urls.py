@@ -26,6 +26,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("myapp/", include("myapp.urls")),
     path("testcase/", include("testcase.urls")),
+    path("io_module/", include("io_module.urls"))
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 urlpatterns += staticfiles_urlpatterns()

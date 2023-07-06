@@ -55,6 +55,7 @@ class TestStepStats(View):
             "hotspare": request_data.get("hotspare"),
             "init": request_data.get("init"),
             "readpolicy": request_data.get("readpolicy"),
+            "writepolicy": request_data.get("writepolicy"),
             "repeat": request_data.get("repeat"),
         }
         response = {
@@ -86,7 +87,33 @@ class TestStepStats(View):
             """
             test_step = TestStep.objects.filter(Q(step__raid=step["raid"]))
             total_raid_hits = len(test_step)
-            exact_step = test_step.filter(Q(step__num_pds=step["pdcount"]) & Q(step__num_vds=step["vdcount"]) & Q(step__size=step["size"]))
+            # exact_step = test_step.filter( 
+            #     Q(step__num_pds=step["pdcount"]) & \
+            #     Q(step__num_vds=step["vdcount"]) & \
+            #     Q(step__size=step["size"]) & \
+            #     Q(step__spans=step["spans"]) & \
+            #     Q(step__stripe=step["stripe"]) & \
+            #     Q(step__dtabcount=step["dtabcount"]) & \
+            #     Q(step__hotspare=step["hotspare"]) & \
+            #     Q(step__init=step["init"]) & \
+            #     Q(step__readpolicy=step["readpolicy"]) & \
+            #     Q(step__writepolicy=step["writepolicy"]) & \
+            #     Q(step__repeat=step["repeat"])
+            # )
+            exact_step = test_step.filter( 
+                step__pdcount=step["pdcount"],
+                step__vdcount=step["vdcount"],
+                step__size=step["size"],
+                step__spans=step["spans"],
+                step__stripe=step["stripe"],
+                step__dtabcount=step["dtabcount"],
+                step__hotspare=step["hotspare"],
+                step__init=step["init"],
+                step__readpolicy=step["readpolicy"],
+                step__writepolicy=step["writepolicy"],
+                step__repeat=step["repeat"]
+            )
+            print("Exact step : {}".format(exact_step))
             # num_tcs = exact_step.first().test_cases.all().count()   # Use the related name
             num_tcs = TestCase.objects.filter(test_steps_list__in=exact_step)   # Use the related name
             fetched = exact_step.exists()
@@ -147,28 +174,28 @@ class TestStepDetail(DetailView):
     `ListView`, etc.) and can be further customized based on your requirements.
     """
     model = TestStep
-    # context_object_name = "teststep_detail"
-    # queryset = TestStep.objects.prefetch_related('test_cases').order_by('updated_on')
-    # print("Returning QuerySet : {}".format(queryset))
+    context_object_name = "teststep_detail"
+    queryset = TestStep.objects.prefetch_related('test_cases').order_by('updated_on')
+    print("Returning QuerySet : {}".format(queryset))
 
-    # def render_to_response(self, context, **response_kwargs):
-    #     teststep_detail = context.get(self.context_object_name)
-    #     print("Test Step Details : {}".format(teststep_detail))
-    #     print("All TC Step Details : {}".format(teststep_detail.test_cases.all()))
-    #     data = {
-    #         'step': teststep_detail.step,
-    #         'test_cases': [
-    #             {
-    #                 'cqid': testcase.cqid,
-    #                 'title': testcase.title,
-    #                 'summary': testcase.summary,
-    #                 "updated_on": testcase.updated_on
-    #             }
-    #             for testcase in teststep_detail.test_cases.all()
-    #         ]
-    #     }
-    #     print("Data being sent : {}".format(data))
-    #     return JsonResponse(data, **response_kwargs)
+    def render_to_response(self, context, **response_kwargs):
+        teststep_detail = context.get(self.context_object_name)
+        print("Test Step Details : {}".format(teststep_detail))
+        print("All TC Step Details : {}".format(teststep_detail.test_cases.all()))
+        data = {
+            'step': teststep_detail.step,
+            'test_cases': [
+                {
+                    'cqid': testcase.cqid,
+                    'title': testcase.title,
+                    'summary': testcase.summary,
+                    "updated_on": testcase.updated_on
+                }
+                for testcase in teststep_detail.test_cases.all()
+            ]
+        }
+        print("Data being sent : {}".format(data))
+        return JsonResponse(data, **response_kwargs)
 
     # def get_context_data(self, **kwargs):
     #     context = super().get_context_data(**kwargs)
