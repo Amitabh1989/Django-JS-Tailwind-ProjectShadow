@@ -33,6 +33,7 @@ ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
     "myapp.apps.MyappConfig",
+    "io_module.apps.IoModuleConfig",
     "testcase.apps.TestcaseConfig",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -64,6 +65,7 @@ TEMPLATES = [
             os.path.join(BASE_DIR, "templates"),
             os.path.join(BASE_DIR, "myapp", "templates"),
             os.path.join(BASE_DIR, "testcase", "templates"),
+            os.path.join(BASE_DIR, "io_module", "templates"),
         ],
         "APP_DIRS": True,
         "OPTIONS": {

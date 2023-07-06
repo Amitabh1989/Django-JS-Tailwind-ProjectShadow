@@ -25,7 +25,7 @@ class ConfigModel(models.Model):
             ("no init", "No INIT"), ("autobgi", "AutoBGI")]
 
     # testcase = models.
-    type = models.CharField(max_length=15, default='config', editable=False)
+    module_type = models.CharField(max_length=15, default='config')
     raid = models.CharField(max_length=20, choices=RAIDS)
     vdcount = models.IntegerField(choices=NUM_VDS)
     spans = models.IntegerField(choices=SPANS)
