@@ -35,7 +35,7 @@ class IOModuleForm(ModelForm):
 
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = css_class
-            print("IO => Field name : {}   Fields : {}".format(field_name, field))
+            # print("IO => Field name : {}   Fields : {}".format(field_name, field))
             if field_name == 'module_type':
                 self.fields['module_type'].widget = forms.TextInput(attrs={'readonly':'readonly'})
         
