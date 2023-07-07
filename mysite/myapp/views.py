@@ -44,7 +44,7 @@ class ConfigView(CreateView):
 
     def ajax_get(self, request, *args, **kwargs):
         print("Got the ajax request")
-        context_data = {"key1": [1, 2, 3]}
+        # context_data = {"key1": [1, 2, 3]}
         return JsonResponse({"form": request.META["form"].as_table()})
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:

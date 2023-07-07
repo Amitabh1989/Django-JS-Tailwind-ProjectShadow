@@ -64,6 +64,10 @@ $(document).ready(function () {
     $(document).on('click', '.submit-step', function () {
 
         console.log("The submit-step button is clicked now");
+        
+        // Get module_type
+        let moduleType = document.getElementById("module-name");
+        console.log("Module Type : " + moduleType.innerText);
 
         // Retrieve the form and its values
         var form = $(this).closest('form');
@@ -78,6 +82,10 @@ $(document).ready(function () {
         form.serializeArray().forEach(function (field) {
             formValues[field.name] = field.value;
         });
+
+        // Add module type information in the step object
+        formValues["module_type"] = moduleType.innerText.split(" ")[1].toLowerCase();
+
         console.log("Form Values: " + JSON.stringify(formValues));
 
         // Retrieve the testSteps from localStorage
