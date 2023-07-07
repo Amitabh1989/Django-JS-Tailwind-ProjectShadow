@@ -10,7 +10,7 @@ from django.core.serializers import serialize
 from django.db.models import Q, Value
 from myapp.models import ConfigModel
 from io_module.models import IOModule
-from api.serializers import TestCaseSerializer, TestStepSerializer
+from api.serializer import TestCaseSerializer, TestStepSerializer
 # Create your views here.
 
 class TestCaseView(View):

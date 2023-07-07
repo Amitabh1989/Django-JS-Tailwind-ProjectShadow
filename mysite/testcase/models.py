@@ -24,7 +24,8 @@ class TestCase(models.Model):
     cqid = models.CharField(max_length=20)
     title = models.CharField(max_length=100)
     summary = models.TextField(max_length=2000)
-    test_steps_list = models.ManyToManyField('TestStep')
+    # test_steps_list = models.ManyToManyField("TestStep", related_name="test_steps")
+    test_steps_list = models.ManyToManyField("TestStep")  # using reverse relation ship name : test_steps_list
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now_add=True)
     def __str__(self) -> str:
