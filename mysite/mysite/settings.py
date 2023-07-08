@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     "myapp.apps.MyappConfig",
     "io_module.apps.IoModuleConfig",
     "testcase.apps.TestcaseConfig",
+    "api.apps.ApiConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
