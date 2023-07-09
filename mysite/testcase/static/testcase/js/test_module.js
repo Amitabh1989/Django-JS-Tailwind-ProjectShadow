@@ -7,6 +7,7 @@
 
 function loadModule(appName) {
     console.log("Clicked : " + appName);
+    console.log("Clicked after edit : " + appName);
     const url = '/api/' + appName;
     console.log("Path is : " + url);
     $.ajax({
@@ -14,6 +15,7 @@ function loadModule(appName) {
         method: 'GET',
         data: { app: appName },
         success: function(response) {
+            $('#module-form-container').html('');
             $('#module-form-container').html(response);
         }
     });

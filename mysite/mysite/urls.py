@@ -24,9 +24,9 @@ from . import views
 from myapp.views import ConfigView
 
 urlpatterns = [
-    # path("", TemplateView.as_view(template_name="homepage.html"), name="home"),
+    path("", TemplateView.as_view(template_name="testcase/tchome.html"), name="home"),
     # path("", TemplateView.as_view(template_name="index.html"), name="home"),
-    path("", TemplateView.as_view(template_name="index.html"), name="home"),
+    # path("", TemplateView.as_view(template_name="index.html"), name="home"),
     path("admin/", admin.site.urls),
     path("myapp/", include("myapp.urls")),
     # path("myapp/", ConfigView.as_view(), name="config_api_view"),
