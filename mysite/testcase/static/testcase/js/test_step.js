@@ -221,7 +221,8 @@ function getTestStepStats(formValues) {
         console.log("Fetching step data : " + queryString);
         // const url = '/testcase/teststep_stats/?' + new URLSearchParams(queryString);
         // const url = '/testcase/teststep_stats/?' + queryString; <--- This is the most current line and works
-        const url = '/testcase/teststep_stats/?' + queryString;
+        // const url = '/testcase/teststep_stats/?' + queryString;
+        const url = '/api/stepstat/?' + queryString;
         console.log('Get Request : ' + url)
         const xhr = new XMLHttpRequest();
         xhr.open('GET', url, true);
@@ -400,10 +401,11 @@ function testStepDetails(jsonResponse) {
     //     ctx.chart.destroy();
     // }
     const testCases = jsonResponse;
-    console.log("Test Cases: " + JSON.stringify(testCases));
+    console.log("Test Cases     : " + JSON.stringify(testCases));
     console.log("Tets Case type : " + typeof testCases);
-    console.log("Test Cases: " + typeof testCases.num_tc_associated);
-    console.log("Test Cases type: " + typeof JSON.parse(testCases.num_tc_associated));
+    console.log("Test NumTC     : " + typeof testCases.num_tc_associated);
+    // console.log("Type NumTC     : " + typeof JSON.parse(testCases.num_tc_associated));
+    console.log("Type NumTC     : " + typeof testCases.num_tc_associated);
 
     // ##############################
     // CHART 1
@@ -411,7 +413,8 @@ function testStepDetails(jsonResponse) {
     const cqIDSet = [];
     const dateSet = new Set();
 
-    const numTCs = JSON.parse(testCases.num_tc_associated);
+    // const numTCs = JSON.parse(testCases.num_tc_associated);
+    const numTCs = testCases.num_tc_associated;
     console.log("numTCs type: " + typeof numTCs);
     const dataValues = numTCs.map(testCase => {
         console.log("Element: " + JSON.stringify(testCase));
@@ -420,9 +423,9 @@ function testStepDetails(jsonResponse) {
         dateSet.add(new Date(testCase.fields.updated_on).toLocaleDateString());
         return cqIDSet.length; // or any other value you want to assign to each test case
     });
-    console.log("CQIDSET: " + [...cqIDSet]);
-    console.log("DATESET: " + [...dateSet]);
-    console.log("DATAVALUES: " + [...dataValues]);
+    console.log("CQIDSET    : " + [...cqIDSet]);
+    console.log("DATESET    : " + [...dateSet]);
+    console.log("DATAVALUES : " + [...dataValues]);
 
     const options = {
         scales: {
@@ -513,10 +516,12 @@ function testStepDetails(jsonResponse) {
     // ##############################
     // CHART 2
     // ##############################
-    const configType = JSON.parse(jsonResponse.data);
-    const tcHitInfo = jsonResponse.total_raid_hits + " other Test Cases uses " + configType[0].fields.step.raid;
+    // const configType = JSON.parse(jsonResponse.data);
+    console.log("JSON response in chart 2 : " + JSON.stringify(jsonResponse));
+    const configType = jsonResponse;
+    const tcHitInfo = jsonResponse.total_raid_hits + " other Test Cases uses " + configType.data[0].step.raid;
     console.log("String to print : " + tcHitInfo);
-    const tcHitInfoHtml = `<ul><li> 🚀 <strong>${jsonResponse.total_raid_hits}</strong> other Test Cases have <strong>${configType[0].fields.step.raid}</strong><br>with same <strong>and/or</strong> other configurations</li></ul>`;
+    const tcHitInfoHtml = `<ul><li> 🚀 <strong>${jsonResponse.total_raid_hits}</strong> other Test Cases have <strong>${configType.data[0].step.raid}</strong><br>with same <strong>and/or</strong> other configurations</li></ul>`;
     const ctx1 = document.getElementById('myp-1');
     ctx1.innerHTML = "";
     ctx1.innerHTML = tcHitInfoHtml;
