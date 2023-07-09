@@ -252,6 +252,25 @@ function handleTestStepStatsResponse(response) {
 };
 
 
+// /**
+//  * Adding module form container to display all modules in the same page
+//  * 
+//  * @param {*} name 
+//  * @returns 
+//  */
+
+// function loadModule(appName) {
+//     $.ajax({
+//         url: '/path/to/module/view/',
+//         method: 'GET',
+//         data: { app: appName },
+//         success: function(response) {
+//             $('#form-container').html(response);
+//         }
+//     });
+// }
+
+
 function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie !== '') {
