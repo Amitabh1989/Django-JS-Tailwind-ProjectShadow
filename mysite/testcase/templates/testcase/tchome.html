@@ -20,6 +20,15 @@
                         <!-- Sidebar content goes here -->
                         <ul class="py-4 grow">
                             <li class="px-4 py-2 hover:bg-yellow-300 hover:font-bold">Test Modules</li>
+
+                            
+                                <ul class="px-4 py-2">
+                                  <li class="hover:bg-yellow-300 hover:font-bold rounded-sm px-4 py-2"><a href="#" onclick="loadModule('config')">App 1</a></li>
+                                  <li class="hover:bg-yellow-300 hover:font-bold rounded-sm px-4 py-2"><a href="#" onclick="loadModule('io')">App 2</a></li>
+                                  <!-- Add more app links here -->
+                                </ul>
+
+
                             <li class="px-4 py-2 hover:bg-yellow-300 hover:font-bold">My Test Cases</li>
                             <li class="px-4 py-2 hover:bg-yellow-300 hover:font-bold">Settings</li>
                             {% comment %} <ul class="space-y-2"> {% endcomment %}
@@ -50,7 +59,7 @@
                     <div class="grid grid-rows-4 grid-cols-5 gap-4 h-full">
 
                         <!-- MODULE FORM -->
-                        <div class="row-span-4 col-span-2 p-2 shadow-lg rounded-sm">
+                        <div class="row-span-4 col-span-2 p-2 shadow-lg rounded-sm" id="module-form-container">
                             {% block tchome %}
                             {% comment %} All forms will be rendered here {% endcomment %}
                             {% endblock tchome %}
@@ -179,5 +188,6 @@
     </div>
 
 <script src="{% static 'testcase/js/test_step.js' %}"></script>
+<script src="{% static 'testcase/js/test_module.js' %}"></script>
 
 {% endblock content %}

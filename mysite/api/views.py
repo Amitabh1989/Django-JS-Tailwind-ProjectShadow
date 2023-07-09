@@ -7,6 +7,7 @@ from django.http import JsonResponse
 from django.db.models import Q, Value
 from django.core.serializers import serialize
 from rest_framework.views import APIView
+from rest_framework.viewsets import ViewSet
 import json
 # Create your views here.
 
@@ -48,6 +49,7 @@ MODULE_SEARCH_KEYMAP = {
     "io": ["tool"]
 }
 
+# class TestStepStats(APIView):
 class TestStepStats(APIView):
     def get(self, request, *args, **kwargs):
         print("Request for stats from API: {}".format(request.GET))
