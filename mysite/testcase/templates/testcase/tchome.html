@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% load static %}
+<link rel="stylesheet" href="{% static 'testcase/css/module_form.css' %}">
 {% block content %}
 
 <h2>Welcome to tchome</h2>
@@ -60,9 +61,9 @@
 
                         <!-- MODULE FORM -->
                         <div class="row-span-4 col-span-2 p-2 shadow-lg rounded-sm" id="module-form-container">
-                            {% block tchome %}
+                            {% comment %} {% block tchome %} {% endcomment %}
                             {% comment %} All forms will be rendered here {% endcomment %}
-                            {% endblock tchome %}
+                            {% comment %} {% endblock tchome %} {% endcomment %}
                         </div>
                     
                         <!-- TS STATS -->

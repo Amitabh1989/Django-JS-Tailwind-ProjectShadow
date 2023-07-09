@@ -1,15 +1,15 @@
-{% extends 'testcase/tchome.html' %}
+{% comment %} {% extends 'testcase/tchome.html' %}
 
-{% block tchome %}
-{% load static %}
-<link rel="stylesheet" href="{% static 'testcase/css/module_form.css' %}">
+{% block tchome %} {% endcomment %}
+{% comment %} {% load static %}
+<link rel="stylesheet" href="{% static 'testcase/css/module_form.css' %}"> {% endcomment %}
 <div class="flex justify-start w-full h-full hover:shadow-lg rounded-lg">
     <div class="w-full items-center">
         <div class="flex">
             <div class="text-grey-300 module-name text-xl font-bold m-10" id="module-name">Add {{ module_name|upper  }}</div>
         </div>
         <div class="flex flex-wrap">
-            <form action="" method="POST" id="config-form" class="w-full">
+            <form action="" method="POST" id="module-form" class="w-full">
                 {% csrf_token %}
                 <div class="flex flex-wrap">
                     {% for field in form %}
@@ -37,4 +37,4 @@
     </div>
 </div>
 
-{% endblock tchome %}
+{% comment %} {% endblock tchome %} {% endcomment %}

@@ -332,14 +332,16 @@ $("#submit-to-db").click(submitToDB);
  * Sends AJAX request to the backend and fetches the form for the module to be edited.
 */
  function ajaxRequest(stepDict) {
-    console.log("Creating AJAX request now");
+    console.log("Creating AJAX request now : " + stepDict);
+    const url = '/api/' + JSON.parse(stepDict).module_type;
+    console.log("Path is : " + url);
     const xhttp = new XMLHttpRequest();
     xhttp.onload = function() {
         editStepFormHandler(xhttp, stepDict);
         // autoReloadDetailView();
     };
     // Modify the URL by appending query parameters
-    const url = '/myapp/?is_ajax=True&send_data=True';
+    // const url = '/myapp/?is_ajax=True&send_data=True';
     xhttp.open('GET', url);
     xhttp.send();
 }
@@ -352,13 +354,15 @@ $("#submit-to-db").click(submitToDB);
  */
 function editStepFormHandler(xhttp, stepDict) {
     console.log("Status   : " + xhttp.status);
+    console.log("Context data received : " + xhttp.responseText);
     // console.log("Response : " + xhttp.responseText);
     if (xhttp.status >= 200 && xhttp.status < 300) {
-        const context_data = JSON.parse(xhttp.responseText);
+        // const context_data = JSON.parse(xhttp.responseText);
+        const context_data = xhttp.responseText;
         const formToLoad = context_data.form;
 
         console.log("Successfull : ");
-        document.getElementById('config-form').form = formToLoad;
+        document.getElementById('module-form-container').innerHTML = context_data;
         document.getElementById('submit-step').value = 'Save Edited Step';
         console.log("Finding the Edit the step DOM : " + document.querySelector('.module-name').innerHTML);
         const stepDictParsed = JSON.parse(stepDict);

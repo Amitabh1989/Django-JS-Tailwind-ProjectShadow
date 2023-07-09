@@ -1,8 +1,8 @@
-{% extends 'testcase/tchome.html' %}
+{% comment %} {% extends 'testcase/tchome.html' %}
 
-{% block tchome %}
-{% load static %}
-<link rel="stylesheet" href="{% static 'testcase/css/module_form.css' %}">
+{% block tchome %} {% endcomment %}
+{% comment %} {% load static %}
+<link rel="stylesheet" href="{% static 'testcase/css/module_form.css' %}"> {% endcomment %}
 {% comment %} <div class="flex justify-start">
     <div class="w-full items-center">
         <div class="flex">
@@ -41,7 +41,7 @@
             </div>
             <div class="flex flex-wrap">
                 {% comment %} <form action="{% url 'config_api_view' %}" method="POST" id="config-form" class="w-full"> {% endcomment %}
-                    <form action="" method="POST" id="config-form" class="w-full">
+                    <form action="" method="POST" id="module-form" class="w-full">
                     {% csrf_token %}
                     <div class="flex flex-wrap">
                         {% for field in form %}
@@ -78,4 +78,4 @@
 <iframe src="{{ success_url }}" width="100%" height="400"></iframe>
 <!-- Rest of your HTML content --> {% endcomment %}
 
-{% endblock tchome %}
+{% comment %} {% endblock tchome %} {% endcomment %}
