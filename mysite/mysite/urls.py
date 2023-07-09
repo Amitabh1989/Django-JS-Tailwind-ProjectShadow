@@ -32,7 +32,7 @@ urlpatterns = [
     # path("myapp/", ConfigView.as_view(), name="config_api_view"),
     path("testcase/", include("testcase.urls")),
     path("io_module/", include("io_module.urls")),
-    # path("api/", include("api.urls"))
+    path("api/", include("api.urls"))
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 urlpatterns += staticfiles_urlpatterns()
