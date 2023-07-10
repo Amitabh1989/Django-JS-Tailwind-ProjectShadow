@@ -101,7 +101,7 @@ $(document).ready(function () {
         const submitType = document.getElementById("submit-step");
         if (submitType.value === 'Save Edited Step') {
             console.log("Saving Edited Step");
-            const stepNo = parseInt(document.querySelector(".module-name").innerHTML.split(" ")[2]);
+            const stepNo = parseInt(document.querySelector("#module-name").innerHTML.split(" ")[2]);
             console.log("Step number is: " + stepNo);
             testSteps.moduleForm[stepNo - 1] = formValues;
         } else {

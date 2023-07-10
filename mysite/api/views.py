@@ -54,6 +54,7 @@ class TestStepStats(APIView):
     def get(self, request, *args, **kwargs):
         print("Request for stats from API: {}".format(request.GET))
         print("Self.Request for stats : {}".format(self.request.GET))
+        print("Self.Request for body : {}".format(self.request.data))
         request_data = self.request.GET
         # print("Self.Request num_pds : {}".format(self.request.GET["pdcount"]))
 
