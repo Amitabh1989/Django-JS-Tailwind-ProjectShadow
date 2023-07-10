@@ -1,7 +1,7 @@
 from django.urls import path, include
 from io_module import views
-from .serializers import IOModuleSerializer
 from rest_framework.routers import DefaultRouter
+
 app_name = 'io'
 
 router = DefaultRouter()

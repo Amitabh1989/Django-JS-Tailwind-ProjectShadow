@@ -25,5 +25,5 @@ class IOModule(models.Model):
     verify = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.journal
+        return f'{self.tool} step submitted'
 

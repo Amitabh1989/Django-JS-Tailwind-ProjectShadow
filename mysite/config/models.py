@@ -1,9 +1,6 @@
 from django.db import models
 
 # Create your models here.
-
-
-
 class ConfigModel(models.Model):
     RAIDS = (
         ("R0", "R0"),
@@ -26,12 +23,12 @@ class ConfigModel(models.Model):
 
     # testcase = models.
     module_type = models.CharField(max_length=15, default='config', editable=False)
-    raid = models.CharField(max_length=20, choices=RAIDS, null=False)
-    vdcount = models.IntegerField(choices=NUM_VDS, null=False)
-    spans = models.IntegerField(choices=SPANS, null=False)
-    stripe = models.IntegerField(choices=STRIPE, null=False)
-    pdcount = models.IntegerField(choices=NUM_PDS, null=False)
-    size = models.CharField(max_length=10, null=False)
+    raid = models.CharField(max_length=20, choices=RAIDS)
+    vdcount = models.IntegerField(choices=NUM_VDS)
+    spans = models.IntegerField(choices=SPANS)
+    stripe = models.IntegerField(choices=STRIPE)
+    pdcount = models.IntegerField(choices=NUM_PDS)
+    size = models.CharField(max_length=10)
     dtabcount = models.IntegerField(choices=NUM_DTABS)
     hotspare = models.IntegerField(choices=NUM_DTABS)
     init = models.CharField(max_length=10, choices=INIT)
@@ -40,10 +37,4 @@ class ConfigModel(models.Model):
     repeat = models.IntegerField(choices=NUM_VDS)
     
     def __str__(self) -> str:
-        return f'{self.raid} ( {self.num_pds} VD ) with {self.num_pds} \
-            submitted'
-    
-    def save(self, *args, **kwargs):
-        if not self.pk:
-            self.type = "config"
-        return super().save(*args, **kwargs)
+        return f'{self.raid} ({self.vdcount} VD) with {self.pdcount}PDs submitted'
