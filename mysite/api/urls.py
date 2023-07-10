@@ -1,7 +1,7 @@
 from django.urls import path, include
 from .views import TestStepStats
 from rest_framework.routers import DefaultRouter
-from io_module.views import IOModuleView
+# from io_module.views import IOModuleView
 from myapp.views import ConfigView
 app_name = "api"
 
@@ -12,6 +12,6 @@ router = DefaultRouter()
 
 urlpatterns = [
     path('config/', ConfigView.as_view(), name='config'),
-    path('io/', IOModuleView.as_view(), name='io'),
+    # path('io/', IOModuleView.as_view(), name='io'),
     path("stepstat/", TestStepStats.as_view(), name="stepstat")
 ]
