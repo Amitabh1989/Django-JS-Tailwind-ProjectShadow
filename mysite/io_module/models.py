@@ -1,9 +1,9 @@
 from django.db import models
-from myapp.models import ConfigModel
+from config.models import ConfigModel
 # Create your models here.
 
 
-class IOModule(models.Model):
+class IOModel(models.Model):
     TOOL_CHOICES = [
         ('chaos', 'Chaos'),
         ('medusa', 'Medusa'),

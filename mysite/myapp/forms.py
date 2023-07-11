@@ -1,7 +1,7 @@
 from django import forms
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.forms import ModelForm
-from .models import ConfigModel
+from config.models import ConfigModel
 
 
 class ConfigModelForm(ModelForm):

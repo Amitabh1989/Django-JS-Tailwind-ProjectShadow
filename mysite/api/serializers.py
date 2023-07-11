@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from myapp.models import ConfigModel
+from config.models import ConfigModel
 from testcase.models import TestCase, TestStep
 
 

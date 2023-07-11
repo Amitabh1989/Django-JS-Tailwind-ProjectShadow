@@ -9,7 +9,7 @@ from django.http import JsonResponse
 from django.core.serializers import serialize
 from django.db.models import Q, Value
 from myapp.models import ConfigModel
-from io_module.models import IOModule
+from io_module.models import IOModel
 from api.serializers import TestCaseSerializer, TestStepSerializer
 # Create your views here.
 

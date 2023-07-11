@@ -1,7 +1,7 @@
 from rest_framework import generics
 from django.shortcuts import render
 from .serializers import *
-from myapp.models import ConfigModel
+from config.models import ConfigModel
 from rest_framework.response import Response
 from django.http import JsonResponse
 from django.db.models import Q, Value

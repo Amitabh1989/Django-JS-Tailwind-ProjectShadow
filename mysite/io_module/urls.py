@@ -6,13 +6,9 @@ app_name = 'io'
 
 router = DefaultRouter()
 
-router.register("api", views.IOModuleModelViewSet, basename="io")
+router.register("api", views.IOModelModelViewSet, basename="io")
 
 urlpatterns = [
-    # path("", views.IOModuleListAPI.as_view(), name="io"),
-    # path("", views.IOModuleViewSet.as_view(), name="io"),
-    # path("<int:pk>/", views.IOModuleRetrieveUpdateDestroyAPI.as_view(), name="io"),
-    # path("", views.IOModuleListAPI.as_view(), name="io"),
-    # path("", views.IOModuleListAPI.as_view(), name="io"),
-    path("", include(router.urls))
+    path("", include(router.urls)),
+    path("form/", views.IOModelCreateView.as_view(), name="io_form"),
 ]

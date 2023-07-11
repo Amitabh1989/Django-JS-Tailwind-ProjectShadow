@@ -32,7 +32,7 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
-    "myapp.apps.MyappConfig",
+    # "myapp.apps.MyappConfig",
     "io_module.apps.IoModuleConfig",
     "testcase.apps.TestcaseConfig",
     "api.apps.ApiConfig",
@@ -66,8 +66,9 @@ TEMPLATES = [
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [
             os.path.join(BASE_DIR, "templates"),
-            os.path.join(BASE_DIR, "myapp", "templates"),
+            # os.path.join(BASE_DIR, "myapp", "templates"),
             os.path.join(BASE_DIR, "testcase", "templates"),
+            os.path.join(BASE_DIR, "config", "templates"),
             os.path.join(BASE_DIR, "io_module", "templates"),
             os.path.join(BASE_DIR, "react-shadow", "build"),
         ],

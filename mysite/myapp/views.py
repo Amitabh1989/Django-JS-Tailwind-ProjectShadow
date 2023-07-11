@@ -8,7 +8,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import (
     CreateView, DetailView, ListView, UpdateView,
     DeleteView, TemplateView, View)
-from .models import ConfigModel
+from config.models import ConfigModel
 from .forms import ConfigModelForm
 from django.http import JsonResponse
 from api.views import ConfigCreateAPIView

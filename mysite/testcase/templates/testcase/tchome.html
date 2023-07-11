@@ -61,9 +61,9 @@
 
                         <!-- MODULE FORM -->
                         <div class="row-span-4 col-span-2 p-2 shadow-lg rounded-sm" id="module-form-container">
-                            {% comment %} {% block tchome %} {% endcomment %}
+                            {% block tchome %}
                             {% comment %} All forms will be rendered here {% endcomment %}
-                            {% comment %} {% endblock tchome %} {% endcomment %}
+                            {% endblock tchome %}
                         </div>
                     
                         <!-- TS STATS -->
@@ -188,7 +188,7 @@
         </div>
     </div>
 
-<script src="{% static 'testcase/js/test_step.js' %}"></script>
-<script src="{% static 'testcase/js/test_module.js' %}"></script>
+{% comment %} <script src="{% static 'testcase/js/test_step.js' %}"></script> {% endcomment %}
+{% comment %} <script src="{% static 'testcase/js/test_module.js' %}"></script> {% endcomment %}
 
 {% endblock content %}
