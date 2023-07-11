@@ -1,7 +1,8 @@
 from rest_framework import serializers
-from .models import ConfigModel
+from config.models import ConfigModel
 
 class ConfigModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = ConfigModel
-        fields = "__all__"
+        fields = '__all__'
+        # read_only_fields = ["module_type"]

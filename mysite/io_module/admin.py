@@ -1,8 +1,8 @@
 from django.contrib import admin
-from .models import IOModule
+from .models import IOModel
 
 # Register your models here.
-class IOModuleAdmin(admin.ModelAdmin):
-    print("IO Module Meta : {}".format(IOModule._meta))
-    list_display = [field.name for field in IOModule._meta.fields]
-admin.site.register(IOModule, IOModuleAdmin)
+class IOModelAdmin(admin.ModelAdmin):
+    print("IO Module Meta : {}".format(IOModel._meta))
+    list_display = [field.name for field in IOModel._meta.fields]
+admin.site.register(IOModel, IOModelAdmin)

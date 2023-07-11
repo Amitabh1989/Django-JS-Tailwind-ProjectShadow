@@ -1,12 +1,12 @@
 from rest_framework import serializers
-from .models import IOModule
+from .models import IOModel
 
 
-class IOModuleSerializer(serializers.ModelSerializer):
+class IOModelSerializer(serializers.ModelSerializer):
     
     class Meta:
-        model = IOModule
-        fields = "__all__"
+        model = IOModel
+        fields = '__all__'
         read_only_fields = ["module_type"]
 
     # def get_fields(self):

@@ -9,5 +9,6 @@ router = DefaultRouter()
 router.register("api", views.ConfigViewSetAPI, basename="config")
 
 urlpatterns = [
-    path("", include(router.urls))
+    path("", include(router.urls)),
+    path("form/", views.ConfigModelCreateView.as_view(), name="config_form")
 ]
