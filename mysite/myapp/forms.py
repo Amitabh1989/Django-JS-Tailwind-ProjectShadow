@@ -17,15 +17,13 @@ class ConfigModelForm(ModelForm):
         model_fields = ConfigModel._meta.get_fields()
 
         for field in model_fields:
+            print(f"Field prop : {field}")
             if field.choices:
                 choices = [choice for choice in field.choices]
-                # print("ConfigForm : Choices : {}".format(choices))
                 form_field = forms.ChoiceField(choices=choices)
-                # print("Self.fields : {}".format(self.fields))
                 self.fields[field.name] = form_field
 
         css_class = 'module-model-form-class'
 
         for field_name, field in self.fields.items():
-            # print("ConfigForm : Field_name : {}   ==>  Field : {}".format(field_name, field))
             field.widget.attrs['class'] = css_class

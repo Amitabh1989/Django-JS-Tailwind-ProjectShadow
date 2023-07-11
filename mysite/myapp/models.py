@@ -40,7 +40,7 @@ class ConfigModel(models.Model):
     repeat = models.IntegerField(choices=NUM_VDS)
     
     def __str__(self) -> str:
-        return f'{self.raid} ( {self.num_pds} VD ) with {self.num_pds} \
+        return f'{self.raid} ( {self.vdcount} VD ) with {self.pdcount} \
             submitted'
     
     def save(self, *args, **kwargs):

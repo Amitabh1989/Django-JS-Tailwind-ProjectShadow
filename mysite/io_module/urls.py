@@ -6,7 +6,7 @@ app_name = 'io'
 
 router = DefaultRouter()
 
-router.register("io", views.IOModuleModelViewSet, basename="io")
+router.register("api", views.IOModuleModelViewSet, basename="io")
 
 urlpatterns = [
     # path("", views.IOModuleListAPI.as_view(), name="io"),
