@@ -27,25 +27,13 @@ class ConfigViewSetAPI(viewsets.ModelViewSet):
         _data = {key: value[0] for key, value in _data.items()}
         
         query = Q()
-        # _data["vdcount"] = int(_data["vdcount"])
-        # _data["pdcount"] = int(_data["pdcount"])
-        # _data["spans"] = int(_data["spans"])
-        # _data["stripe"] = int(_data["stripe"])
-        # _data["dtabcount"] = int(_data["dtabcount"])
-        # _data["hotspare"] = int(_data["hotspare"])
-        # _data["repeat"] = int(_data["repeat"])
-        # print(f"Data is : {_data}")
         del _data['csrfmiddlewaretoken']
-        # print(f"Data is : {_data}")
-
-        # for field_name in _data:
-        #     query &= Q(**{f'{field_name}': self.request._data[field_name]})
-        # print("Query is : {}".format(query))
         for fields, value in _data.items():
             query &= Q(**{f'{fields}': value})
         print(f"Query is : {query}")
 
-        obj = self.queryset.filter(query).first()
+        obj = self.queryset.filter(query)
+        print(f"OBJ : {obj}")
 
         if obj.exists():
             print(f"Obj {obj} already exists, not creating again")
@@ -61,14 +49,7 @@ class ConfigModelCreateView(CreateView):
     model = ConfigModel
     template_name = "config/input_form.html"
     form_class = ConfigModelForm
-    print(f"This is done config : {form_class}")
 
-    # def get_initial(self):
-    #     initial = {
-    #         'raid': 'R0',
-    #     }
-    #     return initial
-    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["module_name"] = self.model.module_type.field.get_default()

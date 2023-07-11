@@ -53,7 +53,7 @@ class IOModelModelViewSet(viewsets.ModelViewSet):
 class IOModelCreateView(CreateView):
     print("I am here in this view already!")
     model = IOModel
-    template_name = 'io_module/input_form.html'
+    template_name = "testcase/input_form.html"
     form_class = IOModelForm
 
     def get_context_data(self, **kwargs):
