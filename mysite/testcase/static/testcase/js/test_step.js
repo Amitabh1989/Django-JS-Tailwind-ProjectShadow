@@ -1,6 +1,10 @@
 /* global console */
 "use strict";
+// let moduleUrlTable = new Map();
 
+// moduleUrlTable.set("io", "io_module");
+// moduleUrlTable.set("config", "config");
+import { moduleUrlTable } from './moduleUrlMap.js';
 /** 
  * Gets the localStorage content and returns the JSON object
  * @param {boolean} [log=true] - If we want to log the content of the cart
@@ -327,13 +331,13 @@ function submitToDB() {
 }
 
 $("#submit-to-db").click(submitToDB);
-
 /**
  * Sends AJAX request to the backend and fetches the form for the module to be edited.
 */
  function ajaxRequest(stepDict) {
     console.log("Creating AJAX request now : " + stepDict);
-    const url = '/api/' + JSON.parse(stepDict).module_type;
+    // const url = '/api/' + JSON.parse(stepDict).module_type;
+    const url = '/' + moduleUrlTable.get(JSON.parse(stepDict).module_type) + '/form';
     console.log("Path is : " + url);
     const xhttp = new XMLHttpRequest();
     xhttp.onload = function() {
@@ -354,7 +358,7 @@ $("#submit-to-db").click(submitToDB);
  */
 function editStepFormHandler(xhttp, stepDict) {
     console.log("Status   : " + xhttp.status);
-    console.log("Context data received : " + xhttp.responseText);
+    // console.log("Context data received : " + xhttp.responseText);
     // console.log("Response : " + xhttp.responseText);
     if (xhttp.status >= 200 && xhttp.status < 300) {
         // const context_data = JSON.parse(xhttp.responseText);
@@ -415,7 +419,7 @@ function autoReloadDetailView(pk) {
 function testStepDetails(jsonResponse) {
     console.log("Response received in teststepdetails: " + jsonResponse);
     console.log("Type teststepdetails: " + typeof jsonResponse);
-    const ctx = document.getElementById('myChart-0');
+    
 
     // console.log("Chart: " + ctx.chart);
     // // Check if a chart already exists
@@ -433,23 +437,117 @@ function testStepDetails(jsonResponse) {
     // ##############################
     // CHART 1
     // ##############################
-    const cqIDSet = [];
-    const dateSet = new Set();
+    let cqIDSet = [];
+    let dateSet = new Set();
 
-    // const numTCs = JSON.parse(testCases.num_tc_associated);
+    // const numTCs = JSON.stringify(testCases.num_tc_associated);
     const numTCs = testCases.num_tc_associated;
+    let dataValues = undefined;
     console.log("numTCs type: " + typeof numTCs);
-    const dataValues = numTCs.map(testCase => {
+    console.log("numTCs: " + JSON.stringify(numTCs));
+
+    if (Array.isArray(numTCs)) {
+        let dataValues = numTCs.map(testCase => {
         console.log("Element: " + JSON.stringify(testCase));
         console.log("Element: " + typeof testCase.fields.cqid);
         cqIDSet.push(testCase.fields.cqid);
         dateSet.add(new Date(testCase.fields.updated_on).toLocaleDateString());
         return cqIDSet.length; // or any other value you want to assign to each test case
-    });
+      });
+    } else {
+      console.log("No previous TCs found, unique TC");
+    }
+
+
+    if (!Array.isArray(cqIDSet)) {
+        cqIDSet = [cqIDSet];
+    }
+
+    if (!Array.isArray(dateSet)) {
+        dateSet = [dateSet];
+    }
+
+    if (!Array.isArray(dataValues)) {
+        dataValues = [0];
+    }
+
     console.log("CQIDSET    : " + [...cqIDSet]);
     console.log("DATESET    : " + [...dateSet]);
     console.log("DATAVALUES : " + [...dataValues]);
 
+    stepUsageChart(dateSet, dataValues, cqIDSet, numTCs);
+
+    // Get the modal element
+    // const modal = document.getElementById('canvasModal');
+    // // Get the canvas elements
+    // // const canvas = document.getElementById('myChart-1');
+    // const modalCanvas = document.getElementById('modalCanvas');
+    // // Get the close button element
+    // const closeButton = document.getElementsByClassName('close')[0];
+
+    // // Function to open the modal and display the canvas
+    // function openModal() {
+    // modal.style.display = 'block';
+    // modalCanvas.getContext('2d').drawImage(ctx.chart.canvas, 0, 0);
+    // }
+    // Function to open the modal and display the canvas
+    // function openModal() {
+    //     const modalWindow = window.open("", "Chart Window", "width=800, height=600");
+    //     modalWindow.document.write(`<img src="${ctx.chart.canvas.toDataURL()}" alt="Chart">`);
+    // }
+
+    // // Function to close the modal
+    // function closeModal() {
+    // modal.style.display = 'none';
+    // }
+
+    // Event listener for canvas click
+    // ctx.chart.canvas.addEventListener('click', openModal);
+
+    // // Event listener for close button click
+    // closeButton.addEventListener('click', closeModal);
+
+    // ##############################
+    // CHART 2
+    // ##############################
+    // const configType = JSON.parse(jsonResponse.data);
+    console.log("JSON response in chart 2 : " + JSON.stringify(jsonResponse));
+    const configType = jsonResponse;
+    const stepDict = configType.exact_step.length === 0 ? 'No Record Found' : configType.exact_step[0].step.raid;
+    const tcHitInfo = jsonResponse.total_step_by_params + " other Test Cases uses " + stepDict;
+    console.log("String to print : " + tcHitInfo);
+    const tcHitInfoHtml = `<ul><li> 🚀 <strong>${jsonResponse.total_step_by_params}</strong> other Test Cases have <strong>${stepDict}</strong><br>with same <strong>and/or</strong> other configurations</li></ul>`;
+    const ctx1 = document.getElementById('myp-1');
+    ctx1.innerHTML = "";
+    ctx1.innerHTML = tcHitInfoHtml;
+
+
+    // ##############################
+    // CHART 3
+    // ##############################
+    const cqTitle = [];
+    let strPrint = "<p><strong>List of Test cases with exact step</strong><br></p><ul>";
+    if (Array.isArray(numTCs)) {
+        const tcIds = numTCs.forEach(tc => {
+            cqTitle.push(tc.fields.title + " ( CQ ID : " + tc.fields.cqid + ")");
+        });
+        console.log("String to print : " + cqTitle);
+
+        let cqData = cqTitle.forEach(id => {
+            strPrint += `<li> ⭐ <strong>${id}</strong></li>`;
+        });
+    } else {
+        strPrint += `<li> ⭐ <strong>This is a Unique Step...Congrats!</strong></li>`;
+    }
+    strPrint += "</ul>";
+    const ctx2 = document.getElementById('myp-2');
+    ctx2.innerHTML = "";
+    ctx2.innerHTML = strPrint;
+}
+
+
+function stepUsageChart(dateSet=[], dataValues=[], cqIDSet=[]) {
+    const ctx = document.getElementById('myChart-0');
     const options = {
         scales: {
           y: {
@@ -505,66 +603,4 @@ function testStepDetails(jsonResponse) {
             },
         },
     });
-
-    // Get the modal element
-    // const modal = document.getElementById('canvasModal');
-    // // Get the canvas elements
-    // // const canvas = document.getElementById('myChart-1');
-    // const modalCanvas = document.getElementById('modalCanvas');
-    // // Get the close button element
-    // const closeButton = document.getElementsByClassName('close')[0];
-
-    // // Function to open the modal and display the canvas
-    // function openModal() {
-    // modal.style.display = 'block';
-    // modalCanvas.getContext('2d').drawImage(ctx.chart.canvas, 0, 0);
-    // }
-    // Function to open the modal and display the canvas
-    // function openModal() {
-    //     const modalWindow = window.open("", "Chart Window", "width=800, height=600");
-    //     modalWindow.document.write(`<img src="${ctx.chart.canvas.toDataURL()}" alt="Chart">`);
-    // }
-
-    // // Function to close the modal
-    // function closeModal() {
-    // modal.style.display = 'none';
-    // }
-
-    // Event listener for canvas click
-    // ctx.chart.canvas.addEventListener('click', openModal);
-
-    // // Event listener for close button click
-    // closeButton.addEventListener('click', closeModal);
-
-    // ##############################
-    // CHART 2
-    // ##############################
-    // const configType = JSON.parse(jsonResponse.data);
-    console.log("JSON response in chart 2 : " + JSON.stringify(jsonResponse));
-    const configType = jsonResponse;
-    const tcHitInfo = jsonResponse.total_raid_hits + " other Test Cases uses " + configType.data[0].step.raid;
-    console.log("String to print : " + tcHitInfo);
-    const tcHitInfoHtml = `<ul><li> 🚀 <strong>${jsonResponse.total_raid_hits}</strong> other Test Cases have <strong>${configType.data[0].step.raid}</strong><br>with same <strong>and/or</strong> other configurations</li></ul>`;
-    const ctx1 = document.getElementById('myp-1');
-    ctx1.innerHTML = "";
-    ctx1.innerHTML = tcHitInfoHtml;
-
-
-    // ##############################
-    // CHART 3
-    // ##############################
-    const cqTitle = [];
-    const tcIds = numTCs.forEach(tc => {
-        cqTitle.push(tc.fields.title + " ( CQ ID : " + tc.fields.cqid + ")");
-    });
- 
-    console.log("String to print : " + cqTitle);
-    let strPrint = "<p><strong>List of Test cases with exact step</strong><br></p><ul>";
-    let cqData = cqTitle.forEach(id => {
-        strPrint += `<li> ⭐ <strong>${id}</strong></li>`;
-    });
-    strPrint += "</ul>";
-    const ctx2 = document.getElementById('myp-2');
-    ctx2.innerHTML = "";
-    ctx2.innerHTML = strPrint;
 }

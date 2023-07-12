@@ -8,13 +8,13 @@ import time, json
 from django.http import JsonResponse
 from django.core.serializers import serialize
 from django.db.models import Q, Value
-from myapp.models import ConfigModel
+# from myapp.models import ConfigModel
 from io_module.models import IOModel
 from api.serializers import TestCaseSerializer, TestStepSerializer
 # Create your views here.
 
 class TestCaseView(View):
-    template_name = 'testcase/success.html'
+    template_name = '/testcase/success.html'
     def post(self, request, *args, **kwargs):
         body = request.body.decode('utf-8')
         data = json.loads(body)
@@ -45,32 +45,24 @@ class TestStepStats(View):
         print("Request for stats : {}".format(request.GET))
         print("Self.Request for stats : {}".format(self.request.GET))
         request_data = self.request.GET
-        print("Self.Request num_pds : {}".format(self.request.GET["pdcount"]))
-        step = {
-            "pdcount": request_data.get("pdcount"),
-            "vdcount": request_data.get("vdcount"),
-            "raid": request_data.get("raid"),
-            "size": request_data.get("size", ""),
-            "spans": request_data.get("spans"),
-            "stripe": request_data.get("stripe"),
-            "dtabcount": request_data.get("dtabcount"),
-            "hotspare": request_data.get("hotspare"),
-            "init": request_data.get("init"),
-            "readpolicy": request_data.get("readpolicy"),
-            "writepolicy": request_data.get("writepolicy"),
-            "repeat": request_data.get("repeat"),
-        }
+        step = {k: v[0] for k, v in request_data}
+        print(f"Step data is : {step}")
+
+        query = Q()
+        for key, value in step.items():
+            query &= Q(**{f'step__{key}': value})
+        print(f"Query is : {query}")
         response = {
+            "pk": False,
             "fetched": False,
             "step_stats": {},  # this has been changed from data
-            "pk": False,
-            "total_raid_hits": 0,
+            "total_step_by_params": 0,
             "num_tc_associated": 0, 
         }
         print("Fetching Test Step Stats : step {}".format(step))
-        fetched = False
-        total_raid_hits = 0
         pk = False
+        fetched = False
+        total_step_by_params = 0
         num_tc_associated = 0
         try:
             # test_step = TestStep.objects.filter(step=step).first()
@@ -88,20 +80,8 @@ class TestStepStats(View):
             pks = queryset.values_list('pk', flat=True)  # Returns a list of primary keys            
             """
             test_step = TestStep.objects.filter(Q(step__raid=step["raid"]))
-            total_raid_hits = len(test_step)
-            # exact_step = test_step.filter( 
-            #     Q(step__num_pds=step["pdcount"]) & \
-            #     Q(step__num_vds=step["vdcount"]) & \
-            #     Q(step__size=step["size"]) & \
-            #     Q(step__spans=step["spans"]) & \
-            #     Q(step__stripe=step["stripe"]) & \
-            #     Q(step__dtabcount=step["dtabcount"]) & \
-            #     Q(step__hotspare=step["hotspare"]) & \
-            #     Q(step__init=step["init"]) & \
-            #     Q(step__readpolicy=step["readpolicy"]) & \
-            #     Q(step__writepolicy=step["writepolicy"]) & \
-            #     Q(step__repeat=step["repeat"])
-            # )
+            total_step_by_params = len(test_step)
+
             exact_step = test_step.filter( 
                 step__pdcount=step["pdcount"],
                 step__vdcount=step["vdcount"],
@@ -124,7 +104,7 @@ class TestStepStats(View):
                 num_tc_associated = exact_step.first()
             else:
                 pk = False
-            print("Test Cases : {}".format(total_raid_hits))
+            print("Test Cases : {}".format(total_step_by_params))
             print("Test step : {}".format(test_step))
             print("Exact Test step : {}".format(exact_step))
             print("Exact Test num_tcs : {}".format(num_tcs))
@@ -148,7 +128,7 @@ class TestStepStats(View):
             "data": serialized_test_step.data if serialized_test_step.data is not None else {},
             # "data": serialized_test_step,
             "pk": pk,
-            "total_raid_hits": total_raid_hits,
+            "total_step_by_params": total_step_by_params,
             "num_tc_associated": num_tcs_serial
         }
         print("Response is : {}".format(response))

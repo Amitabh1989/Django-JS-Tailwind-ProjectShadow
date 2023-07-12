@@ -23,9 +23,9 @@
                             <li class="px-4 py-2 hover:bg-yellow-300 hover:font-bold">Test Modules</li>
 
                             
-                                <ul class="px-4 py-2">
-                                  <li class="hover:bg-yellow-300 hover:font-bold rounded-sm px-4 py-2"><a href="#" onclick="loadModule('config')">App 1</a></li>
-                                  <li class="hover:bg-yellow-300 hover:font-bold rounded-sm px-4 py-2"><a href="#" onclick="loadModule('io')">App 2</a></li>
+                                <ul class="px-4 py-2" id="module-list">
+                                  <li class="hover:bg-yellow-300 hover:font-bold rounded-sm px-4 py-2"><a href="#" data-appname="config">Config</a></li>
+                                  <li class="hover:bg-yellow-300 hover:font-bold rounded-sm px-4 py-2"><a href="#" data-appname="io">IO</a></li>
                                   <!-- Add more app links here -->
                                 </ul>
 
@@ -188,7 +188,8 @@
         </div>
     </div>
 
-<script src="{% static 'testcase/js/test_step.js' %}"></script>
-<script src="{% static 'testcase/js/test_module.js' %}"></script>
+<script type="module"  src="{% static 'testcase/js/moduleUrlMap.js' %}"></script>
+<script type="module" src="{% static 'testcase/js/test_step.js' %}"></script>
+<script type="module" src="{% static 'testcase/js/test_module.js' %}"></script>
 
 {% endblock content %}
