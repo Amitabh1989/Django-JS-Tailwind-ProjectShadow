@@ -47,7 +47,7 @@ class ConfigViewSetAPI(viewsets.ModelViewSet):
 
 class ConfigModelCreateView(CreateView):
     model = ConfigModel
-    template_name = "config/input_form.html"
+    template_name = "testcase/input_form.html"
     form_class = ConfigModelForm
 
     def get_context_data(self, **kwargs):
