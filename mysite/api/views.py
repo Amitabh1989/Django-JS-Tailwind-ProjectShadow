@@ -13,7 +13,7 @@ import json
 
 
 class ConfigCreateAPIView(generics.CreateAPIView):
-    queryset = ConfigModel.objects.all()
+    user_queryset = ConfigModel.objects.all()
     serializer_class = ConfigModelSerializer
 
     # def form_valid(self, form):
@@ -23,8 +23,8 @@ class ConfigCreateAPIView(generics.CreateAPIView):
 
     # def dispatch(self, request, *args, **kwargs):
     #     print("In dispatch : {}".format(request.META))
-    #     if request.META.get('QUERY_STRING', False):
-    #         q_str = request.META.get("QUERY_STRING").split('&')
+    #     if request.META.get('user_query_STRING', False):
+    #         q_str = request.META.get("user_query_STRING").split('&')
     #         if q_str[0].split("=")[1] == "True":
     #             # print("Context data : {}".format(self.get_context_data()))
     #             form = self.get_form()
@@ -51,44 +51,42 @@ MODULE_SEARCH_KEYMAP = {
 
 # class TestStepStats(APIView):
 class TestStepStats(APIView):
+    """
+    TODO : Add user query in the steps. User can select to see stats with his selected
+    parameter as well. The request will be added to GET request and decoded here.
+    If no user query, will default to module type only
+    """
     def get(self, request, *args, **kwargs):
         print("Request for stats from API: {}".format(request.GET))
         print("Self.Request for stats : {}".format(self.request.GET))
         print("Self.Request for body : {}".format(self.request.data))
         request_data = self.request.GET
-        # print("Self.Request num_pds : {}".format(self.request.GET["pdcount"]))
-
         step = {key: value for key, value in request_data.items()}
         print("Step is : {}".format(step))
+
         response = {
             "pk": False,
             "fetched": False,
-            "step_stats": {},  # this has been changed from data
-            "total_raid_hits": 0,
+            "exact_step": {},  # this has been changed from data
+            "total_step_by_params": 0,
             "num_tc_associated": 0, 
         }
+
         print("Fetching Test Step Stats : step {}".format(step))
         pk = False
         fetched = False
-        total_raid_hits = 0
+        total_step_by_params = 0
         num_tc_associated = 0
 
-        # Contruct the query here:
-        
-        query = Q()
+        # Contruct the user_query here:        
+        user_query = Q()
         for field_name in MODULE_SEARCH_KEYMAP[step["module_type"]]:
-            query &= Q(**{f'step__{field_name}': step[field_name]})
+            user_query &= Q(**{f'step__{field_name}': step[field_name]})
+        print("Filter params : {}".format(user_query))
 
-        # filter_params = {}
-        # for field_name in MODULE_SEARCH_KEYMAP[step["module_type"]]:
-        #     filter_params[f'step__{field_name}'] = step[field_name]
-        print("Filter params : {}".format(query))
         try:
-            # test_step = TestStep.objects.filter(Q(step__raid=step["raid"]))
-            # test_step = TestStep.objects.filter(Q(step__raid=MODULE_SEARCH_KEYMAP[step["module_type"]]))
-            # test_step = TestStep.objects.filter(**filter_params)
-            test_step = TestStep.objects.filter(query)
-            total_raid_hits = len(test_step)
+            test_step = TestStep.objects.filter(user_query)
+            total_step_by_params = len(test_step)
             exact_step = test_step.filter(step=step)
             print("Exact step : {}".format(exact_step))
             
@@ -100,7 +98,7 @@ class TestStepStats(APIView):
                 num_tc_associated = exact_step.first()
             else:
                 pk = False
-            print("Test Cases             : {}".format(total_raid_hits))
+            print("Test Cases             : {}".format(total_step_by_params))
             print("Test step              : {}".format(test_step))
             print("Exact Test step        : {}".format(exact_step))
             print("Exact Test num_tcs     : {}".format(num_tcs))
@@ -116,14 +114,14 @@ class TestStepStats(APIView):
         print("Serialized Test Step : {}".format(serialized_test_step.data))
         
         num_tcs_serial = serialize('json', list(num_tcs)) if fetched else {}
-        print("NUm TCS : {}".format(num_tcs_serial))
-        print("NUm TCS JOSN : {}".format(json.loads(num_tcs_serial)))
+        print("Num TCS : {}".format(num_tcs_serial))
+        print("Num TCS JOSN : {}".format(num_tcs_serial))
         response = {
             "pk": pk,
             "fetched": fetched,
-            "data": serialized_test_step.data if serialized_test_step.data is not None else {},
-            "total_raid_hits": total_raid_hits,
-            "num_tc_associated": json.loads(num_tcs_serial)
+            "exact_step": serialized_test_step.data if serialized_test_step.data is not None else {},
+            "total_step_by_params": total_step_by_params,
+            "num_tc_associated": num_tcs_serial
         }
         print("Response is : {}".format(response))
         return JsonResponse(response)
