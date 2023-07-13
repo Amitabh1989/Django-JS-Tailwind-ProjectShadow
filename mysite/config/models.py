@@ -60,6 +60,7 @@ class ConfigModel(models.Model):
     readpolicy = models.CharField(max_length=6, choices=[("ra", "RA"), ("nora", "NORA")], default='ra')
     writepolicy = models.CharField(max_length=6, choices=[("wb", "WB"), ("wt", "WT")], default='wt')
     repeat = models.IntegerField(choices=NUM_VDS)
+    _use_count =  models.IntegerField(default=1)
 
     def __str__(self) -> str:
         return f'{self.raid} ({self.vdcount} VD) with {self.pdcount}PDs submitted'

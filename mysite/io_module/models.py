@@ -23,6 +23,7 @@ class IOModel(models.Model):
     expected_result = models.CharField(max_length=10, choices=[('fail', 'Fail'), ('pass', 'Pass')], default='pass')
     unaligned = models.BooleanField(default=False)
     verify = models.BooleanField(default=False)
+    _use_count = models.IntegerField(default=1)
 
     def __str__(self):
         return f'{self.tool} step submitted'

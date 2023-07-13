@@ -1,7 +1,7 @@
 version: '3'
 services:
   web:
-    image: shadow:0.0.2.RELEASE
+    image: shadow:0.0.3.RELEASE
     build:
       context: .
       dockerfile: Dockerfile

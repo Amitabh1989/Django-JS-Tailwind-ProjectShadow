@@ -9,6 +9,7 @@ router = DefaultRouter()
 # router.register(r'stepstat/', TestStepStats, basename='stepstat')
 # router.register(r'io', IOModuleView, basename='io')
 
+print("I am searching here. in API url.py. Is that correct?")
 
 urlpatterns = [
     path('config/', ConfigView.as_view(), name='config'),

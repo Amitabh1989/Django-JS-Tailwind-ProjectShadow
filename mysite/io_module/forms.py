@@ -8,6 +8,7 @@ class IOModelForm(ModelForm):
         model = IOModel
         name = model.module_type.field.get_default()
         fields = '__all__'
+        exclude = ['_use_count']
         print("Module name is : {}".format(name))
     
     def __init__(self, *args, **kwargs):

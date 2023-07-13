@@ -9,6 +9,8 @@ from django.core.serializers import serialize
 from rest_framework.views import APIView
 from rest_framework import viewsets
 import json
+from mysite.modules import Modules, data_request, get_module, get_url
+
 # Create your views here.
 
 
@@ -85,6 +87,9 @@ class TestStepStats(viewsets.ModelViewSet):
         # Contruct the user_query here:        
         user_query = Q()
         for field_name in MODULE_SEARCH_KEYMAP[step["module_type"]]:
+            print(f"Field name api/views : {field_name}")
+            if field_name == "module_type":
+                continue
             user_query &= Q(**{f'step__{field_name}': step[field_name]})
         print("Filter params : {}".format(user_query))
 
@@ -133,9 +138,14 @@ class TestStepStats(viewsets.ModelViewSet):
 
 
     def create(self, request, *args, **kwargs):
-        data_1 = request.POST
-        print(f"Data 1 : {data_1}")
-        data = request.POST.getlist('{"moduleForm"}')
-        print("Data in POST : {}".format(data))
-        step_list = [json.loads(step) for step in data]
-        print("Step List : {}".format(step_list))
+        step_data = request.POST
+        step_list = [json.loads(step) for step in step_data]
+        print(f"Step List : {step_list}")
+        # self.module = Modules()
+        for step in step_list[0]["moduleForm"]:
+            print(f'Module is : {step["module_type"]}')
+            module = get_module(step["module_type"])
+            url = get_url(module)
+            print(f"URL is : {url}")
+            data_request(url, step)
+        
