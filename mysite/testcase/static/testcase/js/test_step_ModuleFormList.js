@@ -5,25 +5,20 @@
 // moduleUrlTable.set("io", "io_module");
 // moduleUrlTable.set("config", "config");
 import { moduleUrlTable } from './moduleUrlMap.js';
-
-
 /** 
  * Gets the localStorage content and returns the JSON object
  * @param {boolean} [log=true] - If we want to log the content of the cart
 */
 function getTestStep(log=true) {
     var testSteps = localStorage.getItem('testSteps');
-    // console.log("OLD TESTSTEP : " + testSteps);
-    // testSteps = createTeststepCart(testSteps);
-    // console.log("NEW TESTSTEP : " + testSteps);
     if (testSteps === null) {
         testSteps = {};
-        testSteps.moduleForm = [];
     } else {
         testSteps = JSON.parse(testSteps);
     }
     if (log) {
-        console.log("Test Case dictionary : " + JSON.stringify(testSteps));
+        console.log("Test Case dictionary : ");
+        console.log(testSteps);
     }
     return testSteps;
 }
@@ -33,22 +28,20 @@ function getTestStep(log=true) {
  */
 function displayTestSteps() {
     var testStepsAll = getTestStep();
-    var testSteps = testStepsAll;
+    var testSteps = testStepsAll.moduleForm;
     var testStepCart = document.getElementsByClassName("tc-cart");
-    // console.log("TC cart fetched : " + JSON.stringify(testSteps));
+    console.log("TC cart fetched");
     testStepCart[0].innerHTML = "";
     let step = null;
     let stepNo = null;
     var stepString = `<div class="mr-1 ml-1 mb-1 rounded-sm">
                         <div class="flex flex-col rounded-sm">`;
-    for (let i = 0;  i < testSteps.moduleForm.length; i++) {
-        // step = JSON.stringify(testSteps[i]);
-        step = testSteps.moduleForm[i];
-        console.log("Test Step displayTestSteps : " + step);
+    for (let i = 0;  i < testSteps.length; i++) {
+        step = testSteps[i];
         stepNo = i + 1;
         stepString += `
                 <div class="flex flex-row hover:scale-105 hover:bg-sky-100">
-                    <div class="flex-initial w-96 text-blue-400 text-left text-sm font-bold ml-auto px-5"><span>Test Step ${stepNo} (${step.module_type.charAt(0).toUpperCase()}${step.module_type.slice(1)})</span></div>
+                    <div class="flex-initial w-96 text-blue-400 text-left text-sm font-bold ml-auto px-5"><span>Test Step ${stepNo}</span></div>
                     <div class="flex w-32">
                         <div class="edit-step text-yellow-500 px-1 text-xs text-right font-bold pr-2">
                             <input type="button" value="Edit" edit-test-step="${stepNo}">
@@ -73,8 +66,9 @@ displayTestSteps();
  */
 $(document).ready(function () {
     $(document).on('click', '.submit-step', function () {
-        console.log("The submit-step button is clicked now");
 
+        console.log("The submit-step button is clicked now");
+        
         // Get module_type
         let moduleType = document.getElementById("module-name");
         console.log("Module Type : " + moduleType.innerText);
@@ -99,46 +93,31 @@ $(document).ready(function () {
         console.log("Form Values: " + JSON.stringify(formValues));
 
         // Retrieve the testSteps from localStorage
-        let testStepslocal = getTestStep();
-        console.log("Before Update, cart: ", testStepslocal);
+        var testSteps = getTestStep();
+        console.log("Before Update, cart: ", testSteps);
 
         // Check if 'formValues' property exists
-        if (!testStepslocal.hasOwnProperty('moduleForm')) {
+        if (!testSteps.hasOwnProperty('moduleForm')) {
             // testSteps.moduleForm = [];
-            console.log("No JSON objects found to store testStepslocal, creating");
-            testStepslocal.moduleForm = [];
-            // testSteps.moduleForm.steps = [];
-        } else {
-            console.log("Found modeleForm : " + JSON.stringify(testStepslocal));
+            testSteps.moduleForm = [];
         }
-
-        console.log("testStepslocal:", testStepslocal);
-        console.log("testStepslocal.moduleForm:", testStepslocal.moduleForm);
-        console.log("testStepslocal.moduleForm.steps:", testStepslocal.moduleForm);
 
         // Check if the value being submitted is edited or new. And act accordingly
         const submitType = document.getElementById("submit-step");
         if (submitType.value === 'Save Edited Step') {
             console.log("Saving Edited Step");
-            console.log(document.querySelector("#module-name").innerHTML.split(" "))
-            let formLabel = document.querySelector("#module-name").innerHTML.split(" ");
-            const stepNo = parseInt(formLabel[formLabel.length-1]);
+            const stepNo = parseInt(document.querySelector("#module-name").innerHTML.split(" ")[2]);
             console.log("Step number is: " + stepNo);
-            testStepslocal.moduleForm[parseInt(stepNo-1)] = formValues;
-            console.log("BEFORE Edited step details : " + JSON.stringify(testStepslocal.moduleForm));
-            localStorage.setItem('testSteps', JSON.stringify(testStepslocal));
-            console.log("AFTER  Edited step details : " + JSON.stringify(testStepslocal.moduleForm));
-            submitType.value = 'Submit Step';
-            document.querySelector("#module-name").innerHTML = `Add ${formLabel[1].toUpperCase()}`;
+            testSteps.moduleForm[stepNo - 1] = formValues;
         } else {
             // Append the form values to the 'formValues' array
-            testStepslocal.moduleForm.push(formValues);
-            console.log("Pushed value to test case cart : " + JSON.stringify(testStepslocal));
+            testSteps.moduleForm.push(formValues);
         }
 
         // Update the 'testSteps' in localStorage
-        localStorage.setItem('testSteps', JSON.stringify(testStepslocal));
-        console.log("Updated cart: " + JSON.stringify(testStepslocal));
+        localStorage.setItem('testSteps', JSON.stringify(testSteps));
+        console.log("Updated cart: ");
+        console.log(testSteps);
 
         // Send Ajax request to get the PK of the step. If step is not found
         // in the DB, it's a new step. never tried
@@ -158,13 +137,13 @@ $(document).ready(function () {
             // Go to Index in the localStorage testStepList and get the module name
             let tcDict = getTestStep(false);
             console.log("TcDict : " + tcDict);
-            let moduleDict = tcDict.moduleForm;
+            let moduleDict = tcDict["moduleForm"];
             let stepDict = moduleDict[testStepId - 1];
             stepDict["stepNo"] = testStepId;
             console.log("StepDict : " + JSON.stringify(stepDict));
 
             // Compose an Ajax request and fetch the module form - from Database
-            ajaxEditRequest(JSON.stringify(stepDict));
+            ajaxRequest(JSON.stringify(stepDict));
             // Populate the page with the request
 
         } else if ($(event.target).is(".delete-step input[type='button']")) {
@@ -173,14 +152,12 @@ $(document).ready(function () {
             console.log("Test Step " + testStepId + " selected to be deleted");
 
             // Go to Index in the localStorage testStepList and get the module name
-            let tcDict = getTestStep();
+            let tcDict = getTestStep(false);
             console.log("TcDict : " + tcDict);
-            let moduleDict = tcDict.moduleForm;
-            console.log("moduleDict : " + moduleDict);
-            // let stepDict = moduleDict[testStepId - 1];
-            console.log("Deleting elements from index: " + (testStepId-1));
-            console.log("Deleting elements : " + moduleDict[testStepId-1]);
-            moduleDict.splice(testStepId-1);
+            let moduleDict = tcDict["moduleForm"];
+            let stepDict = moduleDict[testStepId - 1];
+            console.log("Deleting elements from index: " + (testStepId - 1));
+            moduleDict.splice(testStepId - 1);
             localStorage.setItem('testSteps', JSON.stringify(tcDict));
             console.log("Items deleted");
             // Send the test step list to display submitted steps in Test Step area
@@ -360,7 +337,7 @@ $("#submit-to-db").click(submitToDB);
 /**
  * Sends AJAX request to the backend and fetches the form for the module to be edited.
 */
- function ajaxEditRequest(stepDict) {
+ function ajaxRequest(stepDict) {
     console.log("Creating AJAX request now : " + stepDict);
     // const url = '/api/' + JSON.parse(stepDict).module_type;
     const url = '/' + moduleUrlTable.get(JSON.parse(stepDict).module_type) + '/form';
@@ -378,7 +355,7 @@ $("#submit-to-db").click(submitToDB);
 
 
 /**
- * Handles the ajaxEditRequest onload functionality
+ * Handles the ajaxRequest onload functionality
  * @param {*} xhttp : The XMLHttpRequest object
  * @param {*} stepDict : The step dict of the selected step
  */
@@ -396,7 +373,7 @@ function editStepFormHandler(xhttp, stepDict) {
         document.getElementById('submit-step').value = 'Save Edited Step';
         console.log("Finding the Edit the step DOM : " + document.querySelector('.module-name').innerHTML);
         const stepDictParsed = JSON.parse(stepDict);
-        document.querySelector('.module-name').innerHTML = `Edit ${stepDictParsed.module_type} : step ${stepDictParsed["stepNo"]}`;
+        document.querySelector('.module-name').innerHTML = `Edit Step ${stepDictParsed["stepNo"]}`;
         console.log("Step Dict : " + stepDict);
 
         // for (const fieldName in JSON.parse(stepDict)) {
