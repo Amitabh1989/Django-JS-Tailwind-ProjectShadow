@@ -25,15 +25,18 @@ from . import views
 
 urlpatterns = [
     path("", TemplateView.as_view(template_name="testcase/tchome.html"), name="home"),
-    # path("", TemplateView.as_view(template_name="index.html"), name="home"),
-    # path("", TemplateView.as_view(template_name="index.html"), name="home"),
     path("admin/", admin.site.urls),
-    # path("myapp/", include("myapp.urls")),
-    # path("myapp/", ConfigView.as_view(), name="config_api_view"),
-    # path("testcase/", include("testcase.urls")),
     path("io_module/", include("io_module.urls")),
-    path("api/", include("api.urls")),
-    path("config/", include("config.urls"))
+    path("api/", include("api.urls"), name='api'),
+    path("config/", include("config.urls"), name='config')
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 urlpatterns += staticfiles_urlpatterns()
+
+
+# path("", TemplateView.as_view(template_name="index.html"), name="home"),
+    # path("", TemplateView.as_view(template_name="index.html"), name="home"),
+    
+    # path("myapp/", include("myapp.urls")),
+    # path("myapp/", ConfigView.as_view(), name="config_api_view"),
+    # path("testcase/", include("testcase.urls")),

@@ -330,8 +330,8 @@ function submitToDB() {
         // url: '/testcase/api/',
         url: '/api/stepstat/',
         method: "POST",
-        // data: JSON.stringify(testSteps),
-        data: testSteps,
+        data: JSON.stringify(testSteps),
+        // data: testSteps,
         success: function(response) {
             // Can add additional data handling here upon success
             console.log("Test Case is saved buddy : " + response.resp);

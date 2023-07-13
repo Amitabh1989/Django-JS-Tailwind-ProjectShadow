@@ -24,26 +24,50 @@ class ConfigViewSetAPI(viewsets.ModelViewSet):
         print("This is POST request")
         print("Request _data is : {}".format(self.request.data))
         _data =  dict(self.request.data)
-        _data = {key: value[0] for key, value in _data.items()}
+        _data = {key: value[0] if isinstance(value, list) else value for key, value in _data.items()}
         
         query = Q()
         del _data['csrfmiddlewaretoken']
-        for fields, value in _data.items():
-            query &= Q(**{f'{fields}': value})
+        for field, value in _data.items():
+            print(f"Field name : {field}  Value : {value}")
+            if field == "module_type":
+                continue
+            query &= Q(**{f'{field}': value})
         print(f"Query is : {query}")
 
         obj = self.queryset.filter(query)
         print(f"OBJ : {obj}")
 
         if obj.exists():
-            print(f"Obj {obj} already exists, not creating again")
-            return Response({"msg": "Obj already exists"}, status=status.HTTP_201_CREATED)
+            print(f"Obj {obj.first()} already exists, not creating again : {obj.first().pk}")
+            # Update the record with +1 use count
+            data = {"_use_count": int(obj.first()._use_count+1)}
+            self.partial_update(request, data=data, pk=obj.first().pk)
+            # serializer = self.serializer_class(
+            #     obj.first(),
+            #     data={"_use_count": int(obj.first()._use_count+1)},
+            #     partial=True)
+            # serializer.is_valid(raise_exception=True)
+            # # print(f"Serialized data : {serializer}")
+            # serializer.save()
+            # return Response({"msg": "Obj already exists"}, status=status.HTTP_201_CREATED)
 
         serializer = self.serializer_class(data=_data)
         if serializer.is_valid():
+            # print(f"Serialized data : {serializer}")
             serializer.save()
             return Response({"msg": "New config submitted"}, status=status.HTTP_201_CREATED)
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    def partial_update(self, request, data=None, pk=None, **kwargs):
+        # return super().partial_update(request, *args, **kwargs)
+        print("This is invoked")
+        model = self.queryset.get(pk=pk)
+        serializer = self.serializer_class(model, data=data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ConfigModelCreateView(CreateView):
     model = ConfigModel

@@ -55,7 +55,7 @@ class TestStepStats(View):
         response = {
             "pk": False,
             "fetched": False,
-            "step_stats": {},  # this has been changed from data
+            "step_stats": {},
             "total_step_by_params": 0,
             "num_tc_associated": 0, 
         }
