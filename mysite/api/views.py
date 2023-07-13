@@ -7,13 +7,13 @@ from django.http import JsonResponse
 from django.db.models import Q, Value
 from django.core.serializers import serialize
 from rest_framework.views import APIView
-from rest_framework.viewsets import ViewSet
+from rest_framework import viewsets
 import json
 # Create your views here.
 
 
-class ConfigCreateAPIView(generics.CreateAPIView):
-    user_queryset = ConfigModel.objects.all()
+class ConfigCreateAPIView(viewsets.ModelViewSet):
+    queryset = ConfigModel.objects.all()
     serializer_class = ConfigModelSerializer
 
     # def form_valid(self, form):
@@ -50,13 +50,17 @@ MODULE_SEARCH_KEYMAP = {
 }
 
 # class TestStepStats(APIView):
-class TestStepStats(APIView):
+class TestStepStats(viewsets.ModelViewSet):
     """
     TODO : Add user query in the steps. User can select to see stats with his selected
     parameter as well. The request will be added to GET request and decoded here.
     If no user query, will default to module type only
     """
-    def get(self, request, *args, **kwargs):
+    queryset = TestStep.objects.all()
+    serializer_class = TestStepSerializer
+
+    # def get(self, request, *args, **kwargs):
+    def list(self, request, *args, **kwargs):
         print("Request for stats from API: {}".format(request.GET))
         print("Self.Request for stats : {}".format(self.request.GET))
         print("Self.Request for body : {}".format(self.request.data))
@@ -109,7 +113,8 @@ class TestStepStats(APIView):
             test_step = None
         print("Test step fetched PK : {}".format(pk))
 
-        serialized_test_step = TestStepSerializer(exact_step, many=True) # if fetched else {}
+        # serialized_test_step = TestStepSerializer(exact_step, many=True) # if fetched else {}
+        serialized_test_step = self.serializer_class(exact_step, many=True) # if fetched else {}
         print("Serialized Test Step : {}".format(serialized_test_step))
         print("Serialized Test Step : {}".format(serialized_test_step.data))
         
@@ -125,3 +130,12 @@ class TestStepStats(APIView):
         }
         print("Response is : {}".format(response))
         return JsonResponse(response)
+
+
+    def create(self, request, *args, **kwargs):
+        data_1 = request.POST
+        print(f"Data 1 : {data_1}")
+        data = request.POST.getlist('{"moduleForm"}')
+        print("Data in POST : {}".format(data))
+        step_list = [json.loads(step) for step in data]
+        print("Step List : {}".format(step_list))

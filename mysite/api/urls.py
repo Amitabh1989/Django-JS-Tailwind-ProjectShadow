@@ -13,5 +13,6 @@ router = DefaultRouter()
 urlpatterns = [
     path('config/', ConfigView.as_view(), name='config'),
     # path('io/', IOModuleView.as_view(), name='io'),
-    path("stepstat/", TestStepStats.as_view(), name="stepstat")
+    # path("stepstat/", TestStepStats.as_view(), name="stepstat")
+    path("stepstat/", TestStepStats.as_view({"get": "list", "post": "create"}), name="stepstat"),
 ]
