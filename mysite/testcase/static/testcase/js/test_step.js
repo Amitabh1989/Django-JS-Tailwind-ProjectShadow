@@ -11,7 +11,7 @@ import { moduleUrlTable } from './moduleUrlMap.js';
  * Gets the localStorage content and returns the JSON object
  * @param {boolean} [log=true] - If we want to log the content of the cart
 */
-function getTestStep(log=true) {
+function getTestStep(log=false) {
     var testSteps = localStorage.getItem('testSteps');
     // console.log("OLD TESTSTEP : " + testSteps);
     // testSteps = createTeststepCart(testSteps);
@@ -26,6 +26,16 @@ function getTestStep(log=true) {
         console.log("Test Case dictionary : " + JSON.stringify(testSteps));
     }
     return testSteps;
+}
+
+/** 
+ * Gets the localStorage content and returns the JSON object
+ * @param {boolean} [log=true] - If we want to log the content of the cart
+*/
+function getLastTestStep(log=false) {
+    let allTestSteps = getTestStep().moduleForm;
+    console.log("Last step is : " + allTestSteps[allTestSteps.length -1])
+    return allTestSteps[allTestSteps.length -1];
 }
 
 /**
@@ -467,13 +477,14 @@ function testStepDetails(jsonResponse) {
     let dateSet = new Set();
 
     // const numTCs = JSON.stringify(testCases.num_tc_associated);
-    const numTCs = testCases.num_tc_associated;
+    let numTCs = testCases.num_tc_associated;
     let dataValues = undefined;
     console.log("numTCs type: " + typeof numTCs);
-    console.log("numTCs: " + JSON.stringify(numTCs));
+    // console.log("numTCs: " + JSON.stringify(numTCs));
+    console.log("numTCs: " + numTCs);
 
     if (Array.isArray(numTCs)) {
-        let dataValues = numTCs.map(testCase => {
+        dataValues = numTCs.map(testCase => {
         console.log("Element: " + JSON.stringify(testCase));
         console.log("Element: " + typeof testCase.fields.cqid);
         cqIDSet.push(testCase.fields.cqid);
@@ -539,21 +550,26 @@ function testStepDetails(jsonResponse) {
     // const configType = JSON.parse(jsonResponse.data);
     console.log("JSON response in chart 2 : " + JSON.stringify(jsonResponse));
     const configType = jsonResponse;
-    const stepDict = configType.exact_step.length === 0 ? 'No Record Found' : configType.exact_step[0].step.raid;
-    const tcHitInfo = jsonResponse.total_step_by_params + " other Test Cases uses " + stepDict;
-    console.log("String to print : " + tcHitInfo);
-    const tcHitInfoHtml = `<ul><li> 🚀 <strong>${jsonResponse.total_step_by_params}</strong> other Test Cases have <strong>${stepDict}</strong><br>with same <strong>and/or</strong> other configurations</li></ul>`;
-    const ctx1 = document.getElementById('myp-1');
-    ctx1.innerHTML = "";
-    ctx1.innerHTML = tcHitInfoHtml;
+    // const stepDict = configType.exact_step.length === 0 ? 'No Record Found' : configType.exact_step[0].step.raid;
+    if (configType.exact_step.length !== 0) {
+        const stepDict = configType.exact_step.length === 0 ? getLastTestStep()["raid"] : configType.exact_step[0].step.raid
+    }
 
+    // const tcHitInfo = jsonResponse.total_step_by_params + " other Test Cases uses " + stepDict.charAt(0).toUpperCase() + stepDict.slice(1);
+    const tcHitInfo = jsonResponse.total_step_by_params + " other Test Cases uses " + getLastTestStep()["raid"].charAt(0).toUpperCase() + getLastTestStep()["raid"].slice(1);
+        console.log("String to print : " + tcHitInfo);
+        const tcHitInfoHtml = `<ul><li> 🚀 <strong>${jsonResponse.total_step_by_params}</strong> other Test Cases uses <strong>${getLastTestStep()["raid"].charAt(0).toUpperCase() + getLastTestStep()["raid"].slice(1)}</strong><br>with same <strong>and/or</strong> other configurations</li></ul>`;
+        const ctx1 = document.getElementById('myp-1');
+        ctx1.innerHTML = "";
+        ctx1.innerHTML = tcHitInfoHtml;
 
     // ##############################
     // CHART 3
     // ##############################
     const cqTitle = [];
     let strPrint = "<p><strong>List of Test cases with exact step</strong><br></p><ul>";
-    if (Array.isArray(numTCs)) {
+    // numTCs = numTCs
+    if (numTCs && numTCs.length > 0) {
         const tcIds = numTCs.forEach(tc => {
             cqTitle.push(tc.fields.title + " ( CQ ID : " + tc.fields.cqid + ")");
         });
@@ -563,8 +579,17 @@ function testStepDetails(jsonResponse) {
             strPrint += `<li> ⭐ <strong>${id}</strong></li>`;
         });
     } else {
-        strPrint += `<li> ⭐ <strong>This is a Unique Step...Congrats!</strong></li>`;
+        strPrint += `<li class="ml-1 text-sm text-gray-500"> ⭐ <strong>This is a Unique Step from your records...Congrats!</strong></li>`;
     }
+    // if (numTCs && numTCs.length > 0) {
+    //     const tcIds = numTCs.map(tc => tc.fields.title + " ( CQ ID : " + tc.fields.cqid + ")");
+    //     console.log("String to print : " + tcIds);
+
+    //     let cqData = tcIds.map(id => `<li> ⭐ <strong>${id}</strong></li>`).join("");
+    //     strPrint += cqData;
+    // } else {
+    //     strPrint += `<li> ⭐ <strong>This is a Unique Step...Congrats!</strong></li>`;
+    // }
     strPrint += "</ul>";
     const ctx2 = document.getElementById('myp-2');
     ctx2.innerHTML = "";

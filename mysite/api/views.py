@@ -131,6 +131,7 @@ class TestStepStats(viewsets.ModelViewSet):
             "fetched": fetched,
             "exact_step": serialized_test_step.data if serialized_test_step.data is not None else {},
             "total_step_by_params": total_step_by_params,
+            "tc_by_params": serialize('json', list(test_step)),
             "num_tc_associated": num_tcs_serial
         }
         print("Response is : {}".format(response))
@@ -141,11 +142,28 @@ class TestStepStats(viewsets.ModelViewSet):
         step_data = request.POST
         step_list = [json.loads(step) for step in step_data]
         print(f"Step List : {step_list}")
-        # self.module = Modules()
+        cqid = 2
+        title = "Dummy_TC_5"
+        summary = "Testing Model"
+        tcid, created = TestCase.objects.get_or_create(cqid=cqid, title=title, summary=summary)
+        print("Created : {}".format(created))
+        
+        # Create and associate TestStep instances with the TestCase
+        # test_step, _ = TestStep.objects.get_or_create(step=step)
         for step in step_list[0]["moduleForm"]:
-            print(f'Module is : {step["module_type"]}')
-            module = get_module(step["module_type"])
-            url = get_url(module)
-            print(f"URL is : {url}")
+            url = get_url(get_module(step["module_type"]))
             data_request(url, step)
+            del step["csrfmiddlewaretoken"]
+            test_step, created = TestStep.objects.get_or_create(step=step) #, defaults={'step': step})
+            print(f"Value of Created is : {created}")
+            test_step.test_cases.set([tcid])
+            tcid.test_steps_list.add(test_step)
+            test_step.save()
+        tcid.save()
+        response = {"resp": "Submit successful from testcase view"}
+        test_steps = tcid.test_steps_list.all()
+        for test_step in test_steps:
+            print(test_step.step)
+        return JsonResponse(response)
+
         

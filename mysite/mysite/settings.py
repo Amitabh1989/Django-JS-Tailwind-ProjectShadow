@@ -143,3 +143,11 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',  # JSON renderer for programmatic requests
+        'rest_framework.renderers.BrowsableAPIRenderer',  # Browsable API renderer for browser requests
+    ],
+}
+

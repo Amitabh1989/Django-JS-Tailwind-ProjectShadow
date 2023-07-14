@@ -63,4 +63,4 @@ class ConfigModel(models.Model):
     _use_count =  models.IntegerField(default=1)
 
     def __str__(self) -> str:
-        return f'{self.raid} ({self.vdcount} VD) with {self.pdcount}PDs submitted'
+        return f'<{self.raid.upper()} ({self.vdcount} VD) with {self.pdcount}PDs>'
