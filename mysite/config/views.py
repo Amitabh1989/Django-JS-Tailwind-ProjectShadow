@@ -8,6 +8,7 @@ from django.db.models import Q
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.renderers import TemplateHTMLRenderer
+from rest_framework import renderers
 import json
 from django.views.generic import CreateView
 # Create your views here.
@@ -15,6 +16,8 @@ from django.views.generic import CreateView
 class ConfigViewSetAPI(viewsets.ModelViewSet):
     queryset = ConfigModel.objects.all()
     serializer_class = ConfigModelSerializer
+    # Override the renderers attribute to enforce JSON rendering
+    renderer_classes = [renderers.JSONRenderer]
     # renderer_classes = [TemplateHTMLRenderer]
     print("Config View set API called")
 
@@ -42,27 +45,26 @@ class ConfigViewSetAPI(viewsets.ModelViewSet):
             print(f"Obj {obj.first()} already exists, not creating again : {obj.first().pk}")
             # Update the record with +1 use count
             data = {"_use_count": int(obj.first()._use_count+1)}
-            self.partial_update(request, data=data, pk=obj.first().pk)
-            # serializer = self.serializer_class(
-            #     obj.first(),
-            #     data={"_use_count": int(obj.first()._use_count+1)},
-            #     partial=True)
-            # serializer.is_valid(raise_exception=True)
-            # # print(f"Serialized data : {serializer}")
-            # serializer.save()
-            # return Response({"msg": "Obj already exists"}, status=status.HTTP_201_CREATED)
-
+            resp = self.partial_update(request, data=data, pk=obj.first().pk)
+            print(f"REsp seen is : {resp}")
+            return Response({"msg": "Partial update done"})
+            # return resp
+            # return self.partial_update(request, data=data, pk=obj.first().pk)
+        print("After partial update, proceeding")
         serializer = self.serializer_class(data=_data)
         if serializer.is_valid():
-            # print(f"Serialized data : {serializer}")
             serializer.save()
             return Response({"msg": "New config submitted"}, status=status.HTTP_201_CREATED)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def partial_update(self, request, data=None, pk=None, **kwargs):
         # return super().partial_update(request, *args, **kwargs)
-        print("This is invoked")
+        print("partial_update from config.views is invoked")
         model = self.queryset.get(pk=pk)
+        print(f"Model is : {model}")
+        print(f"PK is    : {pk}")
+        print(f"Data is  : {data}")
+
         serializer = self.serializer_class(model, data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
