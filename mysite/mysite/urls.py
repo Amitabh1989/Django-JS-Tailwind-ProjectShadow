@@ -17,7 +17,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("io_module/", include("io_module.urls")),
     path("api/", include("api.urls"), name='api'),
-    path("api/users", include("api.urls"), name='users'),
+    path("auth/", include("users.urls"), name='users'),
     path("config/", include("config.urls"), name='config')
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

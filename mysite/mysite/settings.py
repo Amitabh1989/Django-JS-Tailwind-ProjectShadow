@@ -152,10 +152,13 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = 'users.User' 
 
+APPEND_SLASH = False
+
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
-        'rest_framework.renderers.JSONRenderer',  # JSON renderer for programmatic requests
-        'rest_framework.renderers.BrowsableAPIRenderer',  # Browsable API renderer for browser requests
+        # 'rest_framework.renderers.JSONRenderer',  # JSON renderer for programmatic requests
+        # 'rest_framework.renderers.BrowsableAPIRenderer',  # Browsable API renderer for browser requests
+        'users.renderers.UserRenderer'
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
