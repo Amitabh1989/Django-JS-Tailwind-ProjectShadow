@@ -17,7 +17,7 @@ class ConfigViewSetAPI(viewsets.ModelViewSet):
     queryset = ConfigModel.objects.all()
     serializer_class = ConfigModelSerializer
     # Override the renderers attribute to enforce JSON rendering
-    renderer_classes = [renderers.JSONRenderer]
+    # renderer_classes = [renderers.JSONRenderer]
     # renderer_classes = [TemplateHTMLRenderer]
     print("Config View set API called")
 
