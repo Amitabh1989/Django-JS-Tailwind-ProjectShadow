@@ -152,7 +152,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = 'users.User' 
 
-APPEND_SLASH = False
+# APPEND_SLASH = False
 
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [

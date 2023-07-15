@@ -45,3 +45,35 @@ class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["email", "id", "name"]
+    
+class UserResetPasswordSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(max_length=255, style={"input_type": "password"}, write_only=True)
+    password2 = serializers.CharField(max_length=255, style={"input_type": "password"}, write_only=True)
+    class Meta:
+        model = User
+        fields = ["password", "password2"]
+
+
+    def validate(self, attrs):
+        print(f"Attributes are : {attrs}")
+        password = attrs.get("password")
+        password2 = attrs.pop('password2')
+        if password != password2:
+            raise serializers.ValidationError("Passwords do not match")
+        user = self.context.get("user")
+        print(f"User is : {user}")
+        # user.set_password(password)
+        # user.save()
+        print(f"Returning attrs : {attrs}")
+        return attrs
+
+    def update(self, instance, validated_data):
+        password = validated_data.get("password")
+        print(f"Instance is : {instance}")
+        
+        if password:
+            instance.set_password(password)
+            instance.save()
+            print(f"Instance saved : {instance}")
+        
+        return instance
