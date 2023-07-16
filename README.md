@@ -1,44 +1,85 @@
-# Django JavaScript Ajax jQuery Tailwind React Docker : "ProjectShadow"
+# Project Shadow
 
-A custom website to generate custom JSON data. Personal project. More details to follow.
+ProjectShadow is a custom website built using Django, Django Rest Framework (DRF), and Chart.js to generate custom JSON data. It provides a user-friendly interface for creating and managing test cases, while also offering powerful features for data visualization.
 
-## Project Summary
+## Features
 
-This project is a web application built using Django, a Python web framework. The application allows users to create test cases by selecting modules and submitting test steps. Each module represents a feature, and users can toggle values and submit steps using Django forms.
+- **User Authentication with JWT**: ProjectShadow includes user registration, login, and password reset functionality using Django JSON Web Token (JWT) authentication. Users can securely create accounts, authenticate themselves, and reset their passwords if needed.
 
-One of the main features of the project is the Cart functionality, where users can add test steps to a cart using JavaScript and Ajax. The cart allows users to gather multiple test steps before creating a test case. Once the desired steps are added to the cart, users can click the "Create Test Case" button to finalize the test case. This interaction is facilitated by jQuery, a JavaScript library known for its simplicity and powerful DOM manipulation capabilities.
+- **Django Rest Framework (DRF) APIs**: The project leverages DRF to create robust and scalable APIs that handle various operations, including user management, test case creation, and data retrieval. These APIs provide a seamless integration of frontend and backend components.
 
-The project utilizes various technologies and tools:
+- **Test Case Creation**: Users can create test cases by selecting modules and submitting test steps. Each module represents a feature, and users can easily toggle values and submit steps using Django forms. The application ensures a smooth and intuitive experience for creating comprehensive test cases.
 
-- **Django**: The web framework used to develop the application, providing the structure and functionality for handling requests, managing models, and rendering templates.
+- **Cart Functionality**: ProjectShadow offers a cart feature that allows users to add test steps to a cart using JavaScript and Ajax. The cart enables users to gather multiple test steps before creating a test case. This dynamic interaction is facilitated by jQuery, ensuring a responsive and efficient workflow.
 
-- **SQLite**: The default database backend in Django, used for storing application data.
+- **Data Visualization with Chart.js**: The project utilizes Chart.js, a powerful JavaScript library, for visualizing data. It enables users to generate custom JSON data and display it in various chart types, such as line charts, bar charts, and pie charts. Chart.js provides an interactive and visually appealing way to analyze and present data.
 
-- **Tailwind CSS**: A utility-first CSS framework used for styling the application, providing a flexible and customizable design system.
+## Technologies Used
 
-- **JavaScript**: Used to enhance the user experience, implement dynamic functionality, and interact with the server using Ajax calls.
+- Django: A Python web framework that provides a robust foundation for building web applications.
 
-- **Ajax**: A set of web development techniques that allows asynchronous communication between the client and server, enabling real-time updates and avoiding full page reloads.
+- Django Rest Framework (DRF): A powerful and flexible toolkit for building Web APIs in Django.
 
-- **jQuery**: A JavaScript library that simplifies HTML document traversal, event handling, and AJAX interactions. It provides an easy-to-use API for DOM manipulation and AJAX calls.
+- Chart.js: A JavaScript library for data visualization that allows the creation of dynamic and interactive charts.
 
-- **Docker**: Used for containerization, allowing for a consistent and isolated environment for running the application.
+- Django JSON Web Token (JWT): A secure authentication mechanism for Django applications.
 
-- **Python**: The primary programming language used in Django, providing the backend logic and driving the application's functionality.
+- SQLite: A lightweight and reliable database management system used as the default database backend in Django.
 
-- **React**: Using React to design responsive elements
+- Tailwind CSS: A utility-first CSS framework for creating responsive and modern user interfaces.
 
-The project aims to provide an efficient and user-friendly environment for creating and managing test cases within a web application. It leverages Django's powerful features, integrates JavaScript and jQuery for enhanced interactivity, uses Ajax for seamless server communication, and employs Docker for easy deployment and scalability.
+- JavaScript: The programming language used to enhance interactivity and handle dynamic functionality.
 
-Please note that this summary provides a high-level overview of the project. For more detailed information, refer to the project's documentation and source code.
+- Ajax: A set of web development techniques that enable asynchronous communication between the client and server.
 
-**Technologies Used:**
+- jQuery: A JavaScript library that simplifies HTML document traversal, event handling, and AJAX interactions.
 
-- Django
-- SQLite
-- Tailwind CSS
-- JavaScript
-- Ajax
-- jQuery
-- React
-- Docker
+- React: A JavaScript library used to design responsive and reusable UI components.
+
+- Docker: A containerization platform that provides an isolated and consistent environment for running applications.
+
+## Installation and Usage
+
+To run the ProjectShadow application locally, follow these steps:
+
+1. Clone the repository:
+   git clone https://github.com/your-username/ProjectShadow.git
+
+2. Install the required dependencies:
+   pip install -r requirements.txt
+
+3. Set up the database:
+   python manage.py migrate
+
+4. Start the development server:
+   python manage.py runserver
+  
+5. Access the application in your browser at `http://localhost:8000`.
+
+## Contributing
+
+Contributions to ProjectShadow are welcome! If you have any ideas, suggestions, or bug reports, please open an issue or submit a pull request.
+
+## License
+
+ProjectShadow is licensed under the MIT License. You can find more information in the [LICENSE](https://github.com/your-username/ProjectShadow/blob/main/LICENSE) file.
+
+## Acknowledgements
+
+- [Django](https://www.djangoproject.com/)
+- [Django Rest Framework](https://www.django-rest-framework.org/)
+- [Chart.js](https://www.chartjs.org/)
+- [SQLite](https://www.sqlite.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+- [Ajax](https://developer.mozilla.org/en-US/docs/Web/Guide/AJAX)
+- [jQuery](https://jquery.com/)
+- [React](https://reactjs.org/)
+- [Docker](https://www.docker.com/)
+
+## Contact
+
+For any inquiries or questions, feel free to contact the project maintainers at [email protected]
+
+We hope you find ProjectShadow helpful and enjoy using it for your custom JSON data generation and test case management needs!
+
