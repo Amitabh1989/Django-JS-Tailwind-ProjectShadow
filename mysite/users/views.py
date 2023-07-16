@@ -5,10 +5,12 @@ from rest_framework import viewsets
 from rest_framework import views
 from .models import User
 from django.contrib.auth import authenticate
-from .serializers import UserModelSerializer, UserLoginAuthSerializer, UserProfileSerializer, UserResetPasswordSerializer
+from .serializers import UserModelSerializer, UserLoginAuthSerializer, UserProfileSerializer, UserChangePasswordSerializer, \
+    SendResetPasswordEmailSerializer, ValidateResetPasswordSerializer
 from .renderers import UserRenderer
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
+from mysite.settings import PASSWORD_RESET_TIMEOUT
 # Create your views here.
 
 
@@ -156,14 +158,35 @@ class UserProfileAPIView(views.APIView):
         serializer = UserProfileSerializer(request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-class ResetPasswordAPIView(views.APIView):
+class UserChangePasswordAPIView(views.APIView):
     renderer_classes = [UserRenderer]
     permission_classes = [IsAuthenticated]
 
     def post(self, request, format=None):
         print(f"In Profile get : {request}")
-        serializer = UserResetPasswordSerializer(data=request.data, context={"user": request.user})
+        serializer = UserChangePasswordSerializer(data=request.data, context={"user": request.user})
         if serializer.is_valid(raise_exception=True):
-            serializer.save()
+            serializer.update(request.user, serializer.validated_data)
             return Response({"msg": "Password updated successfully"}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class SendResetPasswordEmailAPIView(views.APIView):
+    renderer_classes = [UserRenderer]
+    
+    def post(self, request, *args, **kwargs):
+        serializer = SendResetPasswordEmailSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response({"msg": f"Reset email sent. Its valid for {PASSWORD_RESET_TIMEOUT} minsutes only"})
+
+class ValidateResetPasswordEmailAPIView(views.APIView):
+    renderer_classes = [UserRenderer]
+
+    def post(self, request, uid, token, *args, **kwargs):
+        serializer = ValidateResetPasswordSerializer(data=request.data,
+                                                          context={"uid": uid, "token": token})
+        serializer.is_valid(raise_exception=True)
+        print(f"Srialized data {serializer.data}")
+        user = serializer.validated_data["user"]
+        serializer.update(user, serializer.validated_data)
+        return Response({"msg": "Password has been updated. Try login with new password"})
