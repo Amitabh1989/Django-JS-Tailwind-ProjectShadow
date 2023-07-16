@@ -1,6 +1,6 @@
 from django.urls import path, include
 # from .views import UserRegistrationViewSet, UserAuthViewSet
-from .views import UserRegistrationViewSet, UserLoginAPIView, UserProfileAPIView, ResetPasswordAPIView
+from .views import UserRegistrationViewSet, UserLoginAPIView, UserProfileAPIView, UserChangePasswordAPIView, SendResetPasswordEmailAPIView, ValidateResetPasswordEmailAPIView
 from rest_framework.routers import DefaultRouter
 
 # app_name = "users"
@@ -16,7 +16,9 @@ urlpatterns = [
     path("", include(router.urls)),
     path("login/", UserLoginAPIView.as_view(), name="login"),
     path("profile/", UserProfileAPIView.as_view(), name="profile"),
-    path("reset_password/", ResetPasswordAPIView.as_view(), name="reset_password"),
+    path("change_password/", UserChangePasswordAPIView.as_view(), name="change_password"),
+    path('send-reset-password-email/', SendResetPasswordEmailAPIView.as_view(), name='send-reset-password-email'),
+    path('reset_password/<uid>/<token>/', ValidateResetPasswordEmailAPIView.as_view(), name='reset_password'),
 ]
 
 # router.register("", UserRegistrationViewSet, basename="userapi")
