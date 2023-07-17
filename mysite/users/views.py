@@ -11,6 +11,10 @@ from .renderers import UserRenderer
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
 from mysite.settings import PASSWORD_RESET_TIMEOUT
+from rest_framework import renderers
+from rest_framework import permissions
+from rest_framework import authentication
+from django.contrib.auth import get_user_model, login, logout
 # Create your views here.
 
 
@@ -24,7 +28,7 @@ def get_tokens_for_user(user):
 class UserRegistrationViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserModelSerializer
-    renderer_classes = [UserRenderer]
+    renderer_classes = [UserRenderer, renderers.BrowsableAPIRenderer]
 
     def create(self, request, *args, **kwargs):
         print(f"Entered the User Create function : {request.__dict__}")
@@ -43,7 +47,98 @@ class UserRegistrationViewSet(viewsets.ModelViewSet):
         serializer = self.serializer_class(self.queryset, many=True)
         print(f"Serialized Data : {serializer}")        
         return Response({"msg": "User List Fetched successfully!", "response": serializer.data})
+
+
+class UserLoginAPIView(views.APIView):
+    renderer_classes = [UserRenderer, renderers.BrowsableAPIRenderer]
+    permission_classes = [permissions.AllowAny]
+    authentication_classes = [authentication.SessionAuthentication]
     
+    def post(self, request, *args, **kwargs):
+        print(f"Authview data received: {request.data}")
+        serializer = UserLoginAuthSerializer(data=request.data)
+        try:
+            serializer.is_valid(raise_exception=True)
+        except Exception as error:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        email = serializer.validated_data.get("email")
+        password = serializer.validated_data.get("password")
+        user = authenticate(request, email=email, password=password)
+
+        if user:
+            token = get_tokens_for_user(user)
+            print(f"User ({user.name}) is authenticated")
+            login(request, user)
+            return Response({"msg": f"User ({user.name}) is authenticated", "token": token}, status=status.HTTP_200_OK)
+
+        return Response({"msg": "User not found or invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
+
+class UserProfileAPIView(views.APIView):
+    renderer_classes = [UserRenderer, renderers.BrowsableAPIRenderer]
+    permission_classes = [IsAuthenticated]
+    # permission_classes = [authentication.SessionAuthentication]
+
+    def get(self, request, format=None):
+        print(f"In Profile get : {request}")
+        serializer = UserProfileSerializer(request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class UserChangePasswordAPIView(views.APIView):
+    renderer_classes = [UserRenderer, renderers.BrowsableAPIRenderer]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        print(f"In Profile get : {request}")
+        serializer = UserChangePasswordSerializer(data=request.data, context={"user": request.user})
+        if serializer.is_valid(raise_exception=True):
+            serializer.update(request.user, serializer.validated_data)
+            return Response({"msg": "Password updated successfully"}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class SendResetPasswordEmailAPIView(views.APIView):
+    renderer_classes = [UserRenderer, renderers.BrowsableAPIRenderer]
+    
+    def post(self, request, *args, **kwargs):
+        serializer = SendResetPasswordEmailSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response({"msg": f"Reset email sent. Its valid for {PASSWORD_RESET_TIMEOUT} minsutes only"})
+
+class ValidateResetPasswordEmailAPIView(views.APIView):
+    renderer_classes = [UserRenderer, renderers.BrowsableAPIRenderer]
+
+    def post(self, request, uid, token, *args, **kwargs):
+        serializer = ValidateResetPasswordSerializer(data=request.data,
+                                                          context={"uid": uid, "token": token})
+        serializer.is_valid(raise_exception=True)
+        print(f"Srialized data {serializer.data}")
+        user = serializer.validated_data["user"]
+        serializer.update(user, serializer.validated_data)
+        return Response({"msg": "Password has been updated. Try login with new password"})
+
+class UserLogoutAPIView(views.APIView):
+    def post(self, request, *args, **kwargs):
+        logout(request)
+        return Response({"msg": "User is logged out"}, status=status.HTTP_200_OK)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # class UserAuthAPIView(views.APIView):
 #     def post(self, request, *args, **kwargs):
@@ -125,68 +220,3 @@ class UserRegistrationViewSet(viewsets.ModelViewSet):
 #             if serializer.is_valid(raise_exception=True):
 #                 return Response({"msg": "User profile is valid"}, status=status.HTTP_200_OK)
 #             return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
-
-
-class UserLoginAPIView(views.APIView):
-    renderer_classes = [UserRenderer]
-    
-    def post(self, request, *args, **kwargs):
-        print(f"Authview data received: {request.data}")
-        serializer = UserLoginAuthSerializer(data=request.data)
-        try:
-            serializer.is_valid(raise_exception=True)
-        except Exception as error:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        email = serializer.validated_data.get("email")
-        password = serializer.validated_data.get("password")
-        user = authenticate(request, email=email, password=password)
-
-        if user:
-            token = get_tokens_for_user(user)
-            print(f"User ({user.name}) is authenticated")
-            return Response({"msg": f"User ({user.name}) is authenticated", "token": token}, status=status.HTTP_200_OK)
-
-        return Response({"msg": "User not found or invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
-
-class UserProfileAPIView(views.APIView):
-    renderer_classes = [UserRenderer]
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request, format=None):
-        print(f"In Profile get : {request}")
-        serializer = UserProfileSerializer(request.user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-class UserChangePasswordAPIView(views.APIView):
-    renderer_classes = [UserRenderer]
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request, format=None):
-        print(f"In Profile get : {request}")
-        serializer = UserChangePasswordSerializer(data=request.data, context={"user": request.user})
-        if serializer.is_valid(raise_exception=True):
-            serializer.update(request.user, serializer.validated_data)
-            return Response({"msg": "Password updated successfully"}, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class SendResetPasswordEmailAPIView(views.APIView):
-    renderer_classes = [UserRenderer]
-    
-    def post(self, request, *args, **kwargs):
-        serializer = SendResetPasswordEmailSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        return Response({"msg": f"Reset email sent. Its valid for {PASSWORD_RESET_TIMEOUT} minsutes only"})
-
-class ValidateResetPasswordEmailAPIView(views.APIView):
-    renderer_classes = [UserRenderer]
-
-    def post(self, request, uid, token, *args, **kwargs):
-        serializer = ValidateResetPasswordSerializer(data=request.data,
-                                                          context={"uid": uid, "token": token})
-        serializer.is_valid(raise_exception=True)
-        print(f"Srialized data {serializer.data}")
-        user = serializer.validated_data["user"]
-        serializer.update(user, serializer.validated_data)
-        return Response({"msg": "Password has been updated. Try login with new password"})

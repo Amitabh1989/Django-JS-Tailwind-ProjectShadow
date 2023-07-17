@@ -10,6 +10,7 @@ from rest_framework.views import APIView
 from rest_framework import viewsets
 import json
 from mysite.modules import Modules, data_request, get_module, get_url
+from rest_framework.permissions import IsAuthenticated
 
 # Create your views here.
 
@@ -60,6 +61,7 @@ class TestStepStats(viewsets.ModelViewSet):
     """
     queryset = TestStep.objects.all()
     serializer_class = TestStepSerializer
+    permission_classes = [IsAuthenticated]
 
     # def get(self, request, *args, **kwargs):
     def list(self, request, *args, **kwargs):

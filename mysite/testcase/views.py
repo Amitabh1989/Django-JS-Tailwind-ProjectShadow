@@ -11,6 +11,7 @@ from django.db.models import Q, Value
 # from myapp.models import ConfigModel
 from io_module.models import IOModel
 from api.serializers import TestCaseSerializer, TestStepSerializer
+from rest_framework.permissions import IsAuthenticated
 # Create your views here.
 
 class TestCaseView(View):
