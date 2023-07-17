@@ -3,7 +3,7 @@ from .models import User, UserManager
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.utils.encoding import smart_str, force_bytes, DjangoUnicodeDecodeError
-import utils
+from .utils import Util
 
 class UserModelSerializer(serializers.ModelSerializer):
 
@@ -43,6 +43,7 @@ class UserLoginAuthSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["email", "password"]
+
 
 class UserProfileSerializer(serializers.ModelSerializer):
     # email = serializers.CharField(max_length=255)
@@ -138,13 +139,11 @@ class SendResetPasswordEmailSerializer(serializers.ModelSerializer):
             "body": f"Click on this link to reset password : {url_link}",
             "to_email": user.email
         }
-        utils.Util.send_mail(data)
+        Util.send_mail(data)
         return attrs
 
 
-
-class ValidateResetPasswordSerializer(serializers.Serializer):
-  
+class ValidateResetPasswordSerializer(serializers.Serializer):  
     password = serializers.CharField(max_length=255, style={'input_type':'password'}, write_only=True)
     password2 = serializers.CharField(max_length=255, style={'input_type':'password'}, write_only=True)
     class Meta:
@@ -186,4 +185,3 @@ class ValidateResetPasswordSerializer(serializers.Serializer):
             print(f"Instance saved : {instance}")
 
         return instance
-

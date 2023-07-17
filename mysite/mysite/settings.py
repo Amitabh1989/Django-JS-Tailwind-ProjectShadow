@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # "crispy_forms",
+    'django_extensions',
     "corsheaders",
     "rest_framework",
     "rest_framework_simplejwt"
@@ -156,8 +156,8 @@ AUTH_USER_MODEL = 'users.User'
 
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
-        # 'rest_framework.renderers.JSONRenderer',  # JSON renderer for programmatic requests
-        # 'rest_framework.renderers.BrowsableAPIRenderer',  # Browsable API renderer for browser requests
+        'rest_framework.renderers.JSONRenderer',  # JSON renderer for programmatic requests
+        'rest_framework.renderers.BrowsableAPIRenderer',  # Browsable API renderer for browser requests
         'users.renderers.UserRenderer'
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
