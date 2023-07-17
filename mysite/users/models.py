@@ -71,3 +71,12 @@ class User(AbstractBaseUser):
         "Is the user a member of staff?"
         # Simplest possible answer: All admins are staff
         return self.is_admin
+
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    avatar_name = models.CharField(max_length=30, default="Cool Beans")
+    profile_pic = models.ImageField()
+
+    def __str__(self) -> str:
+        return f'Profile for {self.user.name} created!'
