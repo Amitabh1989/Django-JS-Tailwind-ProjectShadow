@@ -10,7 +10,7 @@ from rest_framework.views import APIView
 from rest_framework import viewsets
 import json
 from mysite.modules import Modules, data_request, get_module, get_url
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 
 # Create your views here.
 
