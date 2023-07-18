@@ -29,6 +29,9 @@ class UserRegistrationViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserModelSerializer
     renderer_classes = [UserRenderer, renderers.BrowsableAPIRenderer]
+    # permission_classes = [permissions.DjangoModelPermissions]
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [authentication.BasicAuthentication]
 
     def create(self, request, *args, **kwargs):
         print(f"Entered the User Create function : {request.__dict__}")
@@ -40,19 +43,28 @@ class UserRegistrationViewSet(viewsets.ModelViewSet):
             token = get_tokens_for_user(user)
             return Response({"msg": "User Registration successful!", "token": token}, status=status.HTTP_201_CREATED)
         return Response({"msg": "Bad user data", "error": serializer.errors, "non_field_errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+    
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            # return User.objects.all()
+            return self.queryset
+        else:
+            # If the user is not an admin, we return an empty queryset.
+            return self.queryset.none()
 
-    def list(self, request, *args, **kwargs):
-        print(f"Entered the User List function : {request}")
-        print(f"User list queryset : {self.queryset}")
-        serializer = self.serializer_class(self.queryset, many=True)
-        print(f"Serialized Data : {serializer}")        
-        return Response({"msg": "User List Fetched successfully!", "response": serializer.data})
+    # def list(self, request, *args, **kwargs):
+    #     print(f"Entered the User List function : {request}")
+    #     print(f"User list queryset : {self.queryset}")
+    #     serializer = self.serializer_class(self.queryset, many=True)
+    #     print(f"Serialized Data : {serializer}")        
+    #     return Response({"msg": "User List Fetched successfully!", "response": serializer.data})
 
 
 class UserLoginAPIView(views.APIView):
     renderer_classes = [UserRenderer, renderers.BrowsableAPIRenderer]
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [authentication.SessionAuthentication]
+    # authentication_classes = [authentication.BasicAuthentication]
     
     def post(self, request, *args, **kwargs):
         print(f"Authview data received: {request.data}")
@@ -73,6 +85,13 @@ class UserLoginAPIView(views.APIView):
             return Response({"msg": f"User ({user.name}) is authenticated", "token": token}, status=status.HTTP_200_OK)
 
         return Response({"msg": "User not found or invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
+
+    def list(self, request, *args, **kwargs):
+        print(f"Entered the User List function : {request}")
+        print(f"User list queryset : {self.queryset}")
+        serializer = self.serializer_class(self.queryset, many=True)
+        print(f"Serialized Data : {serializer}")        
+        return Response({"msg": "User List Fetched successfully!", "response": serializer.data})
 
 class UserProfileAPIView(views.APIView):
     renderer_classes = [UserRenderer, renderers.BrowsableAPIRenderer]

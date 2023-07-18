@@ -18,6 +18,7 @@ urlpatterns = [
     path("io_module/", include("io_module.urls")),
     path("api/", include("api.urls"), name='api'),
     path("auth/", include("users.urls"), name='users'),
+    path("restapi/", include('rest_framework.urls'), name="rest_framework"), # UserRegistrationViewSet
     path("config/", include("config.urls"), name='config')
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
