@@ -32,15 +32,26 @@ class IOModelModelViewSet(viewsets.ModelViewSet):
         obj = self.queryset.filter(query).first()
 
         if obj:
+            data = {"_use_count": obj._use_count+1}
+            print(f"Obj.pk : {obj.pk}")
+            print(f"Use count : {obj._use_count}")
+            self.partial_update(request, pk=obj.pk, data=data)
             return Response({"msg": "Obj already present"}, status=status.HTTP_201_CREATED)
         
         serialilzer = self.serializer_class(data=self.request.data)
-        # serialilzer = self.serializer_class(data=request.data, raise_exception=True)
         if serialilzer.is_valid(raise_exception=True):
             serialilzer.save()
             return Response({"msg": "Obj created"}, status=status.HTTP_201_CREATED)
         return Response(serialilzer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
+    def partial_update(self, request, pk=None, data=None, *args, **kwargs):
+        print(f"Request received here: {request}")
+        obj = self.queryset.get(pk=pk)
+        serializer = self.serializer_class(data=data, instance=obj, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({"msg": "Use count increased"})
+
     # @action(detail=False, methods=['get'])
     # def form(self, request):
     #     serializer = self.get_serializer()
@@ -50,6 +61,7 @@ class IOModelModelViewSet(viewsets.ModelViewSet):
     #     # return super().retrieve(request, *args, **kwargs)
     #     # return render(request, 'io_module/io.html', {'form': self.serializer_class})
     #     return Response({'serializer': self.serializer_class})
+
 
 class IOModelCreateView(CreateView):
     print("I am here in this view already!")
