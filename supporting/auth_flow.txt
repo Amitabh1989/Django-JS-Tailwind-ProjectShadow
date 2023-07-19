@@ -1,0 +1,13 @@
+Remeber, we have 3 authentications provided in the settings.py.
+
+JWT, Session and Token.
+
+So Django tries to authenticate the user in order the authentication is provided in the settings.py Authentication classes.
+
+Now, if authentication classes is not provided in the view, the default is apllied.
+
+JWT auth class and Browsable APIs can not work together. We have to rely on cCurl or Postman to work
+with JWT based authentications.
+
+How i made the bropwsable APIs work with JWT (well not really), for my views where I needed the data,
+I have over-ridden the authentication_calsses to Session.

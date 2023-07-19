@@ -17,14 +17,15 @@ from rest_framework import permissions, authentication
 class ConfigViewSetAPI(viewsets.ModelViewSet):
     queryset = ConfigModel.objects.all()
     serializer_class = ConfigModelSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    authentication_classes = [authentication.SessionAuthentication]
+    # permission_classes = [permissions.IsAuthenticated]
+    # authentication_classes = [authentication.SessionAuthentication]
     # Override the renderers attribute to enforce JSON rendering
     # renderer_classes = [renderers.JSONRenderer]
     # renderer_classes = [TemplateHTMLRenderer]
     print("Config View set API called")
 
     def create(self, request, *args, **kwargs):
+        print(f"Config create : User Authenticated : {self.request.user.is_authenticated}")
         # _data =  dict(request.POST)
         # _data =  json.loads(request.body.decode('utf-8'))
         print("This is POST request")
@@ -73,6 +74,28 @@ class ConfigViewSetAPI(viewsets.ModelViewSet):
             serializer.save()
             return Response(status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def list(self, request, pk=None, **kwargs):
+        # return super().partial_update(request, *args, **kwargs)
+        print("List view config.views is invoked")
+
+        model = self.queryset.all()
+        serializer = self.serializer_class(model, many=True)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def retrieve(self, request, pk=None, *args, **kwargs):
+        # return super().partial_update(request, *args, **kwargs)
+        print("Retrieve view config.views is invoked")
+        
+        # model = self.queryset.get(pk=pk)
+        model = self.get_object()
+        print(f"Model is : {model}")
+        print(f"PK is    : {pk}")
+        serializer = self.serializer_class(model)
+        # serializer.is_valid(raise_exception=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class ConfigModelCreateView(CreateView):
     model = ConfigModel

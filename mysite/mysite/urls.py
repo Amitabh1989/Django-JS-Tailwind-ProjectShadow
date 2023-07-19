@@ -7,15 +7,17 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
+    TokenVerifyView
 )
 # from myapp.views import ConfigView
 
 urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path("", TemplateView.as_view(template_name="testcase/tchome.html"), name="home"),
     path("admin/", admin.site.urls),
-    path("io_module/", include("io_module.urls")),
+    path("io_module/", include("io_module.urls"), name="io_module"),
     path("api/", include("api.urls"), name='api'),
     path("auth/", include("users.urls"), name='users'),
     path("restapi/", include('rest_framework.urls'), name="rest_framework"), # UserRegistrationViewSet

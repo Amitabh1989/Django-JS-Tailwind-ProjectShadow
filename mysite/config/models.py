@@ -1,4 +1,5 @@
 from django.db import models
+from users.models import User
 
 # Create your models here.
 class ConfigModel(models.Model):
@@ -30,23 +31,8 @@ class ConfigModel(models.Model):
     INIT = [("full", "FULL"), ("fast", "FAST"),
             ("no init", "No INIT"), ("autobgi", "AutoBGI")]
 
-    # testcase = models.
-    # module_type = models.CharField(max_length=10, default='config', editable=False)
-    # # raid = models.CharField(max_length=20, choices=RAID.choices, default=RAID.R0)
-    # raid = models.CharField(max_length=20, choices=RAIDS)
-    # vdcount = models.IntegerField(choices=NUM_VDS, default=1)
-    # spans = models.IntegerField(choices=SPANS, default=1)
-    # stripe = models.IntegerField(choices=STRIPE, default=128)
-    # pdcount = models.IntegerField(choices=NUM_PDS, default=1)
-    # size = models.IntegerField(default=10)
-    # dtabcount = models.IntegerField(choices=NUM_DTABS, default=0)
-    # hotspare = models.IntegerField(choices=NUM_DTABS, default=0)
-    # init = models.CharField(max_length=10, choices=INIT, default='full')
-    # readpolicy = models.CharField(max_length=6, choices=[("ra", "RA"), ("nora", "NORA")], default='ra')
-    # writepolicy = models.CharField(max_length=6, choices=[("wb", "WB"), ("wt", "WT")], default='wt')
-    # repeat = models.IntegerField(choices=NUM_VDS, default=1)
-    
-    module_type = models.CharField(max_length=10, default='config', editable=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    module_type = models.CharField(max_length=10, default='config')
     # raid = models.CharField(max_length=20, choices=RAID.choices, default=RAID.R0)
     raid = models.CharField(max_length=20, choices=RAIDS)
     vdcount = models.IntegerField(choices=NUM_VDS)
@@ -60,7 +46,25 @@ class ConfigModel(models.Model):
     readpolicy = models.CharField(max_length=6, choices=[("ra", "RA"), ("nora", "NORA")], default='ra')
     writepolicy = models.CharField(max_length=6, choices=[("wb", "WB"), ("wt", "WT")], default='wt')
     repeat = models.IntegerField(choices=NUM_VDS)
-    _use_count =  models.IntegerField(default=1)
+    _use_count =  models.IntegerField(default=0)
 
     def __str__(self) -> str:
         return f'<{self.raid.upper()} ({self.vdcount} VD) with {self.pdcount}PDs>'
+
+
+    def save(self, *args, **kwargs):
+        print(f"Request received in Config save is : {kwargs}")
+        # Request received in Config save is : {'_state': <django.db.models.base.ModelState object at 0x7fdf5394d810>,
+        # 'id': 1, 'user_id': 1, 'module_type': 'config', 'raid': 'r0', 'vdcount': 1,
+        # 'spans': 0, 'stripe': 64, 'pdcount': 1, 'size': 12, 'dtabcount': 0, 'hotspare': 0,
+        # 'init': 'full', 'readpolicy': 'ra', 'writepolicy': 'wb', 'repeat': 1, '_use_count': 2}
+        
+        # Need to do 2 things here.
+        # 1. Check if record exists. If so, just update the use count and updated_time
+        # 2. If record does not exist, save new record and update use count and time created
+
+        # Check if record exists
+        
+
+
+        print(f"Request received in Config save is : {self.__dict__}")

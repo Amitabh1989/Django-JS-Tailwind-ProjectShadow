@@ -161,9 +161,10 @@ REST_FRAMEWORK = {
         'users.renderers.UserRenderer'
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',  # If you want to support both session and JWT authentication.
         'rest_framework.authentication.TokenAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ]
     # We can declare more authentication and permissions globally for all APIs here.
     # rest_framework.permissions.IsAuthenticated
@@ -225,3 +226,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3080",
     "http://127.0.0.1:3000",
 ]
+
+
+# BASE URL
+BASE_URL = os.environ.get('BASE_URL')

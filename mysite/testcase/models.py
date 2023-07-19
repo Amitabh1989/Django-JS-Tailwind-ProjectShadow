@@ -1,5 +1,6 @@
 from django.db import models
 import json
+from users.models import User
 
 # Create your models here.
 
@@ -21,6 +22,7 @@ import json
 #         return self.step
 
 class TestCase(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     cqid = models.CharField(max_length=20)
     title = models.CharField(max_length=100)
     summary = models.TextField(max_length=2000)
@@ -32,6 +34,7 @@ class TestCase(models.Model):
         return self.title
 
 class TestStep(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     test_cases = models.ManyToManyField(TestCase, related_name='test_case')
     # step = models.CharField(max_length=3000)
     step = models.JSONField(null=True)
