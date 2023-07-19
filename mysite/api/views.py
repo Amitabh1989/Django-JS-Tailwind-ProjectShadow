@@ -9,7 +9,6 @@ from django.core.serializers import serialize
 from rest_framework.views import APIView
 from rest_framework import viewsets
 import json
-# from mysite.modules import Modules, data_request, get_module_view_name, get_module_url, save_module_step
 from mysite.modules import get_module_view_name, save_module_step
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.authentication import SessionAuthentication
@@ -183,22 +182,14 @@ class TestStepStats(viewsets.ModelViewSet):
         print("test_case : {}".format(test_case))
         
         # Create and associate TestStep instances with the TestCase
-        # test_step, _ = TestStep.objects.get_or_create(step=step)
         for step in step_list[0]["moduleForm"]:
             view_name = get_module_view_name(step["module_type"])
-            # data_request(url, step)
-            # url = reverse("config.views.ConfigViewSetAPI")
             url = reverse(view_name)
             print(f"URL is : {url}")
             save_module_step(url, step)
             del step["csrfmiddlewaretoken"]
             test_step, created = TestStep.objects.get_or_create(step=step, user=request.user) #, defaults={'step': step})
-            # print(f"Value of Created is : {created}")
-            # test_step.test_cases.set([test_case])
-            # test_case.test_steps_list.add(test_step)
-            # test_step.save()
             print(f"Value of Created is : {created}")
-            # test_step.test_cases.set([test_case])
             test_step.test_cases.add(test_case)
             test_case.test_steps_list.add(test_step)
             test_step.save()
@@ -208,9 +199,5 @@ class TestStepStats(viewsets.ModelViewSet):
         for test_step in test_steps:
             print(test_step.step)
         return JsonResponse(response)
-    
-
-    # target_url = reverse(f'{target_view_name}', args=[key])
-
         
 
