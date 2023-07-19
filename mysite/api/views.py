@@ -176,10 +176,11 @@ class TestStepStats(viewsets.ModelViewSet):
         step_list = [json.loads(step) for step in step_data]
         print(f"Step List : {step_list}")
         cqid = 2
-        title = "Dummy_TC_5"
+        title = "Dummy_TC_3"
         summary = "Testing Model"
         test_case, created = TestCase.objects.get_or_create(cqid=cqid, title=title, summary=summary, user=request.user)
         print("Created : {}".format(created))
+        print("test_case : {}".format(test_case))
         
         # Create and associate TestStep instances with the TestCase
         # test_step, _ = TestStep.objects.get_or_create(step=step)
@@ -192,8 +193,13 @@ class TestStepStats(viewsets.ModelViewSet):
             save_module_step(url, step)
             del step["csrfmiddlewaretoken"]
             test_step, created = TestStep.objects.get_or_create(step=step, user=request.user) #, defaults={'step': step})
+            # print(f"Value of Created is : {created}")
+            # test_step.test_cases.set([test_case])
+            # test_case.test_steps_list.add(test_step)
+            # test_step.save()
             print(f"Value of Created is : {created}")
-            test_step.test_cases.set([test_case])
+            # test_step.test_cases.set([test_case])
+            test_step.test_cases.add(test_case)
             test_case.test_steps_list.add(test_step)
             test_step.save()
         test_case.save()
