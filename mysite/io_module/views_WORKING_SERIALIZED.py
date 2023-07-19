@@ -21,11 +21,11 @@ class IOModelModelViewSet(viewsets.ModelViewSet):
         print("This is POST request")
         print("Request data is : {}".format(self.request.POST))
         print("Request data is : {}".format(self.request.data))
-        # data = dict(self.request.data)
-        # data = {key: value[0] for key, value in data.items()}
-        del self.request.data['csrfmiddlewaretoken']
+        data = dict(self.request.data)
+        data = {key: value[0] for key, value in data.items()}
+        del data['csrfmiddlewaretoken']
         query = Q()
-        for fields, value in self.request.data.items():
+        for fields, value in data.items():
             query &= Q(**{f'{fields}': value})
         print(f"Query is : {query}")
 
@@ -34,9 +34,9 @@ class IOModelModelViewSet(viewsets.ModelViewSet):
         if obj:
             return Response({"msg": "Obj already present"}, status=status.HTTP_201_CREATED)
         
-        serialilzer = self.serializer_class(data=self.request.data)
+        serialilzer = self.serializer_class(data=data, raise_exception=True)
         # serialilzer = self.serializer_class(data=request.data, raise_exception=True)
-        if serialilzer.is_valid(raise_exception=True):
+        if serialilzer.is_valid():
             serialilzer.save()
             return Response({"msg": "Obj created"}, status=status.HTTP_201_CREATED)
         return Response(serialilzer.errors, status=status.HTTP_400_BAD_REQUEST)
