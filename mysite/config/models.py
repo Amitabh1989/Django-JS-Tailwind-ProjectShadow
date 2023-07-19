@@ -31,8 +31,8 @@ class ConfigModel(models.Model):
     INIT = [("full", "FULL"), ("fast", "FAST"),
             ("no init", "No INIT"), ("autobgi", "AutoBGI")]
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, editable=False)
-    module_type = models.CharField(max_length=10, default='config', editable=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    module_type = models.CharField(max_length=10, default='config')
     # raid = models.CharField(max_length=20, choices=RAID.choices, default=RAID.R0)
     raid = models.CharField(max_length=20, choices=RAIDS)
     vdcount = models.IntegerField(choices=NUM_VDS)
@@ -46,7 +46,7 @@ class ConfigModel(models.Model):
     readpolicy = models.CharField(max_length=6, choices=[("ra", "RA"), ("nora", "NORA")], default='ra')
     writepolicy = models.CharField(max_length=6, choices=[("wb", "WB"), ("wt", "WT")], default='wt')
     repeat = models.IntegerField(choices=NUM_VDS)
-    _use_count =  models.IntegerField(default=0, editable=False)
+    _use_count =  models.IntegerField(default=0)
 
     def __str__(self) -> str:
         return f'<{self.raid.upper()} ({self.vdcount} VD) with {self.pdcount}PDs>'

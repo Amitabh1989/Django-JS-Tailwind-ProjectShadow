@@ -75,6 +75,28 @@ class ConfigViewSetAPI(viewsets.ModelViewSet):
             return Response(status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def list(self, request, pk=None, **kwargs):
+        # return super().partial_update(request, *args, **kwargs)
+        print("List view config.views is invoked")
+
+        model = self.queryset.all()
+        serializer = self.serializer_class(model, many=True)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def retrieve(self, request, pk=None, *args, **kwargs):
+        # return super().partial_update(request, *args, **kwargs)
+        print("Retrieve view config.views is invoked")
+        
+        # model = self.queryset.get(pk=pk)
+        model = self.get_object()
+        print(f"Model is : {model}")
+        print(f"PK is    : {pk}")
+        serializer = self.serializer_class(model)
+        # serializer.is_valid(raise_exception=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class ConfigModelCreateView(CreateView):
     model = ConfigModel
     template_name = "testcase/input_form.html"
