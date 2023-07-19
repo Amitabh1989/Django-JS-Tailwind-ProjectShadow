@@ -31,7 +31,7 @@ class IOModelModelViewSet(viewsets.ModelViewSet):
 
         obj = self.queryset.filter(query).first()
 
-        if obj.exists():
+        if obj:
             return Response({"msg": "Obj already present"}, status=status.HTTP_201_CREATED)
         
         serialilzed = self.serializer_class(data=data)

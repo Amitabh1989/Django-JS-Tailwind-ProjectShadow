@@ -17,14 +17,15 @@ from rest_framework import permissions, authentication
 class ConfigViewSetAPI(viewsets.ModelViewSet):
     queryset = ConfigModel.objects.all()
     serializer_class = ConfigModelSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    authentication_classes = [authentication.SessionAuthentication]
+    # permission_classes = [permissions.IsAuthenticated]
+    # authentication_classes = [authentication.SessionAuthentication]
     # Override the renderers attribute to enforce JSON rendering
     # renderer_classes = [renderers.JSONRenderer]
     # renderer_classes = [TemplateHTMLRenderer]
     print("Config View set API called")
 
     def create(self, request, *args, **kwargs):
+        print(f"Config create : User Authenticated : {self.request.user.is_authenticated}")
         # _data =  dict(request.POST)
         # _data =  json.loads(request.body.decode('utf-8'))
         print("This is POST request")

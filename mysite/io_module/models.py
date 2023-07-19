@@ -1,5 +1,6 @@
 from django.db import models
 from config.models import ConfigModel
+from users.models import User
 # Create your models here.
 
 
@@ -8,6 +9,7 @@ class IOModel(models.Model):
         ('chaos', 'Chaos'),
         ('medusa', 'Medusa'),
     ]
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     module_type = models.CharField(max_length=10, default='io', editable=False)
     tool = models.CharField(max_length=10, choices=TOOL_CHOICES)
     qd = models.IntegerField(default=1)

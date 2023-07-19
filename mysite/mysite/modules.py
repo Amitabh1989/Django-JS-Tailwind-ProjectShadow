@@ -2,27 +2,42 @@ from enum import Enum
 from django.urls import reverse
 import requests
 import json
+from django.apps import apps
+from django.views import View
+from .settings import BASE_URL
+# class ModulesModel(Enum):
+#     CONFIG = ("config", 'config.models.)
+#     IO = ("io", "http://localhost:8000/io_module/api/")
 
-class Modules(Enum):
-    CONFIG = ("config", "http://localhost:8000/config/api/")
-    IO = ("io", "http://localhost:8000/io_module/api/")
+
+# def get_module(key):
+#     for module in ModulesModel:
+#         if module.name.lower() == key.lower():
+#             print(f"Returning {module}")
+#             return module.value
+#     return None
 
 
-def get_module(key):
-    for module in Modules:
-        if module.name.lower() == key.lower():
-            print(f"Returning {module}")
-            return module.value
-    return None
+MODULE_VIEWS_MAP = {
+    "config" : 'config:config-list',
+    "io" : 'io:io-list',
+}
 
-def get_url(module):
+def get_module_view_name(key):
+    # module = apps.get_model(key.lower())
+    return MODULE_VIEWS_MAP.get(key.lower())
+
+def get_module_url(module):
     print(f"Module received is : {module}")
+    view_name = module.split(".")[-1]
+    # url = reverse(view_name)
     # return reverse(module[1])
-    return module[1]
+    return view_name
 
-def data_request(url, step):
+def save_module_step(url, step):
     # Submitting the data to the URL
-    response = requests.post(url, data=json.dumps(step), headers={"Content-Type": "application/json"})
+    full_url = BASE_URL + url
+    response = requests.post(full_url, data=json.dumps(step), headers={"Content-Type": "application/json"})
     
     if response.status_code > 200 and response.status_code < 300:
         # Successfully submitted the data, retrieve the response

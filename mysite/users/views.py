@@ -14,6 +14,8 @@ from mysite.settings import PASSWORD_RESET_TIMEOUT
 from rest_framework import renderers
 from rest_framework import permissions
 from rest_framework import authentication
+from rest_framework.authentication import SessionAuthentication
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.contrib.auth import get_user_model, login, logout
 # Create your views here.
 
@@ -31,7 +33,8 @@ class UserRegistrationViewSet(viewsets.ModelViewSet):
     renderer_classes = [UserRenderer, renderers.BrowsableAPIRenderer]
     # permission_classes = [permissions.DjangoModelPermissions]
     permission_classes = [permissions.IsAuthenticated]
-    authentication_classes = [authentication.BasicAuthentication]
+    # authentication_classes = [authentication.BasicAuthentication]
+    authentication_classes = [JWTAuthentication]
 
     def create(self, request, *args, **kwargs):
         print(f"Entered the User Create function : {request.__dict__}")
@@ -63,7 +66,8 @@ class UserRegistrationViewSet(viewsets.ModelViewSet):
 class UserLoginAPIView(views.APIView):
     renderer_classes = [UserRenderer, renderers.BrowsableAPIRenderer]
     permission_classes = [permissions.IsAuthenticated]
-    authentication_classes = [authentication.SessionAuthentication]
+    authentication_classes = [authentication.SessionAuthentication] #, JWTAuthentication]
+    # authentication_classes = [authentication.SessionAuthentication]
     # authentication_classes = [authentication.BasicAuthentication]
     
     def post(self, request, *args, **kwargs):
@@ -96,6 +100,8 @@ class UserLoginAPIView(views.APIView):
 class UserProfileAPIView(views.APIView):
     renderer_classes = [UserRenderer, renderers.BrowsableAPIRenderer]
     permission_classes = [IsAuthenticated]
+    # authentication_classes = [JWTAuthentication]
+    authentication_classes = [SessionAuthentication]
     # permission_classes = [authentication.SessionAuthentication]
 
     def get(self, request, format=None):

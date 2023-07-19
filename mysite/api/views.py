@@ -9,9 +9,11 @@ from django.core.serializers import serialize
 from rest_framework.views import APIView
 from rest_framework import viewsets
 import json
-from mysite.modules import Modules, data_request, get_module, get_url
+# from mysite.modules import Modules, data_request, get_module_view_name, get_module_url, save_module_step
+from mysite.modules import get_module_view_name, save_module_step
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
-
+from rest_framework.authentication import SessionAuthentication
+from django.urls import reverse
 # Create your views here.
 
 
@@ -62,6 +64,7 @@ class TestStepStats(viewsets.ModelViewSet):
     queryset = TestStep.objects.all()
     serializer_class = TestStepSerializer
     permission_classes = [IsAuthenticated]
+    authentication_classes = [SessionAuthentication]
 
     # def get(self, request, *args, **kwargs):
     def list(self, request, *args, **kwargs):
@@ -140,6 +143,34 @@ class TestStepStats(viewsets.ModelViewSet):
         return JsonResponse(response)
 
 
+    # def create(self, request, *args, **kwargs):
+    #     step_data = request.POST
+    #     step_list = [json.loads(step) for step in step_data]
+    #     print(f"Step List : {step_list}")
+    #     cqid = 2
+    #     title = "Dummy_TC_5"
+    #     summary = "Testing Model"
+    #     test_case, created = TestCase.objects.get_or_create(cqid=cqid, title=title, summary=summary, user=request.user)
+    #     print("Created : {}".format(created))
+        
+    #     # Create and associate TestStep instances with the TestCase
+    #     # test_step, _ = TestStep.objects.get_or_create(step=step)
+    #     for step in step_list[0]["moduleForm"]:
+    #         url = get_module_view_name_url(get_module_view_name(step["module_type"]))
+    #         data_request(url, step)
+    #         del step["csrfmiddlewaretoken"]
+    #         test_step, created = TestStep.objects.get_or_create(step=step, user=request.user) #, defaults={'step': step})
+    #         print(f"Value of Created is : {created}")
+    #         test_step.test_cases.set([test_case])
+    #         test_case.test_steps_list.add(test_step)
+    #         test_step.save()
+    #     test_case.save()
+    #     response = {"resp": "Submit successful from testcase view"}
+    #     test_steps = test_case.test_steps_list.all()
+    #     for test_step in test_steps:
+    #         print(test_step.step)
+    #     return JsonResponse(response)
+
     def create(self, request, *args, **kwargs):
         step_data = request.POST
         step_list = [json.loads(step) for step in step_data]
@@ -147,25 +178,33 @@ class TestStepStats(viewsets.ModelViewSet):
         cqid = 2
         title = "Dummy_TC_5"
         summary = "Testing Model"
-        tcid, created = TestCase.objects.get_or_create(cqid=cqid, title=title, summary=summary)
+        test_case, created = TestCase.objects.get_or_create(cqid=cqid, title=title, summary=summary, user=request.user)
         print("Created : {}".format(created))
         
         # Create and associate TestStep instances with the TestCase
         # test_step, _ = TestStep.objects.get_or_create(step=step)
         for step in step_list[0]["moduleForm"]:
-            url = get_url(get_module(step["module_type"]))
-            data_request(url, step)
+            view_name = get_module_view_name(step["module_type"])
+            # data_request(url, step)
+            # url = reverse("config.views.ConfigViewSetAPI")
+            url = reverse(view_name)
+            print(f"URL is : {url}")
+            save_module_step(url, step)
             del step["csrfmiddlewaretoken"]
-            test_step, created = TestStep.objects.get_or_create(step=step) #, defaults={'step': step})
+            test_step, created = TestStep.objects.get_or_create(step=step, user=request.user) #, defaults={'step': step})
             print(f"Value of Created is : {created}")
-            test_step.test_cases.set([tcid])
-            tcid.test_steps_list.add(test_step)
+            test_step.test_cases.set([test_case])
+            test_case.test_steps_list.add(test_step)
             test_step.save()
-        tcid.save()
+        test_case.save()
         response = {"resp": "Submit successful from testcase view"}
-        test_steps = tcid.test_steps_list.all()
+        test_steps = test_case.test_steps_list.all()
         for test_step in test_steps:
             print(test_step.step)
         return JsonResponse(response)
+    
+
+    # target_url = reverse(f'{target_view_name}', args=[key])
 
         
+
