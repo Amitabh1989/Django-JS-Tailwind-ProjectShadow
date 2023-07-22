@@ -135,7 +135,8 @@ class TestStepStats(viewsets.ModelViewSet):
             "fetched": fetched,
             "exact_step": serialized_test_step.data if serialized_test_step.data is not None else {},
             "total_step_by_params": total_step_by_params,
-            "tc_by_params": serialize('json', list(test_step)),
+            # "tc_by_params": serialize('json', list(test_step)),
+            "tc_by_params": self.serializer_class(test_step),
             "num_tc_associated": num_tcs_serial
         }
         print("Response is : {}".format(response))

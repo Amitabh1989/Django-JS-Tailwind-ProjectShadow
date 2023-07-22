@@ -32,7 +32,7 @@ class ConfigModel(models.Model):
             ("no init", "No INIT"), ("autobgi", "AutoBGI")]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    module_type = models.CharField(max_length=10, default='config')
+    module_type = models.CharField(max_length=10, default='config', editable=False)
     # raid = models.CharField(max_length=20, choices=RAID.choices, default=RAID.R0)
     raid = models.CharField(max_length=20, choices=RAIDS)
     vdcount = models.IntegerField(choices=NUM_VDS)
