@@ -12,6 +12,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
 from mysite.settings import PASSWORD_RESET_TIMEOUT
 from rest_framework import renderers
+from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework import permissions
 from rest_framework import authentication
 from rest_framework.authentication import SessionAuthentication
@@ -31,21 +32,27 @@ class UserRegistrationViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserModelSerializer
     renderer_classes = [UserRenderer, renderers.BrowsableAPIRenderer]
+    # renderer_classes = [TemplateHTMLRenderer]
+    # template_name = 'users/login.html'
     # permission_classes = [permissions.DjangoModelPermissions]
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
     # authentication_classes = [authentication.BasicAuthentication]
     authentication_classes = [JWTAuthentication]
 
     def create(self, request, *args, **kwargs):
         print(f"Entered the User Create function : {request.__dict__}")
         print(f"Entered the User Create function : {request.data}")
+        print(f"Request accepted renderer        : {request.accepted_renderer}")
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid(raise_exception=True):
             print("User data is valid, saving the user now")
             user = serializer.save()
             token = get_tokens_for_user(user)
-            return Response({"msg": "User Registration successful!", "token": token}, status=status.HTTP_201_CREATED)
-        return Response({"msg": "Bad user data", "error": serializer.errors, "non_field_errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+            context = {"msg": "User Registration successful!", "token": token}
+            return Response(context, status=status.HTTP_201_CREATED)
+        context = {"msg": "Bad user data", "error": serializer.errors, "non_field_errors": serializer.errors}
+        return Response(context, status=status.HTTP_400_BAD_REQUEST)
     
     def get_queryset(self):
         if self.request.user.is_authenticated:
@@ -63,9 +70,12 @@ class UserRegistrationViewSet(viewsets.ModelViewSet):
     #     return Response({"msg": "User List Fetched successfully!", "response": serializer.data})
 
 
+
 class UserLoginAPIView(views.APIView):
-    renderer_classes = [UserRenderer, renderers.BrowsableAPIRenderer]
-    permission_classes = [permissions.IsAuthenticated]
+    renderer_classes = [UserRenderer, TemplateHTMLRenderer, renderers.BrowsableAPIRenderer]
+    template_name = 'users/login.html'
+    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
     authentication_classes = [authentication.SessionAuthentication] #, JWTAuthentication]
     # authentication_classes = [authentication.SessionAuthentication]
     # authentication_classes = [authentication.BasicAuthentication]
@@ -96,6 +106,18 @@ class UserLoginAPIView(views.APIView):
         serializer = self.serializer_class(self.queryset, many=True)
         print(f"Serialized Data : {serializer}")        
         return Response({"msg": "User List Fetched successfully!", "response": serializer.data})
+
+    def retrieve(self, request, *args, **kwargs):
+        print("Hit the Retrieve Login url")
+        return Response(template_name=self.template_name)
+
+    
+    def get(self, request, *args, **kwargs):
+        # Check if the request accepts HTML, and if so, render the template
+        if request.accepted_renderer.format == "html":
+            return Response(template_name=self.template_name)
+        # If the request doesn't accept HTML, return the response as usual
+        return super().get(request, *args, **kwargs)
 
 class UserProfileAPIView(views.APIView):
     renderer_classes = [UserRenderer, renderers.BrowsableAPIRenderer]
