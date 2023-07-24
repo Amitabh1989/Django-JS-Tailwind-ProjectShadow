@@ -10,12 +10,10 @@ router = DefaultRouter()
 
 
 router.register(r"users", UserRegistrationViewSet, basename="userapi")
-# router.register(r"login", UserAuthViewSet, basename="login")
-# router.register(r"profile", UserAuthViewSet, basename="login")
 
 urlpatterns = [
     path("", include(router.urls)), # UserRegistrationViewSet
-    # path("register/", UserRegistrationViewSet.as_view(), name="register"),
+    # path("register/", UserRegistrationViewSet.as_view({"post": "create"}), name="register"),
     path("login/", UserLoginAPIView.as_view(), name="login"),
     path("logout/", UserLogoutAPIView.as_view(), name="logout"),
     path("profile/", UserProfileAPIView.as_view(), name="profile"),
