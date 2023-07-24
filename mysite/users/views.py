@@ -82,15 +82,19 @@ class UserLoginAPIView(views.APIView):
     
     def post(self, request, *args, **kwargs):
         print(f"Authview data received: {request.data}")
-        serializer = UserLoginAuthSerializer(data=request.data)
+        print(f"Authview data received POST REQ : {request.POST.dict()}")
+        serializer = UserLoginAuthSerializer(data=request.POST.dict())
+        print(f"Serializer data : {serializer}")
         try:
             serializer.is_valid(raise_exception=True)
         except Exception as error:
+            print(f"Serializer errors : {serializer.errors}")
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         email = serializer.validated_data.get("email")
         password = serializer.validated_data.get("password")
         user = authenticate(request, email=email, password=password)
+        print(f"User authenticated : {user}")
 
         if user:
             token = get_tokens_for_user(user)
