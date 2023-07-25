@@ -1,4 +1,4 @@
-{% comment %} {% extends 'myapp/base.html' %} {% endcomment %}
+{% extends 'testcase/base.html' %}
 
 {% block content %}
 
@@ -32,7 +32,7 @@
     -->
 
     <p class="m-10">
-        New to website? <span> <a class="text-indigo-500 font-bold" href="{% url 'myapp:register' %}">Register now!</a> </span>
+        New to website? <span> <a class="text-indigo-500 font-bold" href="{% url 'users:login' %}">Register now!</a> </span>
     </p>
 
 </div>
