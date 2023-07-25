@@ -25,3 +25,4 @@ class ConfigModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = ConfigModel
         fields = '__all__'
+        

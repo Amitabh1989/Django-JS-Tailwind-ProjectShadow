@@ -50,7 +50,7 @@ class ConfigViewSetAPI(viewsets.ModelViewSet):
             # Update the record with +1 use count
             data = {"_use_count": int(obj.first()._use_count+1)}
             resp = self.partial_update(request, data=data, pk=obj.first().pk)
-            print(f"REsp seen is : {resp}")
+            print(f"Resp seen is : {resp}")
             return Response({"msg": "Partial update done"})
             # return resp
             # return self.partial_update(request, data=data, pk=obj.first().pk)

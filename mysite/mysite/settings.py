@@ -77,6 +77,7 @@ TEMPLATES = [
             os.path.join(BASE_DIR, "config", "templates"),
             os.path.join(BASE_DIR, "io_module", "templates"),
             os.path.join(BASE_DIR, "react-shadow", "build"),
+            os.path.join(BASE_DIR, "users", "templates"),
         ],
         "APP_DIRS": True,
         "OPTIONS": {
