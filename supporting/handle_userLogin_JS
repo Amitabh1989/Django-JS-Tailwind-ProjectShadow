@@ -1,0 +1,20 @@
+// JavaScript code to handle the login form submission and store the JWT token
+const loginForm = document.getElementById("login-form");
+loginForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const formData = new FormData(loginForm);
+  const response = await fetch(loginForm.action, {
+    method: "POST",
+    body: formData,
+  });
+
+  if (response.ok) {
+    const data = await response.json();
+    const token = data.access;
+    // Store the JWT token (token) on the client-side
+    // Use the token in subsequent API requests
+  } else {
+    // Handle login error (e.g., incorrect credentials)
+    // Display an error message to the user
+  }
+});
