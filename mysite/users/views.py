@@ -12,12 +12,15 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
 from mysite.settings import PASSWORD_RESET_TIMEOUT
 from rest_framework import renderers
-from rest_framework.renderers import TemplateHTMLRenderer
+from rest_framework.renderers import TemplateHTMLRenderer 
+# from rest_framework.renderers import TemplateResponseRenderer
 from rest_framework import permissions
 from rest_framework import authentication
 from rest_framework.authentication import SessionAuthentication
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.contrib.auth import get_user_model, login, logout
+# from django.contrib.auth.forms import UserCreationForm
+from .forms import CustomUserCreationForm
 # Create your views here.
 
 
@@ -31,7 +34,8 @@ def get_tokens_for_user(user):
 class UserRegistrationViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserModelSerializer
-    renderer_classes = [UserRenderer, renderers.BrowsableAPIRenderer]
+    renderer_classes = [UserRenderer, TemplateHTMLRenderer, renderers.BrowsableAPIRenderer]
+    template_name = 'users/register.html'
     # renderer_classes = [TemplateHTMLRenderer]
     # template_name = 'users/login.html'
     # permission_classes = [permissions.DjangoModelPermissions]
@@ -61,6 +65,32 @@ class UserRegistrationViewSet(viewsets.ModelViewSet):
         else:
             # If the user is not an admin, we return an empty queryset.
             return self.queryset.none()
+    
+    # def retrieve(self, request, *args, **kwargs):
+    #     print("REgisterview Retieved invoked")
+    #     if request.accepted_renderer.format == "html":
+    #         context = {"message": "Hello, this is a message!"}
+    #         return Response({"template_name": self.template_name})
+    #         # return render(request, self.template_name, context)
+    #     return super().retrieve(request, *args, **kwargs)
+    def retrieve(self, request, *args, **kwargs):
+        if request.accepted_renderer.format == "html":
+            # Define your context data here
+            context = {"title": "User Registration Page"}
+            return Response(template_name=self.template_name)
+
+        # Handle other formats (e.g., JSON) with the standard retrieve method
+        return super().retrieve(request, *args, **kwargs)
+
+    # def get(self, request, *args, **kwargs):
+    #     print("REgisterview GET invoked")
+    #     # Check if the request accepts HTML, and if so, render the template
+    #     if request.accepted_renderer.format == "html":
+    #         context = {"message": "Hello, this is a message!"}
+    #         return Response(context, template_name=self.template_name)
+    #         # return render(request, self.template_name, context)
+    #     # If the request doesn't accept HTML, return the response as usual
+    #     return super().get(request, *args, **kwargs)
 
     # def list(self, request, *args, **kwargs):
     #     print(f"Entered the User List function : {request}")
@@ -82,15 +112,19 @@ class UserLoginAPIView(views.APIView):
     
     def post(self, request, *args, **kwargs):
         print(f"Authview data received: {request.data}")
-        serializer = UserLoginAuthSerializer(data=request.data)
+        print(f"Authview data received POST REQ : {request.POST.dict()}")
+        serializer = UserLoginAuthSerializer(data=request.POST.dict())
+        print(f"Serializer data : {serializer}")
         try:
             serializer.is_valid(raise_exception=True)
         except Exception as error:
+            print(f"Serializer errors : {serializer.errors}")
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         email = serializer.validated_data.get("email")
         password = serializer.validated_data.get("password")
         user = authenticate(request, email=email, password=password)
+        print(f"User authenticated : {user}")
 
         if user:
             token = get_tokens_for_user(user)
@@ -107,9 +141,9 @@ class UserLoginAPIView(views.APIView):
         print(f"Serialized Data : {serializer}")        
         return Response({"msg": "User List Fetched successfully!", "response": serializer.data})
 
-    def retrieve(self, request, *args, **kwargs):
-        print("Hit the Retrieve Login url")
-        return Response(template_name=self.template_name)
+    # def retrieve(self, request, *args, **kwargs):
+    #     print("Hit the Retrieve Login url")
+    #     return Response(template_name=self.template_name)
 
     
     def get(self, request, *args, **kwargs):

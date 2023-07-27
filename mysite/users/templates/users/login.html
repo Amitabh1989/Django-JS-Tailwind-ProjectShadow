@@ -5,26 +5,30 @@
 <div class="flex flex-col justify-center items-center min-h-screen">
     <h1 class="font-bold text-xl"> Welcome back, Login </h1>
 
-    <form class="shadow-lg p-10 m-5" action="/auth/users/" method="POST">
+    <form class="shadow-lg p-10 m-5" action="/auth/login/" method="POST">
         {% csrf_token %}
-
+        
         <div class="mb-2">
-            <label for="">Username</label>
+            <label for="">Email</label>
             <div class="border rounded-sm py-2 px-2 mr-10">
-                {{ form.username }}
+                <input type="text" name="email" placeholder="Email">
             </div>
         </div>
 
         <div class="mb-2">
             <label for="">Password</label>
             <div class="border rounded-sm py-2 px-2 mr-10">
-                {{ form.password }}
+                <input type="password" name="password" placeholder="Password">
             </div>
         </div>
         
         <div>
             <input class="bg-green-500 text-white rounded-sm px-4 py-2" type="submit" value="Login">
         </div>
+
+            {% comment %} <input type="text" name="email" placeholder="Email">
+            <input type="password" name="password" placeholder="Password"> {% endcomment %}
+
     </form>
 
     <!--
@@ -32,7 +36,8 @@
     -->
 
     <p class="m-10">
-        New to website? <span> <a class="text-indigo-500 font-bold" href="{% url 'users:login' %}">Register now!</a> </span>
+        {% comment %} New to website? <span> <a class="text-indigo-500 font-bold" href="{% url 'users' %}">Register now!</a> </span> {% endcomment %}
+        New to website? <span> <a class="text-indigo-500 font-bold" href="/auth/users/">Register now!</a> </span>
     </p>
 
 </div>
