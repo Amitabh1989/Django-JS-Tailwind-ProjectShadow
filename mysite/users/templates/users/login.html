@@ -36,7 +36,8 @@
     -->
 
     <p class="m-10">
-        New to website? <span> <a class="text-indigo-500 font-bold" href="{% url 'users:login' %}">Register now!</a> </span>
+        {% comment %} New to website? <span> <a class="text-indigo-500 font-bold" href="{% url 'users' %}">Register now!</a> </span> {% endcomment %}
+        New to website? <span> <a class="text-indigo-500 font-bold" href="/auth/users/">Register now!</a> </span>
     </p>
 
 </div>
