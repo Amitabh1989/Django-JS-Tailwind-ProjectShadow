@@ -20,8 +20,9 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.contrib.auth import get_user_model, login, logout
 # from django.contrib.auth.forms import UserCreationForm
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm, UserForm
 # Create your views here.
+from rest_framework.parsers import JSONParser
 
 
 def get_tokens_for_user(user):
@@ -32,9 +33,12 @@ def get_tokens_for_user(user):
     }
 
 class UserRegistrationViewSet(viewsets.ModelViewSet):
+    print(f'In user registrationviewset')
     queryset = User.objects.all()
     serializer_class = UserModelSerializer
-    renderer_classes = [UserRenderer, TemplateHTMLRenderer, renderers.BrowsableAPIRenderer]
+    # renderer_classes = [UserRenderer, renderers.BrowsableAPIRenderer]
+    renderer_classes = [UserRenderer, TemplateHTMLRenderer, renderers.BrowsableAPIRenderer, ]
+    # renderer_classes = [TemplateHTMLRenderer]
     template_name = 'users/register.html'
     # renderer_classes = [TemplateHTMLRenderer]
     # template_name = 'users/login.html'
@@ -44,11 +48,48 @@ class UserRegistrationViewSet(viewsets.ModelViewSet):
     # authentication_classes = [authentication.BasicAuthentication]
     authentication_classes = [JWTAuthentication]
 
+    def dispatch(self, request, *args, **kwargs):
+        # Determine the appropriate HTTP method function based on the request method
+        print(f"In dispatch : {self.http_method_names}")
+        print(f"In dispatch : {request.method.lower()}")
+        print(f"In dispatch : {self.http_method_not_allowed}")
+        if request.method.lower() in self.http_method_names:
+            handler = getattr(self, request.method.lower(), self.http_method_not_allowed)
+        else:
+            handler = self.http_method_not_allowed
+
+        # Call the appropriate handler function
+        print(f"Handler : {handler}")
+        return handler(request, *args, **kwargs)
+
     def create(self, request, *args, **kwargs):
         print(f"Entered the User Create function : {request.__dict__}")
-        print(f"Entered the User Create function : {request.data}")
-        print(f"Request accepted renderer        : {request.accepted_renderer}")
-        serializer = self.serializer_class(data=request.data)
+        print(f"Entered the User Create function : {request.POST}")
+        # print(f"Request accepted renderer        : {request.accepted_renderer}")
+        """
+        => If the request's content type is application/json, request.data will be
+           a dictionary containing the parsed JSON data.
+        => If the request's content type is application/x-www-form-urlencoded
+           (e.g., from HTML form submissions), request.data will be a dictionary
+           containing the form data (equivalent to request.POST.dict()).
+        => For other content types, like file uploads, request.data will contain
+           the parsed data specific to the content type.
+        """
+        # if request.content_type == 'application/x-www-form-urlencoded':
+        #     data_to_serialize = request.POST.dict()
+        
+        # elif request.content_type == 'application/json':
+        #     data_to_serialize = request.data
+
+        # Check if the request content type is JSON
+        if 'application/json' in request.content_type:
+            data_to_serialize = JSONParser().parse(request)
+        else:
+            # Assume it's form data (application/x-www-form-urlencoded)
+            data_to_serialize = request.POST.dict()
+
+        print(f"Data to serialize = {data_to_serialize}")
+        serializer = self.serializer_class(data=data_to_serialize)
         if serializer.is_valid(raise_exception=True):
             print("User data is valid, saving the user now")
             user = serializer.save()
@@ -65,19 +106,36 @@ class UserRegistrationViewSet(viewsets.ModelViewSet):
         else:
             # If the user is not an admin, we return an empty queryset.
             return self.queryset.none()
-    
-    # def retrieve(self, request, *args, **kwargs):
-    #     print("REgisterview Retieved invoked")
-    #     if request.accepted_renderer.format == "html":
-    #         context = {"message": "Hello, this is a message!"}
-    #         return Response({"template_name": self.template_name})
-    #         # return render(request, self.template_name, context)
-    #     return super().retrieve(request, *args, **kwargs)
+
+    def list(self, request, *args, **kwargs):
+        print(f"REgisterview LIST invoked : {request.GET}")
+        if request.GET.get("pk"):
+            pass
+        # if request.accepted_renderer.format == "html":
+            
+        print("REgisterview LSIIT invoked")
+        # Define your context data here
+        if request.content_type == 'application/x-www-form-urlencoded':
+            context = {"title": "User Registration Page"}
+            form = UserForm()
+            context["form"] = form
+            print("Rendering user registration form")
+            # return Response(context, template_name=self.template_name)
+            return render(request, template_name=self.template_name, context=context)
+
+        # Handle other formats (e.g., JSON) with the standard retrieve method
+        return super().retrieve(request, *args, **kwargs)
+
     def retrieve(self, request, *args, **kwargs):
+        print("REgisterview RETRIEVE invoked : here")
         if request.accepted_renderer.format == "html":
+            print("REgisterview RETRIEVE invoked")
             # Define your context data here
             context = {"title": "User Registration Page"}
-            return Response(template_name=self.template_name)
+            form = UserForm()
+            context["form"] = form
+            # return Response(context, template_name=self.template_name)
+            return render(request, template_name=self.template_name, context=context)
 
         # Handle other formats (e.g., JSON) with the standard retrieve method
         return super().retrieve(request, *args, **kwargs)

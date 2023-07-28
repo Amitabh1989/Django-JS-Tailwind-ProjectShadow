@@ -3,7 +3,7 @@ from .models import User, UserManager
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.utils.encoding import smart_str, force_bytes, DjangoUnicodeDecodeError
-from .utils import Util
+from .utils import Util 
 
 class UserModelSerializer(serializers.ModelSerializer):
 
