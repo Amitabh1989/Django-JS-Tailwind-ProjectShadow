@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import viewsets
 from rest_framework import views
-from .models import User
+from .models import User, UserProfile
 from django.contrib.auth import authenticate
 from .serializers import UserModelSerializer, UserLoginAuthSerializer, UserProfileSerializer, UserChangePasswordSerializer, \
     SendResetPasswordEmailSerializer, ValidateResetPasswordSerializer
@@ -24,6 +24,8 @@ from .forms import CustomUserCreationForm, UserForm
 # Create your views here.
 from rest_framework.parsers import JSONParser
 from rest_framework.exceptions import ValidationError
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 
 def get_tokens_for_user(user):
@@ -49,20 +51,6 @@ class UserRegistrationViewSet(viewsets.ModelViewSet):
     # authentication_classes = [authentication.BasicAuthentication]
     authentication_classes = [JWTAuthentication]
 
-    # def dispatch(self, request, *args, **kwargs):
-    #     # Determine the appropriate HTTP method function based on the request method
-    #     print(f"In dispatch : {self.http_method_names}")
-    #     print(f"In dispatch : {request.method.lower()}")
-    #     print(f"In dispatch : {self.http_method_not_allowed}")
-    #     if request.method.lower() in self.http_method_names:
-    #         handler = getattr(self, request.method.lower(), self.http_method_not_allowed)
-    #     else:
-    #         handler = self.http_method_not_allowed
-
-    #     # Call the appropriate handler function
-    #     print(f"Handler : {handler}")
-    #     return handler(request, *args, **kwargs)
-
     def create(self, request, *args, **kwargs):
         print(f"Entered the User Create function : {request.__dict__}")
         print(f"Entered the User Create function : {request.POST}")
@@ -76,20 +64,12 @@ class UserRegistrationViewSet(viewsets.ModelViewSet):
         => For other content types, like file uploads, request.data will contain
            the parsed data specific to the content type.
         """
-        # if request.content_type == 'application/x-www-form-urlencoded':
-        #     data_to_serialize = request.POST.dict()
-        
-        # elif request.content_type == 'application/json':
-        #     data_to_serialize = request.data
-
         # Check if the request content type is JSON
         if 'application/json' in request.content_type:
             data_to_serialize = request.data
-            # self.request.accepted_renderer = renderers.BrowsableAPIRenderer()
         else:
             # Assume it's form data (application/x-www-form-urlencoded)
             data_to_serialize = request.POST.dict()
-            # self.request.accepted_renderer = TemplateHTMLRenderer()
 
         print(f"Data to serialize = {data_to_serialize}")
         serializer = self.serializer_class(data=data_to_serialize)
@@ -106,7 +86,6 @@ class UserRegistrationViewSet(viewsets.ModelViewSet):
             error_msg = e
             if hasattr(e, "detail"):
                 error_msg = e.detail
-
         context = {"msg": "Bad user data", "error": serializer.errors, "non_field_errors": serializer.errors}
         return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
@@ -185,14 +164,24 @@ class UserLoginAPIView(views.APIView):
     template_name = 'users/login.html'
     # permission_classes = [permissions.IsAuthenticated]
     permission_classes = [permissions.AllowAny]
-    authentication_classes = [authentication.SessionAuthentication] #, JWTAuthentication]
+    authentication_classes = [JWTAuthentication]
+    # authentication_classes = [authentication.SessionAuthentication] #, JWTAuthentication]
     # authentication_classes = [authentication.SessionAuthentication]
     # authentication_classes = [authentication.BasicAuthentication]
     
     def post(self, request, *args, **kwargs):
         print(f"Authview data received: {request.data}")
         print(f"Authview data received POST REQ : {request.POST.dict()}")
-        serializer = UserLoginAuthSerializer(data=request.POST.dict())
+
+        # Check if the request content type is JSON
+        if 'application/json' in request.content_type:
+            data_to_serialize = request.data
+        else:
+            # Assume it's form data (application/x-www-form-urlencoded)
+            data_to_serialize = request.POST.dict()
+
+
+        serializer = UserLoginAuthSerializer(data=data_to_serialize)
         print(f"Serializer data : {serializer}")
         try:
             serializer.is_valid(raise_exception=True)
@@ -209,9 +198,12 @@ class UserLoginAPIView(views.APIView):
             token = get_tokens_for_user(user)
             print(f"User ({user.name}) is authenticated")
             login(request, user)
+            if not 'application/json' in request.content_type:
+                return HttpResponseRedirect(reverse("users:profile") + f"?user_id={user.id}")
+            
             return Response({"msg": f"User ({user.name}) is authenticated", "token": token}, status=status.HTTP_200_OK)
-
         return Response({"msg": "User not found or invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
+
 
     def list(self, request, *args, **kwargs):
         print(f"Entered the User List function : {request}")
@@ -219,7 +211,17 @@ class UserLoginAPIView(views.APIView):
         serializer = self.serializer_class(self.queryset, many=True)
         print(f"Serialized Data : {serializer}")        
         return Response({"msg": "User List Fetched successfully!", "response": serializer.data})
-
+    
+    # def finalize_response(self, request, response, *args, **kwargs):
+    #     print("Finalize response being called")
+    #     # Set the appropriate renderer based on the request content type
+    #     if 'application/json' in request.content_type:
+    #         response.accepted_renderer = renderers.BrowsableAPIRenderer()
+    #     else:
+    #         response.accepted_renderer = TemplateHTMLRenderer()
+    #     print(f"Finalize response being returned : {response.accepted_renderer}")
+    #     return super().finalize_response(request, response, *args, **kwargs)
+    
     # def retrieve(self, request, *args, **kwargs):
     #     print("Hit the Retrieve Login url")
     #     return Response(template_name=self.template_name)
@@ -227,22 +229,54 @@ class UserLoginAPIView(views.APIView):
     
     def get(self, request, *args, **kwargs):
         # Check if the request accepts HTML, and if so, render the template
+        print("In login GET function")
         if request.accepted_renderer.format == "html":
             return Response(template_name=self.template_name)
         # If the request doesn't accept HTML, return the response as usual
         return super().get(request, *args, **kwargs)
 
 class UserProfileAPIView(views.APIView):
-    renderer_classes = [UserRenderer, renderers.BrowsableAPIRenderer]
+    renderer_classes = [UserRenderer, TemplateHTMLRenderer, renderers.BrowsableAPIRenderer]
     permission_classes = [IsAuthenticated]
     # authentication_classes = [JWTAuthentication]
+    template_name = "users/profile.html"
     authentication_classes = [SessionAuthentication]
     # permission_classes = [authentication.SessionAuthentication]
 
     def get(self, request, format=None):
-        print(f"In Profile get : {request}")
+        print(f"In Profile get : {request.__dict__}")
         serializer = UserProfileSerializer(request.user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+
+        # if request.content_type == 'application/x-www-form-urlencoded':
+        print(f"I am here in user profile html rendered view : serialized data {serializer}")
+        profile_data = serializer.data
+        context = {}
+        # Accessing the associated UserProfile object for the current User
+        try:
+            user_profile = request.user.userprofile
+        except UserProfile.DoesNotExist:
+            user_profile = None  # Handle the case where UserProfile doesn't exist for the user
+
+        context = {
+            "profile": user_profile,
+            "serializer": profile_data,
+        }
+
+        return render(request, self.template_name, context)
+        # return HttpResponseRedirect(self.template_name)
+        # return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user_id = self.request.GET.get("user_id")
+        print("Getting user context")
+        if user_id:
+            user = User.objects.get(pk=user_id)
+            profile = user.profile
+            context["profile1"] = profile
+            print(f"Returing User profile: {context}")
+        return context
+    
 
 class UserChangePasswordAPIView(views.APIView):
     renderer_classes = [UserRenderer, renderers.BrowsableAPIRenderer]

@@ -33,7 +33,7 @@
                             <li class="px-4 py-2 hover:bg-yellow-300 hover:font-bold">My Test Cases</li>
                             <li class="px-4 py-2 hover:bg-yellow-300 hover:font-bold">Settings</li>
                             {% comment %} <ul class="space-y-2"> {% endcomment %}
-                            <li class="px-4 py-2 mt-2 bg-gray-400 rounded shadow">Profile</li>
+                            <a href="{% url 'users:profile' %}"><li class="px-4 py-2 mt-2 bg-gray-400 rounded shadow">Profile</li></a>
                             <li class="px-4 py-2 mt-2 bg-gray-400 rounded shadow">Settings</li>
                             <!-- Add more menu items as needed -->
                         </ul>

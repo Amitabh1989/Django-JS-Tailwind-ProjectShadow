@@ -1,0 +1,11 @@
+{% extends 'testcase/base.html' %}
+
+{% block content %}
+
+<h2>Welcome to your profile</h2>
+{{user.is_authenticated}}
+{{profile.avatar_name}}
+{{profile.profile_pic}}
+{{serializer}}
+
+{% endblock content %}
