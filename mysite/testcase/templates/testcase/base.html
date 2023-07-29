@@ -16,11 +16,11 @@
             
             <div class="flex items-center">
                 <a href="" class="mr-6 text=sm font-medium text-grey-500">Dashboard</a>
-                <a href="" class="mr-6 text=sm font-medium text-grey-500">Sales</a>
-                <a href="" class="mr-6 text=sm font-medium text-grey-500">Orders</a>
+                <a href="" class="mr-6 text=sm font-medium text-grey-500">Test Cases</a>
+                <a href="/" class="mr-6 text=sm font-medium text-grey-500">Stats</a>
                 {% comment %} <a href="{% url 'myapp:create_product' %}" class="mr-6 text=sm font-medium text-grey-500">Create Products</a> {% endcomment %}
-                <a href="" class="mr-6 text=sm font-medium text-grey-500">My Purchases</a>
-                {% comment %} <a href="{% url 'myapp:logout' %}" class="mr-6 text=sm font-medium text-grey-500">Logout</a> {% endcomment %}
+                <a href="{% url 'users:profile' %}" class="mr-6 text=sm font-medium text-grey-500">My Profile</a>
+                <a href="{% url 'users:logout' %}" class="mr-6 text=sm font-medium text-grey-500">Logout</a>
             </div>
 
         </div>
