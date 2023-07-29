@@ -23,6 +23,7 @@ from django.contrib.auth import get_user_model, login, logout
 from .forms import CustomUserCreationForm, UserForm
 # Create your views here.
 from rest_framework.parsers import JSONParser
+from rest_framework.exceptions import ValidationError
 
 
 def get_tokens_for_user(user):
@@ -48,19 +49,19 @@ class UserRegistrationViewSet(viewsets.ModelViewSet):
     # authentication_classes = [authentication.BasicAuthentication]
     authentication_classes = [JWTAuthentication]
 
-    def dispatch(self, request, *args, **kwargs):
-        # Determine the appropriate HTTP method function based on the request method
-        print(f"In dispatch : {self.http_method_names}")
-        print(f"In dispatch : {request.method.lower()}")
-        print(f"In dispatch : {self.http_method_not_allowed}")
-        if request.method.lower() in self.http_method_names:
-            handler = getattr(self, request.method.lower(), self.http_method_not_allowed)
-        else:
-            handler = self.http_method_not_allowed
+    # def dispatch(self, request, *args, **kwargs):
+    #     # Determine the appropriate HTTP method function based on the request method
+    #     print(f"In dispatch : {self.http_method_names}")
+    #     print(f"In dispatch : {request.method.lower()}")
+    #     print(f"In dispatch : {self.http_method_not_allowed}")
+    #     if request.method.lower() in self.http_method_names:
+    #         handler = getattr(self, request.method.lower(), self.http_method_not_allowed)
+    #     else:
+    #         handler = self.http_method_not_allowed
 
-        # Call the appropriate handler function
-        print(f"Handler : {handler}")
-        return handler(request, *args, **kwargs)
+    #     # Call the appropriate handler function
+    #     print(f"Handler : {handler}")
+    #     return handler(request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
         print(f"Entered the User Create function : {request.__dict__}")
@@ -83,22 +84,42 @@ class UserRegistrationViewSet(viewsets.ModelViewSet):
 
         # Check if the request content type is JSON
         if 'application/json' in request.content_type:
-            data_to_serialize = JSONParser().parse(request)
+            data_to_serialize = request.data
+            # self.request.accepted_renderer = renderers.BrowsableAPIRenderer()
         else:
             # Assume it's form data (application/x-www-form-urlencoded)
             data_to_serialize = request.POST.dict()
+            # self.request.accepted_renderer = TemplateHTMLRenderer()
 
         print(f"Data to serialize = {data_to_serialize}")
         serializer = self.serializer_class(data=data_to_serialize)
-        if serializer.is_valid(raise_exception=True):
+        try:
+            serializer.is_valid(raise_exception=True)
             print("User data is valid, saving the user now")
             user = serializer.save()
             token = get_tokens_for_user(user)
             context = {"msg": "User Registration successful!", "token": token}
             return Response(context, status=status.HTTP_201_CREATED)
+        
+        except ValidationError as e:
+            print(f"Exception is : {e}")
+            error_msg = e
+            if hasattr(e, "detail"):
+                error_msg = e.detail
+
         context = {"msg": "Bad user data", "error": serializer.errors, "non_field_errors": serializer.errors}
         return Response(context, status=status.HTTP_400_BAD_REQUEST)
-    
+
+    # def finalize_response(self, request, response, *args, **kwargs):
+    #     print("Finalize response being called")
+    #     # Set the appropriate renderer based on the request content type
+    #     if 'application/json' in request.content_type:
+    #         response.accepted_renderer = renderers.BrowsableAPIRenderer()
+    #     else:
+    #         response.accepted_renderer = TemplateHTMLRenderer()
+    #     print(f"Finalize response being returned : {response.accepted_renderer}")
+    #     return super().finalize_response(request, response, *args, **kwargs)
+
     def get_queryset(self):
         if self.request.user.is_authenticated:
             # return User.objects.all()
