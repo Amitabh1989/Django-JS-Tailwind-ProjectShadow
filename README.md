@@ -43,7 +43,7 @@ ProjectShadow is a custom website built using Django, Django Rest Framework (DRF
 To run the ProjectShadow application locally, follow these steps:
 
 1. Clone the repository:
-   git clone https://github.com/your-username/ProjectShadow.git
+   git clone https://github.com/Amitabh1989/ProjectShadow.git
 
 2. Install the required dependencies:
    pip install -r requirements.txt
@@ -62,7 +62,7 @@ Contributions to ProjectShadow are welcome! If you have any ideas, suggestions, 
 
 ## License
 
-ProjectShadow is licensed under the MIT License. You can find more information in the [LICENSE](https://github.com/your-username/ProjectShadow/blob/main/LICENSE) file.
+ProjectShadow is licensed under the MIT License. You can find more information in the [LICENSE](https://github.com/Amitabh1989/ProjectShadow/blob/main/LICENSE) file.
 
 ## Acknowledgements
 
