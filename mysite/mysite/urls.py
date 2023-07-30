@@ -21,7 +21,8 @@ urlpatterns = [
     path("api/", include("api.urls"), name='api'),
     path("auth/", include("users.urls"), name='users'),
     path("restapi/", include('rest_framework.urls'), name="rest_framework"), # UserRegistrationViewSet
-    path("config/", include("config.urls"), name='config')
+    path("config/", include("config.urls"), name='config'),
+    path("testcase/", include("testcase.urls"), name='testcase'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 urlpatterns += staticfiles_urlpatterns()

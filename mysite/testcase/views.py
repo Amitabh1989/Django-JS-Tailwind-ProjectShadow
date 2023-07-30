@@ -12,6 +12,13 @@ from django.db.models import Q, Value
 from io_module.models import IOModel
 from api.serializers import TestCaseSerializer, TestStepSerializer
 from rest_framework.permissions import IsAuthenticated
+from rest_framework import viewsets
+from rest_framework.renderers import BrowsableAPIRenderer, TemplateHTMLRenderer
+from rest_framework.authentication import SessionAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from .serializers import TestCaseListSerializer
+from rest_framework import status
 # Create your views here.
 
 class TestCaseView(View):
@@ -191,3 +198,31 @@ class TestStepDetail(DetailView):
     #     print("Context data is : {}".format(context))
     #     return context
 
+class TestCaseListRestAPI(viewsets.ModelViewSet):
+    queryset = TestCase.objects.all()
+    renderer_classes = [BrowsableAPIRenderer, TemplateHTMLRenderer]
+    # authentication_classes = [IsAuthenticated]
+    serializer_class = TestCaseListSerializer
+    template_name = "testcase/tclist.html"
+
+    def list(self, request, *args, **kwargs):
+        print(f"Request : {request.__dict__}")
+        user = request.user
+        tc_list = self.queryset.filter(user=user)
+        serializer = self.serializer_class(instance=tc_list, many=True)
+        print(f"User is : {user}")
+        print(f"TC list is : {tc_list}")
+        print(f"Serializer is : {serializer}")
+        # serializer.is_valid(raise_exception=True)
+        return Response({"data": serializer.data}, status=status.HTTP_201_CREATED)
+        
+    def retrieve(self, request, *args, **kwargs):
+        print(f"Request : {request.__dict__}")
+        user = request.user
+        tc_instance = self.get_object()
+        serializer = self.serializer_class(instance=tc_instance, many=False)
+        print(f"User is : {user}")
+        print(f"TC list is : {tc_instance}")
+        print(f"Serializer is : {serializer}")
+        # serializer.is_valid(raise_exception=True)
+        return Response({"data": serializer.data}, status=status.HTTP_201_CREATED)

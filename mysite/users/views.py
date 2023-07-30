@@ -312,9 +312,18 @@ class ValidateResetPasswordEmailAPIView(views.APIView):
         return Response({"msg": "Password has been updated. Try login with new password"})
 
 class UserLogoutAPIView(views.APIView):
+    print("Logout class called")
+    # renderer_classes = [TemplateHTMLRenderer, renderers.BrowsableAPIRenderer]
+    # permission_classes = [IsAuthenticated]
     def post(self, request, *args, **kwargs):
+        print(f"Logout Request : {request.__dict__}")
         logout(request)
         return Response({"msg": "User is logged out"}, status=status.HTTP_200_OK)
+    
+    # def dispatch(self, request, *args, **kwargs):
+    #     print(f"Request for logout: {request.__dict__}")
+    #     request.method = "POST"
+    #     return super().dispatch(request, *args, **kwargs)
 
 
 
