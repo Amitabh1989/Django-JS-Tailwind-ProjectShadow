@@ -19,6 +19,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from .serializers import TestCaseListSerializer
 from rest_framework import status
+from .renderers import TCRenderer
 # Create your views here.
 
 class TestCaseView(View):
@@ -200,29 +201,48 @@ class TestStepDetail(DetailView):
 
 class TestCaseListRestAPI(viewsets.ModelViewSet):
     queryset = TestCase.objects.all()
-    renderer_classes = [BrowsableAPIRenderer, TemplateHTMLRenderer]
-    # authentication_classes = [IsAuthenticated]
+    renderer_classes = [TCRenderer, BrowsableAPIRenderer, TemplateHTMLRenderer]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = TestCaseListSerializer
     template_name = "testcase/tclist.html"
 
     def list(self, request, *args, **kwargs):
         print(f"Request : {request.__dict__}")
+        accepted_media_type = request.accepted_media_type
+        print(f"Accepted media type : {accepted_media_type}")
         user = request.user
         tc_list = self.queryset.filter(user=user)
         serializer = self.serializer_class(instance=tc_list, many=True)
         print(f"User is : {user}")
         print(f"TC list is : {tc_list}")
         print(f"Serializer is : {serializer}")
+        print(f"Serializer is : {serializer.data}")
         # serializer.is_valid(raise_exception=True)
-        return Response({"data": serializer.data}, status=status.HTTP_201_CREATED)
+        # return Response({"data": serializer.data}, status=status.HTTP_201_CREATED)
+        if accepted_media_type == 'text/html':
+            return render(request, self.template_name, {"data": serializer.data})
+        # return Response({"data": serializer.data}, status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
         
     def retrieve(self, request, *args, **kwargs):
-        print(f"Request : {request.__dict__}")
+        print(f"Request retrieve : {request.__dict__}")
         user = request.user
         tc_instance = self.get_object()
+        accepted_media_type = request.accepted_media_type
         serializer = self.serializer_class(instance=tc_instance, many=False)
         print(f"User is : {user}")
-        print(f"TC list is : {tc_instance}")
+        print(f"TC detail is : {tc_instance}")
         print(f"Serializer is : {serializer}")
         # serializer.is_valid(raise_exception=True)
+        if accepted_media_type == 'text/html':
+            return render(request, self.template_name, {"detail": serializer.data})
         return Response({"data": serializer.data}, status=status.HTTP_201_CREATED)
+
+    # def get_renderer_context(self):
+    #     # Check if the request is from the Browsable API (text/html)
+    #     if self.request.accepted_renderer.format == 'html':
+    #         return {'request': self.request._request, 'view': self}
+
+    #     # For other requests (e.g., JSON, XML), use default behavior
+    #     return super().get_renderer_context()

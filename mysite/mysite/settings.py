@@ -164,6 +164,7 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         # 'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.permissions.IsAuthenticated',
         'rest_framework.authentication.SessionAuthentication',  # If you want to support both session and JWT authentication.
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',

@@ -313,8 +313,8 @@ class ValidateResetPasswordEmailAPIView(views.APIView):
 
 class UserLogoutAPIView(views.APIView):
     print("Logout class called")
-    # renderer_classes = [TemplateHTMLRenderer, renderers.BrowsableAPIRenderer]
-    # permission_classes = [IsAuthenticated]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
     def post(self, request, *args, **kwargs):
         print(f"Logout Request : {request.__dict__}")
         logout(request)
