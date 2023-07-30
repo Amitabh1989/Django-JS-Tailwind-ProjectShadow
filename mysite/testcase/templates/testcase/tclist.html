@@ -1,0 +1,19 @@
+{% extends 'testcase/base.html' %}
+
+{% block content %}
+
+<h2>Welcome to your testcase list</h2>
+<h1>Test Case List</h1>
+<ul>
+    {% for testcase in data %}
+    <li>
+        Test Case ID: {{ testcase.id }}
+        <br>
+        Test Case Name: {{ testcase.name }}
+        <!-- Add other fields you want to display here -->
+        <br>
+    </li>
+    {% endfor %}
+</ul>
+
+{% endblock content %}

@@ -3,6 +3,7 @@
 {% block content %}
 
 <div class="flex flex-col justify-center items-center min-h-screen">
+    {% csrf_token %}
     <h1 class="font-bold text-lg mb-10"> You have been logged out </h1>
     <p>
         <span>Click here to </span>

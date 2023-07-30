@@ -6,6 +6,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <title>Home Page</title>
 </head>
+{% load static %}
 <body>
     <nav class="shadow-lg">
         <div class="flex flex-wrap justify-between ml-5 items-center mx-auto px-4 py-2.5">
@@ -16,11 +17,10 @@
             
             <div class="flex items-center">
                 <a href="" class="mr-6 text=sm font-medium text-grey-500">Dashboard</a>
-                <a href="" class="mr-6 text=sm font-medium text-grey-500">Test Cases</a>
+                <a href='/testcase/tcs/' class="mr-6 text-sm font-medium text-grey-500">Test Cases</a>
                 <a href="/" class="mr-6 text=sm font-medium text-grey-500">Stats</a>
-                {% comment %} <a href="{% url 'myapp:create_product' %}" class="mr-6 text=sm font-medium text-grey-500">Create Products</a> {% endcomment %}
                 <a href="{% url 'users:profile' %}" class="mr-6 text=sm font-medium text-grey-500">My Profile</a>
-                <a href="{% url 'users:logout' %}" class="mr-6 text=sm font-medium text-grey-500">Logout</a>
+                <a href="" class="mr-6 text=sm font-medium text-grey-500" id="logout-link">Logout</a>
             </div>
 
         </div>
@@ -32,4 +32,5 @@
     {% endblock content %}
 
 </body>
+<script src="{% static '/users/js/logout.js' %}"></script>
 </html>
