@@ -318,7 +318,8 @@ class UserLogoutAPIView(views.APIView):
     def post(self, request, *args, **kwargs):
         print(f"Logout Request : {request.__dict__}")
         logout(request)
-        return Response({"msg": "User is logged out"}, status=status.HTTP_200_OK)
+        return HttpResponseRedirect(reverse("users:login"))
+        # return Response({"msg": "User is logged out"}, status=status.HTTP_200_OK)
     
     # def dispatch(self, request, *args, **kwargs):
     #     print(f"Request for logout: {request.__dict__}")

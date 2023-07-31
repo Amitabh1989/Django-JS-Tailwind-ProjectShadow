@@ -14,7 +14,6 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 from rest_framework.authentication import SessionAuthentication
 from django.urls import reverse
 from rest_framework.renderers import BrowsableAPIRenderer, TemplateHTMLRenderer
-from rest_framework import status
 # Create your views here.
 
 
@@ -64,13 +63,12 @@ class TestStepStats(viewsets.ModelViewSet):
     """
     queryset = TestStep.objects.all()
     serializer_class = TestStepSerializer
-    permission_classes = [IsAuthenticated]
-    authentication_classes = [SessionAuthentication]
-    renderer_classes = [BrowsableAPIRenderer] #, TemplateHTMLRenderer]
+    # permission_classes = [IsAuthenticated]
+    # authentication_classes = [SessionAuthentication]
+    renderer_classes = [BrowsableAPIRenderer, TemplateHTMLRenderer]
 
     # def get(self, request, *args, **kwargs):
     def list(self, request, *args, **kwargs):
-        print("Request dict: {}".format(request.__dict__))
         print("Request for stats from API: {}".format(request.GET))
         print("Self.Request for stats : {}".format(self.request.GET))
         print("Self.Request for body : {}".format(self.request.data))
@@ -81,7 +79,7 @@ class TestStepStats(viewsets.ModelViewSet):
         response = {
             "pk": False,
             "fetched": False,
-            "exact_step": {},
+            "exact_step": {},  # this has been changed from data
             "total_step_by_params": 0,
             "num_tc_associated": 0, 
         }
@@ -140,12 +138,11 @@ class TestStepStats(viewsets.ModelViewSet):
             "exact_step": serialized_test_step.data if serialized_test_step.data is not None else {},
             "total_step_by_params": total_step_by_params,
             # "tc_by_params": serialize('json', list(test_step)),
-            "tc_by_params": self.serializer_class(test_step).data,
+            "tc_by_params": self.serializer_class(test_step),
             "num_tc_associated": num_tcs_serial
         }
         print("Response is : {}".format(response))
-        # return JsonResponse(response)
-        return Response(response, status=status.HTTP_200_OK)
+        return JsonResponse(response)
 
 
     # def create(self, request, *args, **kwargs):

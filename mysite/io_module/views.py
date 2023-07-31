@@ -10,11 +10,15 @@ from rest_framework.renderers import TemplateHTMLRenderer
 from django.views.generic import CreateView
 from .forms import IOModelForm
 from .models import IOModel
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import SessionAuthentication
 
 
 class IOModelModelViewSet(viewsets.ModelViewSet):
     queryset = IOModel.objects.all()
     serializer_class = IOModelSerializer
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [SessionAuthentication]
     # renderer_classes = [TemplateHTMLRenderer]
 
     def create(self, request, *args, **kwargs):
