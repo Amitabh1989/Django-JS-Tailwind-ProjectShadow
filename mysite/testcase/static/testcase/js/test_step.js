@@ -257,9 +257,6 @@ function getTestStepStats(formValues) {
             queryString += key + "=" + formValues[key] + '&';
         });
         console.log("Fetching step data : " + queryString);
-        // const url = '/testcase/teststep_stats/?' + new URLSearchParams(queryString);
-        // const url = '/testcase/teststep_stats/?' + queryString; <--- This is the most current line and works
-        // const url = '/testcase/teststep_stats/?' + queryString;
         const url = '/api/stepstat/?' + queryString;
         console.log('Get Request : ' + url)
         const xhr = new XMLHttpRequest();
@@ -268,6 +265,7 @@ function getTestStepStats(formValues) {
             if (xhr.readyState === XMLHttpRequest.DONE) {
                 console.log("XHR status if : " + xhr.status);
                 if (xhr.status === 200) {
+                    console.log("OUTPUT seen : " + xhr.responseText);
                     const response = JSON.parse(xhr.responseText);
                     console.log("Response received parsed : " + response);
                     console.log("Response received parsed : " + JSON.stringify(response));
@@ -480,8 +478,8 @@ function testStepDetails(jsonResponse) {
     let numTCs = testCases.num_tc_associated;
     let dataValues = undefined;
     console.log("numTCs type: " + typeof numTCs);
-    // console.log("numTCs: " + JSON.stringify(numTCs));
-    console.log("numTCs: " + numTCs);
+    console.log("numTCs: " + JSON.stringify(numTCs));
+    // console.log("numTCs: " + numTCs);
 
     if (Array.isArray(numTCs)) {
         dataValues = numTCs.map(testCase => {
