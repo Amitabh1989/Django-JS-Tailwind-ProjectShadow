@@ -246,15 +246,13 @@ class TestStepStats(viewsets.ModelViewSet):
 
         response = {
             "pk": False,
-            "fetched": False,
             "exact_step": {},
             "total_step_by_params": 0,  # How many test steps has same parameters as in MODULE_SEARCH_KEYMAP
             "num_tc_associated": 0, 
         }
 
         print("Fetching Test Step Stats : step {}".format(step))
-        pk = False
-        fetched = False
+        pk = None
         total_step_by_params = 0
         num_tc_associated = 0
 
@@ -306,12 +304,10 @@ class TestStepStats(viewsets.ModelViewSet):
 
 
         try:
-            pk = None
             if exact_test_step.exists():
                 pk = getattr(exact_test_step.first(), 'pk', None)
         except Exception as e:
             print("Exception is : {}".format(e))
-            test_step = None
         print("Test step fetched PK : {}".format(pk))
 
         serialized_exact_test_step = self.serializer_class(exact_test_step, many=True) # if fetched else {}
@@ -320,8 +316,8 @@ class TestStepStats(viewsets.ModelViewSet):
         print("Serialized Similar Test Step : {}".format(serialized_similar_test_step.data))
         
         response = {
-            "pk": pk,
-            "fetched": fetched,
+            "pk": pk,  # Primary Key of the found Step
+            "search_key": MODULE_SEARCH_KEYMAP[step["module_type"]], # What keys were looed for in the query
             "exact_test_step": serialized_exact_test_step.data,
             "similar_test_step": serialized_similar_test_step.data,
         }
@@ -340,7 +336,7 @@ class TestStepStats(viewsets.ModelViewSet):
         # Convert the UUID to a string
         uuid_string = str(generated_uuid)
         cqid = f"CQ_ID_{uuid_string}"
-        title = "Dummy_TC_3"
+        title = f"Dummy_TC_{uuid_string[2:6]}"
         summary = "Testing Model"
         test_case, created = TestCase.objects.get_or_create(cqid=cqid, title=title, summary=summary, user=request.user)
         print("Created : {}".format(created))
