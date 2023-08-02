@@ -462,9 +462,10 @@ function testStepDetails(jsonResponse) {
     //     ctx.chart.destroy();
     // }
     const testCases = jsonResponse;
-    console.log("Test Cases in JS     : " + JSON.stringify(testCases));
-    console.log("Exact Step num TCs   : " + testCases.exact_test_step[0].test_cases.length);
-    console.log("Similar Step num TCs : " + testCases.similar_test_step.length);
+    console.log("Test Cases     : " + JSON.stringify(testCases));
+    console.log("Tets Case type : " + typeof testCases);
+    console.log("Test NumTC     : " + typeof testCases.num_tc_associated);
+    console.log("Type NumTC     : " + typeof testCases.num_tc_associated);
 
     // ##############################
     // CHART 1

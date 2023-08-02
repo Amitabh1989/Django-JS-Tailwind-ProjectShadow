@@ -19,7 +19,8 @@ class TestCaseSerializer(serializers.ModelSerializer):
     test_steps_list = TestStepSerializer(many=True)
     class Meta:
         model = TestCase
-        fields = '__all__'
+        # fields = '__all__'
+        fields = ["cqid", "title", "summary", "test_steps_list", "created_on", "updated_on"]
 
 class ConfigModelSerializer(serializers.ModelSerializer):
     class Meta:

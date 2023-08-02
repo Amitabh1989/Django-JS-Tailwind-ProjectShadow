@@ -17,6 +17,7 @@ from rest_framework.renderers import BrowsableAPIRenderer, TemplateHTMLRenderer
 from rest_framework import status
 import time
 import uuid
+from itertools import chain
 
 # Create your views here.
 
@@ -281,8 +282,17 @@ class TestStepStats(viewsets.ModelViewSet):
         print(f"Exact Step Details : {exact_test_step}")
 
         # Get Test Cases Associated with this Step
-        testCases_with_exact_step = exact_test_step.first().test_cases.all()
+        # testCases_with_exact_step = []
+        
+        testCases_with_exact_step = [test_step.test_cases.all() for test_step in exact_test_step]
         print(f"Exact Step Test Cases List : {testCases_with_exact_step}")
+
+        combined_testCases_with_exact_step = list(chain(*testCases_with_exact_step))
+        print(f"Exact Step Test Cases List Combined: {combined_testCases_with_exact_step}")
+
+        # Get the test case details to create a hyperlink
+        exact_step_testCase_details = [[tc.id, tc.cqid] for tc in combined_testCases_with_exact_step]
+        print(f"Exact Step Test Cases ID List : {exact_step_testCase_details}")
 
         # Total Number of times this step has been used
         print(f"Total number times test step is used : {len(exact_test_step)}")
@@ -295,31 +305,77 @@ class TestStepStats(viewsets.ModelViewSet):
         print(f"Similar Step Details : {similar_test_step}")
 
         # Get Test Cases Associated with this Step
-        testCases_with_similar_step = similar_test_step.first().test_cases.all()
+        # testCases_with_similar_step = similar_test_step.first().test_cases.all()
+        testCases_with_similar_step = [test_step.test_cases.all() for test_step in similar_test_step]
         print(f"Similar Step Test Cases Details : {testCases_with_similar_step}")
+
+        combined_testCases_with_similar_step = list(set(chain(*testCases_with_similar_step)))
+        print(f"Similar Step Test Cases List Combined: {combined_testCases_with_similar_step}")
+
         # Remove exact match from here
-        if testCases_with_similar_step:
-            testCases_with_similar_step = [tc for tc in testCases_with_similar_step if tc not in testCases_with_exact_step]
-        print(f"Similar Step Test Cases Details trimmed : {testCases_with_similar_step}")
+        if combined_testCases_with_similar_step:
+            combined_testCases_with_similar_step = [tc for tc in combined_testCases_with_similar_step if tc not in combined_testCases_with_exact_step]
+        print(f"Similar Step Test Cases Details trimmed : {combined_testCases_with_similar_step}")
+
+        # Get the test case details to create a hyperlink
+        similar_step_testCase_details = [[tc.id, tc.cqid] for tc in combined_testCases_with_similar_step]
+        print(f"Similar Step Test Cases ID List : {similar_step_testCase_details}")
 
 
-        try:
-            if exact_test_step.exists():
-                pk = getattr(exact_test_step.first(), 'pk', None)
-        except Exception as e:
-            print("Exception is : {}".format(e))
-        print("Test step fetched PK : {}".format(pk))
+        # try:
+        #     if exact_test_step.exists():
+        #         pk = getattr(exact_test_step.first(), 'pk', None)
+        # except Exception as e:
+        #     print("Exception is : {}".format(e))
+        # print("Test step fetched PK : {}".format(pk))
 
-        serialized_exact_test_step = self.serializer_class(exact_test_step, many=True) # if fetched else {}
-        serialized_similar_test_step = self.serializer_class(testCases_with_similar_step, many=True) # if fetched else {}
-        print("Serialized Exact Test Step : {}".format(serialized_exact_test_step.data))
+        serialized_exact_test_step = self.serializer_class(exact_test_step, many=True)
+        serialized_similar_test_step = self.serializer_class(testCases_with_similar_step, many=True)
+
+        # serialized_exact_test_case = self.serializer_class(exact_test_step, many=True)
+        # serialized_similar_test_step = self.serializer_class(testCases_with_similar_step, many=True)
+
+        similar_test_step_tc_ids = [step.test_cases.all() for step in similar_test_step]
+
+        print("Serialized Exact Test Step   : {}".format(serialized_exact_test_step.data))
         print("Serialized Similar Test Step : {}".format(serialized_similar_test_step.data))
+        print("Similar Test Step Test Cases : {}".format(similar_test_step_tc_ids))
         
+        exactStep_testCases = TestCaseSerializer(combined_testCases_with_exact_step, many=True).data
+        similarStep_testCases = TestCaseSerializer(combined_testCases_with_similar_step, many=True).data
+        key_to_remove = 'step'
+        for d in exactStep_testCases:
+            # for each in d:
+            #     print(f"D : => {each}")
+                
+            if 'test_steps_list' in d:
+                print(f"Iside")
+                # del d['test_steps_list'][0]["step"]
+                for step_data in d['test_steps_list']:
+                    # step_data.pop('step', None)
+                    print(F"Found step : {step_data}")
+                    step_data.pop('step', None)
+                    print(f"Step data after delete : {step_data}")
+        
+        for d in similarStep_testCases:
+            # for each in d:
+            print(f"D : => {d}")
+            
+            if 'test_steps_list' in d:
+                print(f"Iside")
+                # del d['test_steps_list'][0]["step"]
+                for step_data in d['test_steps_list']:
+                #     step_data.pop('step', None)
+                    print(F"Found step : {step_data}")
+                    step_data.pop('step', None)
+
         response = {
-            "pk": pk,  # Primary Key of the found Step
+            # "pk": pk,  # Primary Key of the found Step
             "search_key": MODULE_SEARCH_KEYMAP[step["module_type"]], # What keys were looed for in the query
             "exact_test_step": serialized_exact_test_step.data,
             "similar_test_step": serialized_similar_test_step.data,
+            "exactStep_testCases": TestCaseSerializer(combined_testCases_with_exact_step, many=True).data,
+            "similarStep_testCases": TestCaseSerializer(combined_testCases_with_similar_step, many=True).data,
         }
         print("Response is : {}".format(response))
         return JsonResponse(response)
@@ -360,4 +416,3 @@ class TestStepStats(viewsets.ModelViewSet):
         for test_step in test_steps:
             print(test_step.step)
         return JsonResponse(response)
-        
