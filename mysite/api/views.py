@@ -18,13 +18,14 @@ from rest_framework import status
 import time
 import uuid
 from itertools import chain
+from copy import deepcopy
 
 # Create your views here.
 
 
-class ConfigCreateAPIView(viewsets.ModelViewSet):
-    queryset = ConfigModel.objects.all()
-    serializer_class = ConfigModelSerializer
+# class ConfigCreateAPIView(viewsets.ModelViewSet):
+#     queryset = ConfigModel.objects.all()
+#     serializer_class = ConfigModelSerializer
 
     # def form_valid(self, form):
     #     print(f"Cleaned data : {form.cleaned_data}")
@@ -244,18 +245,7 @@ class TestStepStats(viewsets.ModelViewSet):
         request_data = self.request.GET
         step = {key: value for key, value in request_data.items()}
         print("Step is : {}".format(step))
-
-        response = {
-            "pk": False,
-            "exact_step": {},
-            "total_step_by_params": 0,  # How many test steps has same parameters as in MODULE_SEARCH_KEYMAP
-            "num_tc_associated": 0, 
-        }
-
         print("Fetching Test Step Stats : step {}".format(step))
-        pk = None
-        total_step_by_params = 0
-        num_tc_associated = 0
 
         # Contruct the user_query here:
         # Here 2 things are happening,
@@ -282,8 +272,6 @@ class TestStepStats(viewsets.ModelViewSet):
         print(f"Exact Step Details : {exact_test_step}")
 
         # Get Test Cases Associated with this Step
-        # testCases_with_exact_step = []
-        
         testCases_with_exact_step = [test_step.test_cases.all() for test_step in exact_test_step]
         print(f"Exact Step Test Cases List : {testCases_with_exact_step}")
 
@@ -305,7 +293,6 @@ class TestStepStats(viewsets.ModelViewSet):
         print(f"Similar Step Details : {similar_test_step}")
 
         # Get Test Cases Associated with this Step
-        # testCases_with_similar_step = similar_test_step.first().test_cases.all()
         testCases_with_similar_step = [test_step.test_cases.all() for test_step in similar_test_step]
         print(f"Similar Step Test Cases Details : {testCases_with_similar_step}")
 
@@ -314,26 +301,13 @@ class TestStepStats(viewsets.ModelViewSet):
 
         # Remove exact match from here
         if combined_testCases_with_similar_step:
-            combined_testCases_with_similar_step = [tc for tc in combined_testCases_with_similar_step if tc not in combined_testCases_with_exact_step]
+            combined_testCases_with_similar_step = [tc for tc in combined_testCases_with_similar_step if 
+                                                    tc not in combined_testCases_with_exact_step]
         print(f"Similar Step Test Cases Details trimmed : {combined_testCases_with_similar_step}")
 
         # Get the test case details to create a hyperlink
-        similar_step_testCase_details = [[tc.id, tc.cqid] for tc in combined_testCases_with_similar_step]
-        print(f"Similar Step Test Cases ID List : {similar_step_testCase_details}")
-
-
-        # try:
-        #     if exact_test_step.exists():
-        #         pk = getattr(exact_test_step.first(), 'pk', None)
-        # except Exception as e:
-        #     print("Exception is : {}".format(e))
-        # print("Test step fetched PK : {}".format(pk))
-
         serialized_exact_test_step = self.serializer_class(exact_test_step, many=True)
-        serialized_similar_test_step = self.serializer_class(testCases_with_similar_step, many=True)
-
-        # serialized_exact_test_case = self.serializer_class(exact_test_step, many=True)
-        # serialized_similar_test_step = self.serializer_class(testCases_with_similar_step, many=True)
+        serialized_similar_test_step = self.serializer_class(combined_testCases_with_similar_step, many=True)
 
         similar_test_step_tc_ids = [step.test_cases.all() for step in similar_test_step]
 
@@ -343,39 +317,34 @@ class TestStepStats(viewsets.ModelViewSet):
         
         exactStep_testCases = TestCaseSerializer(combined_testCases_with_exact_step, many=True).data
         similarStep_testCases = TestCaseSerializer(combined_testCases_with_similar_step, many=True).data
-        key_to_remove = 'step'
+        keys_to_remove = []
+
         for d in exactStep_testCases:
-            # for each in d:
-            #     print(f"D : => {each}")
-                
-            if 'test_steps_list' in d:
-                print(f"Iside")
-                # del d['test_steps_list'][0]["step"]
-                for step_data in d['test_steps_list']:
-                    # step_data.pop('step', None)
-                    print(F"Found step : {step_data}")
-                    step_data.pop('step', None)
-                    print(f"Step data after delete : {step_data}")
-        
+            for i, k in d.items():
+                if i == "test_steps_list":
+                    keys_to_remove.append(i)
+
+        for key in keys_to_remove:
+            for d in exactStep_testCases:
+                d.pop(key, None)
+
+        print(exactStep_testCases)
+
         for d in similarStep_testCases:
-            # for each in d:
-            print(f"D : => {d}")
-            
-            if 'test_steps_list' in d:
-                print(f"Iside")
-                # del d['test_steps_list'][0]["step"]
-                for step_data in d['test_steps_list']:
-                #     step_data.pop('step', None)
-                    print(F"Found step : {step_data}")
-                    step_data.pop('step', None)
+            for i, k in d.items():
+                if i == "test_steps_list":
+                    keys_to_remove.append(i)
+                    
+        for key in keys_to_remove:
+            for d in similarStep_testCases:
+                d.pop(key, None)
 
         response = {
-            # "pk": pk,  # Primary Key of the found Step
             "search_key": MODULE_SEARCH_KEYMAP[step["module_type"]], # What keys were looed for in the query
             "exact_test_step": serialized_exact_test_step.data,
             "similar_test_step": serialized_similar_test_step.data,
-            "exactStep_testCases": TestCaseSerializer(combined_testCases_with_exact_step, many=True).data,
-            "similarStep_testCases": TestCaseSerializer(combined_testCases_with_similar_step, many=True).data,
+            "exactStep_testCases": exactStep_testCases,
+            "similarStep_testCases": similarStep_testCases,
         }
         print("Response is : {}".format(response))
         return JsonResponse(response)
@@ -390,6 +359,8 @@ class TestStepStats(viewsets.ModelViewSet):
         generated_uuid = uuid.uuid4()
 
         # Convert the UUID to a string
+        user = request.user
+        print(f"API create user is : {user}")
         uuid_string = str(generated_uuid)
         cqid = f"CQ_ID_{uuid_string}"
         title = f"Dummy_TC_{uuid_string[2:6]}"
@@ -403,7 +374,7 @@ class TestStepStats(viewsets.ModelViewSet):
             view_name = get_module_view_name(step["module_type"])
             url = reverse(view_name)
             print(f"URL is : {url}")
-            save_module_step(url, step)
+            save_module_step(url, step, user=request.user)
             del step["csrfmiddlewaretoken"]
             test_step, created = TestStep.objects.get_or_create(step=step, user=request.user) #, defaults={'step': step})
             print(f"Value of Created is : {created}")

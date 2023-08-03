@@ -12,6 +12,7 @@ from rest_framework import renderers
 import json
 from django.views.generic import CreateView
 from rest_framework import permissions, authentication
+from rest_framework.renderers import BrowsableAPIRenderer, TemplateHTMLRenderer
 
 # Create your views here.
 
@@ -20,6 +21,7 @@ class ConfigViewSetAPI(viewsets.ModelViewSet):
     serializer_class = ConfigModelSerializer
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [authentication.SessionAuthentication]
+    renderer_classes = [BrowsableAPIRenderer] 
     # permission_classes = [permissions.IsAuthenticated]
     # authentication_classes = [authentication.SessionAuthentication]
     # Override the renderers attribute to enforce JSON rendering

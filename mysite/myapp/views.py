@@ -11,7 +11,7 @@ from django.views.generic import (
 from config.models import ConfigModel
 from .forms import ConfigModelForm
 from django.http import JsonResponse
-from api.views import ConfigCreateAPIView
+# from api.views import ConfigCreateAPIView
 
 # from crispy_forms.helper import FormHelper
 # from crispy_forms.mixin import CrispyFormMixin

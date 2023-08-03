@@ -19,6 +19,8 @@ from .settings import BASE_URL
 
 
 MODULE_VIEWS_MAP = {
+    # "config" : 'config:config-list',
+    # "io" : 'io:io-list',
     "config" : 'config:config-list',
     "io" : 'io:io-list',
 }
@@ -34,7 +36,7 @@ def get_module_url(module):
     # return reverse(module[1])
     return view_name
 
-def save_module_step(url, step):
+def save_module_step(url, step, user):
     # Submitting the data to the URL
     full_url = BASE_URL + url
     response = requests.post(full_url, data=json.dumps(step), headers={"Content-Type": "application/json"})

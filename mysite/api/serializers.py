@@ -20,7 +20,7 @@ class TestCaseSerializer(serializers.ModelSerializer):
     class Meta:
         model = TestCase
         # fields = '__all__'
-        fields = ["cqid", "title", "summary", "test_steps_list", "created_on", "updated_on"]
+        fields = ["id", "cqid", "title", "summary", "test_steps_list", "created_on", "updated_on"]
 
 class ConfigModelSerializer(serializers.ModelSerializer):
     class Meta:

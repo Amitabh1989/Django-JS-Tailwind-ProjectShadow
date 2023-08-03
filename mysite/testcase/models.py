@@ -39,6 +39,7 @@ class TestStep(models.Model):
     step = models.JSONField(null=True)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now_add=True)
+    # use_count = models.IntegerField(default=0)
 
     def __str__(self):
         return json.dumps(self.step) if self.step else ""
