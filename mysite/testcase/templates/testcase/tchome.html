@@ -5,8 +5,6 @@
 {% block content %}
 
 <h2>Welcome to tchome</h2>
-
-
 {% comment %} <div class="flex justify-between items-stretch space-x-5"> {% endcomment %}
 
     <!-- ===================================== -->
@@ -18,6 +16,8 @@
             <div class="flex justify-between items-center py-4 px-6">
                 <div class="items-left">
                     <div class="text-gray-300 text-xl text-left font-bold p-5 mr-5">Wingman Dashboard</div>
+                    <h5>User {{user}}</h5>
+                    <h5>User authenticated : {{user.is_authenticated}}</h5>
                         <!-- Sidebar content goes here -->
                         <ul class="py-4 grow">
                             <li class="px-4 py-2 hover:bg-yellow-300 hover:font-bold">Test Modules</li>

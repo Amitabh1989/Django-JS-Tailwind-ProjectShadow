@@ -8,7 +8,8 @@ class ConfigMiddleWare:
     
     def __call__(self, request, *args: Any, **kwargs: Any) -> Any:
         print(f"Config call pre-view called : {request.__dict__}")
-        print(f"Config call user : {request.user}")
+        print(f"Config call pre-view POST : {request.POST}")
+        # print(f"Config call user : {request.META['user']}")
         response = self.get_response(request)
         print(f"Response after view : {response}")
         return response

@@ -65,6 +65,7 @@ class ConfigModel(models.Model):
 
         # Check if record exists
         
-
+        self._use_count += 1
+        super().save(*args, **kwargs)
 
         print(f"Request received in Config save is : {self.__dict__}")
