@@ -30,6 +30,7 @@ class ConfigViewSetAPI(viewsets.ModelViewSet):
     print("Config View set API called")
 
     def create(self, request, *args, **kwargs):
+        # print(f"RRequest session : {request.session}")
         print(f"Config create : User Authenticated : {self.request.user.is_authenticated}")
         # _data =  dict(request.POST)
         # _data =  json.loads(request.body.decode('utf-8'))
@@ -37,7 +38,7 @@ class ConfigViewSetAPI(viewsets.ModelViewSet):
         print("Request _data is : {}".format(self.request.data))
         _data =  dict(self.request.data)
         _data = {key: value[0] if isinstance(value, list) else value for key, value in _data.items()}
-        
+        partial_update_data = {}
         query = Q()
         del _data['csrfmiddlewaretoken']
         for field, value in _data.items():
@@ -52,10 +53,17 @@ class ConfigViewSetAPI(viewsets.ModelViewSet):
 
         if obj.exists():
             print(f"Obj {obj.first()} already exists, not creating again : {obj.first().pk}")
+            print(f"Obj {obj.first()} use count : {obj.first()._use_count}")
             # Update the record with +1 use count
-            data = {"_use_count": int(obj.first()._use_count+1)}
-            resp = self.partial_update(request, data=data, pk=obj.first().pk)
-            print(f"Resp seen is : {resp}")
+            instance = obj.first()
+            instance._use_count += 1
+            instance.save()
+            print(f"Instance is : {instance}")
+            print(f"Instance use count : {instance._use_count}")
+            # partial_update_data["_use_count"] = int(obj.first()._use_count+1)
+            # resp = self.partial_update(request, data=partial_update_data, pk=obj.first().pk)
+            # print(f"Resp seen is : {resp}")
+            # instance.save()
             return Response({"msg": "Partial update done"})
             # return resp
             # return self.partial_update(request, data=data, pk=obj.first().pk)
@@ -70,13 +78,16 @@ class ConfigViewSetAPI(viewsets.ModelViewSet):
         # return super().partial_update(request, *args, **kwargs)
         print("partial_update from config.views is invoked")
         model = self.queryset.get(pk=pk)
+        # model = self.get_object()
         print(f"Model is : {model}")
         print(f"PK is    : {pk}")
         print(f"Data is  : {data}")
 
         serializer = self.serializer_class(model, data=data, partial=True)
-        if serializer.is_valid():
+        print(f"Config partial update serialized is : {serializer}")
+        if serializer.is_valid(raise_exception=True):
             serializer.save()
+            print("Partial update done")
             return Response(status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

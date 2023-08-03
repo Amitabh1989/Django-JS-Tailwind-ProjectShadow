@@ -374,7 +374,8 @@ class TestStepStats(viewsets.ModelViewSet):
             view_name = get_module_view_name(step["module_type"])
             url = reverse(view_name)
             print(f"URL is : {url}")
-            save_module_step(url, step, user=request.user)
+            # save_module_step(url, step, user=request.user)
+            save_module_step(url, step, request)
             del step["csrfmiddlewaretoken"]
             test_step, created = TestStep.objects.get_or_create(step=step, user=request.user) #, defaults={'step': step})
             print(f"Value of Created is : {created}")
