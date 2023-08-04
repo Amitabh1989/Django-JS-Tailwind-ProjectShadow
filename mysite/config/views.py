@@ -13,13 +13,16 @@ import json
 from django.views.generic import CreateView
 from rest_framework import permissions, authentication
 from rest_framework.renderers import BrowsableAPIRenderer, TemplateHTMLRenderer
+from django.contrib.auth.models import AnonymousUser
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 # Create your views here.
 
 class ConfigViewSetAPI(viewsets.ModelViewSet):
     queryset = ConfigModel.objects.all()
     serializer_class = ConfigModelSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [authentication.SessionAuthentication]
     renderer_classes = [BrowsableAPIRenderer] 
     # permission_classes = [permissions.IsAuthenticated]
@@ -30,6 +33,9 @@ class ConfigViewSetAPI(viewsets.ModelViewSet):
     print("Config View set API called")
 
     def create(self, request, *args, **kwargs):
+        # if isinstance(request.user, AnonymousUser):
+        #     print("User is anonymous, redirecting")
+        #     return HttpResponseRedirect(reverse('auth:login'))
         # print(f"RRequest session : {request.session}")
         print(f"Config create : User Authenticated : {self.request.user.is_authenticated}")
         # _data =  dict(request.POST)
@@ -70,6 +76,8 @@ class ConfigViewSetAPI(viewsets.ModelViewSet):
         print("After partial update, proceeding")
         serializer = self.serializer_class(data=_data)
         if serializer.is_valid():
+            print(f"Config serialized data : {serializer.validated_data}")
+            print(f"Config serialized errors : {serializer.errors}")
             serializer.save()
             return Response({"msg": "New config submitted"}, status=status.HTTP_201_CREATED)
         return Response(status=status.HTTP_400_BAD_REQUEST)

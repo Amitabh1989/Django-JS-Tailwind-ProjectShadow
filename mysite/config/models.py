@@ -53,7 +53,7 @@ class ConfigModel(models.Model):
 
 
     def save(self, *args, **kwargs):
-        print(f"Request received in Config save is : {kwargs}")
+        print(f"Kwargs received in Config save is : {kwargs}")
         # Request received in Config save is : {'_state': <django.db.models.base.ModelState object at 0x7fdf5394d810>,
         # 'id': 1, 'user_id': 1, 'module_type': 'config', 'raid': 'r0', 'vdcount': 1,
         # 'spans': 0, 'stripe': 64, 'pdcount': 1, 'size': 12, 'dtabcount': 0, 'hotspare': 0,
