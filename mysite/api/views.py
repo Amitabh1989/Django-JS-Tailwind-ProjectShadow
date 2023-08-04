@@ -371,6 +371,7 @@ class TestStepStats(viewsets.ModelViewSet):
         
         # Create and associate TestStep instances with the TestCase
         for step in step_list[0]["moduleForm"]:
+            print(f"Sending step to save: {step}")
             view_name = get_module_view_name(step["module_type"])
             url = reverse(view_name)
             print(f"URL is : {url}")
@@ -382,6 +383,7 @@ class TestStepStats(viewsets.ModelViewSet):
             test_step.test_cases.add(test_case)
             test_case.test_steps_list.add(test_step)
             test_step.save()
+            print("------------- Saved step, going for next\n\n\n")
         test_case.save()
         response = {"resp": "Submit successful from testcase view"}
         test_steps = test_case.test_steps_list.all()

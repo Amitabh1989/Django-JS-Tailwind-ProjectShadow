@@ -35,7 +35,7 @@ class TestCase(models.Model):
 
 class TestStep(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    test_cases = models.ManyToManyField(TestCase, related_name='test_case')
+    test_cases = models.ManyToManyField(TestCase, related_name='teststep')
     step = models.JSONField(null=True)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now_add=True)

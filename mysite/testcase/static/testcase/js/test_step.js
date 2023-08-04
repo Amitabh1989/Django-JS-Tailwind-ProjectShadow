@@ -265,10 +265,10 @@ function getTestStepStats(formValues) {
             if (xhr.readyState === XMLHttpRequest.DONE) {
                 console.log("XHR status if : " + xhr.status);
                 if (xhr.status === 200) {
-                    console.log("OUTPUT seen : " + xhr.responseText);
+                    // console.log("OUTPUT seen : " + xhr.responseText);
                     const response = JSON.parse(xhr.responseText);
-                    console.log("Response received parsed : " + response);
-                    console.log("Response received parsed : " + JSON.stringify(response));
+                    // console.log("Response received parsed : " + response);
+                    // console.log("Response received parsed : " + JSON.stringify(response));
                     handleTestStepStatsResponse(response);
                 }
             } else {
@@ -451,7 +451,7 @@ function autoReloadDetailView(pk) {
  * Display the status for the test step submitted
  */
 function testStepDetails(jsonResponse) {
-    console.log("Response received in teststepdetails: " + jsonResponse);
+    // console.log("Response received in teststepdetails: " + jsonResponse);
     console.log("Type teststepdetails: " + typeof jsonResponse);
     
 
@@ -462,53 +462,52 @@ function testStepDetails(jsonResponse) {
     //     ctx.chart.destroy();
     // }
     const testCases = jsonResponse;
-    console.log("Test Cases in JS     : " + JSON.stringify(testCases));
+    // console.log("Test Cases in JS     : " + JSON.stringify(testCases));
     console.log("Exact Step num TCs   : " + testCases.exact_test_step[0].test_cases.length);
     console.log("Similar Step num TCs : " + testCases.similar_test_step.length);
 
-    // ##############################
-    // CHART 1
-    // ##############################
+    // ########################################################
+    // CHART 1 : Number of Test Cases using exact step by date
+    // ########################################################
     let cqIDSet = [];
     let dateSet = new Set();
 
     // const numTCs = JSON.stringify(testCases.num_tc_associated);
-    let numTCs = testCases.num_tc_associated;
-    let dataValues = undefined;
-    console.log("numTCs type: " + typeof numTCs);
-    console.log("numTCs: " + JSON.stringify(numTCs));
+    let exactStep_tcs = testCases.exactStep_testCases;
+    console.log("Exact Step TCs : " + exactStep_tcs);
+    let dateValues = {};
+    console.log("numTCs type: " + typeof exactStep_tcs);
+    // console.log("numTCs: " + JSON.stringify(numTCs));
     // console.log("numTCs: " + numTCs);
+    let countByDate = {};
 
-    if (Array.isArray(numTCs)) {
-        dataValues = numTCs.map(testCase => {
-        console.log("Element: " + JSON.stringify(testCase));
-        console.log("Element: " + typeof testCase.fields.cqid);
-        cqIDSet.push(testCase.fields.cqid);
-        dateSet.add(new Date(testCase.fields.updated_on).toLocaleDateString());
-        return cqIDSet.length; // or any other value you want to assign to each test case
-      });
-    } else {
-      console.log("No previous TCs found, unique TC");
-    }
+    // for (i=0; i<= exactStep_tcs.length; i ++) {
+    exactStep_tcs.forEach(entry => {
+        let _date = new Date(entry["updated_on"]).toLocaleDateString();
+        console.log("Entry is : " + _date);
+        countByDate[_date] = (countByDate[_date] || 0) + 1;
+    });
+    console.log("Count by date : " + JSON.stringify(countByDate));
 
+    stepUsageChart(countByDate);
 
-    if (!Array.isArray(cqIDSet)) {
-        cqIDSet = [cqIDSet];
-    }
+    // if (!Array.isArray(cqIDSet)) {
+    //     cqIDSet = [cqIDSet];
+    // }
 
-    if (!Array.isArray(dateSet)) {
-        dateSet = [dateSet];
-    }
+    // if (!Array.isArray(dateSet)) {
+    //     dateSet = [dateSet];
+    // }
 
-    if (!Array.isArray(dataValues)) {
-        dataValues = [0];
-    }
+    // if (!Array.isArray(dataValues)) {
+    //     dataValues = [0];
+    // }
 
-    console.log("CQIDSET    : " + [...cqIDSet]);
-    console.log("DATESET    : " + [...dateSet]);
-    console.log("DATAVALUES : " + [...dataValues]);
+    // console.log("CQIDSET    : " + [...cqIDSet]);
+    // console.log("DATESET    : " + [...dateSet]);
+    // console.log("DATAVALUES : " + [...dataValues]);
 
-    stepUsageChart(dateSet, dataValues, cqIDSet, numTCs);
+    // stepUsageChart(dateSet, dataValues, cqIDSet, numTCs);
 
     // Get the modal element
     // const modal = document.getElementById('canvasModal');
@@ -593,7 +592,7 @@ function testStepDetails(jsonResponse) {
 }
 
 
-function stepUsageChart(dateSet=[], dataValues=[], cqIDSet=[]) {
+function stepUsageChart(countByDate) {
     const ctx = document.getElementById('myChart-0');
     const options = {
         scales: {
@@ -617,10 +616,10 @@ function stepUsageChart(dateSet=[], dataValues=[], cqIDSet=[]) {
     ctx.chart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: [...dateSet],
+            labels: Object.keys(countByDate),
             datasets: [{
-                label: '# of Test Cases using this step',
-                data: dataValues,
+                label: '# of TCs using exact step',
+                data: Object.values(countByDate),
                 borderWidth: 1,
                 barPercentage: 1,
                 barThickness: 20,
@@ -636,18 +635,18 @@ function stepUsageChart(dateSet=[], dataValues=[], cqIDSet=[]) {
                     },
                 },
             },
-            plugins: {
-                tooltip: {
-                    callbacks: {
-                        label: (context) => {
-                            const index = context.dataIndex;
-                            const cqID = cqIDSet[index];
-                            const length = dataValues[index];
-                            return `CQID: ${cqID} | Total TCs : ${length}`;
-                        },
-                    },
-                },
-            },
+            // plugins: {
+            //     tooltip: {
+            //         callbacks: {
+            //             label: (context) => {
+            //                 const index = context.dataIndex;
+            //                 const cqID = cqIDSet[index];
+            //                 const length = dataValues[index];
+            //                 return `CQID: ${cqID} | Total TCs : ${length}`;
+            //             },
+            //         },
+            //     },
+            // },
         },
     });
 }

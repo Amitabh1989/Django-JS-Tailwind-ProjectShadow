@@ -5,6 +5,7 @@ import json
 from django.apps import apps
 from django.views import View
 from .settings import BASE_URL
+from users.views import get_tokens_for_user
 # class ModulesModel(Enum):
 #     CONFIG = ("config", 'config.models.)
 #     IO = ("io", "http://localhost:8000/io_module/api/")
@@ -92,15 +93,40 @@ def get_module_url(module):
     return view_name
 
 
+# def save_module_step(url, step, request):
+#     # Submitting the data to the URL
+#     full_url = BASE_URL + url
+#     headers = {
+#         "Content-Type": "application/json",
+#         # "Authorization": f"Bearer {request.user.token}"  # Assuming the user has an authentication token
+#         # "Cookie": f"sessionid={request.COOKIES.get('sessionid', '')}"
+#     }
+#     response = requests.post(full_url, data=json.dumps(step), headers=headers)
+    
+#     if response.status_code > 200 and response.status_code < 300:
+#         # Successfully submitted the data, retrieve the response
+#         print(f"Response : {response}")
+#         # Process the response data as needed
+#         print(f"Data Saved/Updated : {response.status_code}") #, response_data)
+#     else:
+#         # Failed to submit the data, handle the error
+#         print(f"Error: {response.status_code}")
+
 def save_module_step(url, step, request):
     # Submitting the data to the URL
+    print(f"Step recevied : {step}")
     full_url = BASE_URL + url
     headers = {
         "Content-Type": "application/json",
-        # "Authorization": f"Bearer {request.user.token}"  # Assuming the user has an authentication token
+        "Authorization": f"Bearer {get_tokens_for_user(request.user)}"  # Assuming the user has an authentication token
         # "Cookie": f"sessionid={request.COOKIES.get('sessionid', '')}"
     }
-    response = requests.post(full_url, data=json.dumps(step), headers=headers)
+    # step["user"] = request.user.email
+    print(f"Step recevied in save_module_step : {step}")
+    # response = requests.post(full_url, data=step, headers=headers)
+    # response = requests.post(full_url, data=json.dumps(step), headers=headers)
+    response = requests.post(full_url, data=json.dumps(step), headers=headers, params={'user': request.user.id})
+
     
     if response.status_code > 200 and response.status_code < 300:
         # Successfully submitted the data, retrieve the response
@@ -110,4 +136,3 @@ def save_module_step(url, step, request):
     else:
         # Failed to submit the data, handle the error
         print(f"Error: {response.status_code}")
-
