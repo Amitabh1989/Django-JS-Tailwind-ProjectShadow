@@ -13,9 +13,6 @@ import { moduleUrlTable } from './moduleUrlMap.js';
 */
 function getTestStep(log=false) {
     var testSteps = localStorage.getItem('testSteps');
-    // console.log("OLD TESTSTEP : " + testSteps);
-    // testSteps = createTeststepCart(testSteps);
-    // console.log("NEW TESTSTEP : " + testSteps);
     if (testSteps === null) {
         testSteps = {};
         testSteps.moduleForm = [];
@@ -26,6 +23,24 @@ function getTestStep(log=false) {
         console.log("Test Case dictionary : " + JSON.stringify(testSteps));
     }
     return testSteps;
+}
+
+/**
+ * Get each module by count
+ */
+function getModuleByCount() {
+    let tcCart = getTestStep().moduleForm;
+    if (!Array.isArray(tcCart)) {
+        console.error('tcCart is not an array:', tcCart);
+        return; // Return or handle the error appropriately
+    }
+    let moduleByCount = {};
+    tcCart.forEach(step => {
+        let moduleType = step['module_type'];
+        moduleByCount[moduleType] = (moduleByCount[moduleType] || 0) + 1;
+    });
+    console.log("Module by count : " + moduleByCount);
+    return moduleByCount;
 }
 
 /** 
@@ -281,7 +296,7 @@ function getTestStepStats(formValues) {
 
 function handleTestStepStatsResponse(response) {
     console.log("Callback for testStepDetails invoked from getTestStepStats: " + response);
-    console.log("Response PK: " + response.pk);
+    // console.log("Response PK: " + response.pk);
     // autoReloadDetailView(response.pk);
     // autoReloadDetailView(response);
     testStepDetails(response);
@@ -451,9 +466,8 @@ function autoReloadDetailView(pk) {
  * Display the status for the test step submitted
  */
 function testStepDetails(jsonResponse) {
-    // console.log("Response received in teststepdetails: " + jsonResponse);
+    console.log("Response received in teststepdetails: " + JSON.stringify(jsonResponse));
     console.log("Type teststepdetails: " + typeof jsonResponse);
-    
 
     // console.log("Chart: " + ctx.chart);
     // // Check if a chart already exists
@@ -462,26 +476,18 @@ function testStepDetails(jsonResponse) {
     //     ctx.chart.destroy();
     // }
     const testCases = jsonResponse;
-    // console.log("Test Cases in JS     : " + JSON.stringify(testCases));
+
     console.log("Exact Step num TCs   : " + testCases.exact_test_step[0].test_cases.length);
     console.log("Similar Step num TCs : " + testCases.similar_test_step.length);
 
     // ########################################################
     // CHART 1 : Number of Test Cases using exact step by date
     // ########################################################
-    let cqIDSet = [];
-    let dateSet = new Set();
-
-    // const numTCs = JSON.stringify(testCases.num_tc_associated);
     let exactStep_tcs = testCases.exactStep_testCases;
     console.log("Exact Step TCs : " + exactStep_tcs);
-    let dateValues = {};
     console.log("numTCs type: " + typeof exactStep_tcs);
-    // console.log("numTCs: " + JSON.stringify(numTCs));
-    // console.log("numTCs: " + numTCs);
     let countByDate = {};
 
-    // for (i=0; i<= exactStep_tcs.length; i ++) {
     exactStep_tcs.forEach(entry => {
         let _date = new Date(entry["updated_on"]).toLocaleDateString();
         console.log("Entry is : " + _date);
@@ -491,72 +497,20 @@ function testStepDetails(jsonResponse) {
 
     stepUsageChart(countByDate);
 
-    // if (!Array.isArray(cqIDSet)) {
-    //     cqIDSet = [cqIDSet];
-    // }
 
-    // if (!Array.isArray(dateSet)) {
-    //     dateSet = [dateSet];
-    // }
 
-    // if (!Array.isArray(dataValues)) {
-    //     dataValues = [0];
-    // }
-
-    // console.log("CQIDSET    : " + [...cqIDSet]);
-    // console.log("DATESET    : " + [...dateSet]);
-    // console.log("DATAVALUES : " + [...dataValues]);
-
-    // stepUsageChart(dateSet, dataValues, cqIDSet, numTCs);
-
-    // Get the modal element
-    // const modal = document.getElementById('canvasModal');
-    // // Get the canvas elements
-    // // const canvas = document.getElementById('myChart-1');
-    // const modalCanvas = document.getElementById('modalCanvas');
-    // // Get the close button element
-    // const closeButton = document.getElementsByClassName('close')[0];
-
-    // // Function to open the modal and display the canvas
-    // function openModal() {
-    // modal.style.display = 'block';
-    // modalCanvas.getContext('2d').drawImage(ctx.chart.canvas, 0, 0);
-    // }
-    // Function to open the modal and display the canvas
-    // function openModal() {
-    //     const modalWindow = window.open("", "Chart Window", "width=800, height=600");
-    //     modalWindow.document.write(`<img src="${ctx.chart.canvas.toDataURL()}" alt="Chart">`);
-    // }
-
-    // // Function to close the modal
-    // function closeModal() {
-    // modal.style.display = 'none';
-    // }
-
-    // Event listener for canvas click
-    // ctx.chart.canvas.addEventListener('click', openModal);
-
-    // // Event listener for close button click
-    // closeButton.addEventListener('click', closeModal);
-
-    // ##############################
-    // CHART 2
-    // ##############################
-    // const configType = JSON.parse(jsonResponse.data);
-    console.log("JSON response in chart 2 : " + JSON.stringify(jsonResponse));
-    const configType = jsonResponse;
-    // const stepDict = configType.exact_step.length === 0 ? 'No Record Found' : configType.exact_step[0].step.raid;
-    if (configType.exact_step.length !== 0) {
-        const stepDict = configType.exact_step.length === 0 ? getLastTestStep()["raid"] : configType.exact_step[0].step.raid
-    }
-
-    // const tcHitInfo = jsonResponse.total_step_by_params + " other Test Cases uses " + stepDict.charAt(0).toUpperCase() + stepDict.slice(1);
-    const tcHitInfo = jsonResponse.total_step_by_params + " other Test Cases uses " + getLastTestStep()["raid"].charAt(0).toUpperCase() + getLastTestStep()["raid"].slice(1);
-        console.log("String to print : " + tcHitInfo);
-        const tcHitInfoHtml = `<ul><li> 🚀 <strong>${jsonResponse.total_step_by_params}</strong> other Test Cases uses <strong>${getLastTestStep()["raid"].charAt(0).toUpperCase() + getLastTestStep()["raid"].slice(1)}</strong><br>with same <strong>and/or</strong> other configurations</li></ul>`;
+    // #################################
+    // CHART 2 : Similar test cases hits
+    // #################################
+    const similarStep_Tcs = jsonResponse.similarStep_testCases;
+    const tcHitInfo = similarStep_Tcs.length + " other Test Cases uses " + getLastTestStep()[jsonResponse["search_key"]].charAt(0).toUpperCase() + getLastTestStep()[jsonResponse["search_key"]].slice(1);
+        // console.log("String to print : " + tcHitInfo);
+        const tcHitInfoHtml = `<ul><li> 🚀 <strong>${similarStep_Tcs.length}</strong> other Test Cases uses <strong>${getLastTestStep()[jsonResponse["search_key"]].charAt(0).toUpperCase() + getLastTestStep()[jsonResponse["search_key"]].slice(1)}</strong><br>with different params</strong></li></ul>`;
         const ctx1 = document.getElementById('myp-1');
         ctx1.innerHTML = "";
         ctx1.innerHTML = tcHitInfoHtml;
+
+
 
     // ##############################
     // CHART 3
@@ -564,32 +518,70 @@ function testStepDetails(jsonResponse) {
     const cqTitle = [];
     let strPrint = "<p><strong>List of Test cases with exact step</strong><br></p><ul>";
     // numTCs = numTCs
-    if (numTCs && numTCs.length > 0) {
-        const tcIds = numTCs.forEach(tc => {
-            cqTitle.push(tc.fields.title + " ( CQ ID : " + tc.fields.cqid + ")");
+    if (jsonResponse.exactStep_testCases && jsonResponse.exactStep_testCases.length > 0) {
+        jsonResponse.exactStep_testCases.forEach(tc => {
+            cqTitle.push(tc.title + " ( CQ ID : " + tc.cqid + ")");
         });
-        console.log("String to print : " + cqTitle);
+        // console.log("String to print : " + cqTitle);
 
-        let cqData = cqTitle.forEach(id => {
-            strPrint += `<li> ⭐ <strong>${id}</strong></li>`;
+        cqTitle.forEach(id => {
+            strPrint += `<li> ⭐ ${id}</li>`;
         });
     } else {
         strPrint += `<li class="ml-1 text-sm text-gray-500"> ⭐ <strong>This is a Unique Step from your records...Congrats!</strong></li>`;
     }
-    // if (numTCs && numTCs.length > 0) {
-    //     const tcIds = numTCs.map(tc => tc.fields.title + " ( CQ ID : " + tc.fields.cqid + ")");
-    //     console.log("String to print : " + tcIds);
 
-    //     let cqData = tcIds.map(id => `<li> ⭐ <strong>${id}</strong></li>`).join("");
-    //     strPrint += cqData;
-    // } else {
-    //     strPrint += `<li> ⭐ <strong>This is a Unique Step...Congrats!</strong></li>`;
-    // }
     strPrint += "</ul>";
     const ctx2 = document.getElementById('myp-2');
     ctx2.innerHTML = "";
     ctx2.innerHTML = strPrint;
+
+    testCaseDoughNut();
 }
+
+function testCaseDoughNut() {
+    // ######################################################################
+    // CHART 4 : Doughnutchart : Distribution of the modules in a test case
+    // ######################################################################
+    // Get each module by count.
+    const ctx4 = document.getElementById('myChart-2');
+    let moduleByCount =getModuleByCount();
+    console.log("Doughnut : " + JSON.stringify(getModuleByCount()));
+    const DATA_COUNT = moduleByCount.length;
+    console.log("Keys   : " + Object.keys(moduleByCount));
+    console.log("Values : " + Object.values(moduleByCount));
+    const NUMBER_CFG = {count: DATA_COUNT, min: 0, max: 100};
+
+    const data = {
+    labels: Object.keys(moduleByCount),
+    datasets: [
+        {
+        label: 'Number of Steps',
+        data: Object.values(moduleByCount),
+        backgroundColor: ['Red', 'Orange', 'Yellow', 'Green', 'Blue'],
+        }
+    ]
+    };
+    console.log("Context chart : " + JSON.stringify(data));
+    ctx4.chart = new Chart(ctx4, {
+        type: 'doughnut',
+        data: data,
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
+            title: {
+              display: true,
+              text: 'Your Test case composition'
+            }
+          }
+        },
+      }
+    );
+    }
+
 
 
 function stepUsageChart(countByDate) {
