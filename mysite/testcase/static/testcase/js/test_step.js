@@ -477,26 +477,32 @@ function testStepDetails(jsonResponse) {
     // }
     const testCases = jsonResponse;
 
-    console.log("Exact Step num TCs   : " + testCases.exact_test_step[0].test_cases.length);
-    console.log("Similar Step num TCs : " + testCases.similar_test_step.length);
+    if (testCases.exact_test_step && testCases.exact_test_step.length === 0) {
+        console.log("List is empty!");
+        let chartContainer = document.getElementById("myChart-0");
+        chartContainer.innerHTML = "";
+        chartContainer.innerHTML = `This is a unique step`;
+    } else {
+        console.log("Exact Step num TCs   : " + testCases.exact_test_step[0].test_cases.length);
+        console.log("Similar Step num TCs : " + testCases.similar_test_step.length);
 
-    // ########################################################
-    // CHART 1 : Number of Test Cases using exact step by date
-    // ########################################################
-    let exactStep_tcs = testCases.exactStep_testCases;
-    console.log("Exact Step TCs : " + exactStep_tcs);
-    console.log("numTCs type: " + typeof exactStep_tcs);
-    let countByDate = {};
+        // ########################################################
+        // CHART 1 : Number of Test Cases using exact step by date
+        // ########################################################
+        let exactStep_tcs = testCases.exactStep_testCases;
+        console.log("Exact Step TCs : " + exactStep_tcs);
+        console.log("numTCs type: " + typeof exactStep_tcs);
+        let countByDate = {};
 
-    exactStep_tcs.forEach(entry => {
-        let _date = new Date(entry["updated_on"]).toLocaleDateString();
-        console.log("Entry is : " + _date);
-        countByDate[_date] = (countByDate[_date] || 0) + 1;
-    });
-    console.log("Count by date : " + JSON.stringify(countByDate));
+        exactStep_tcs.forEach(entry => {
+            let _date = new Date(entry["updated_on"]).toLocaleDateString();
+            console.log("Entry is : " + _date);
+            countByDate[_date] = (countByDate[_date] || 0) + 1;
+        });
+        console.log("Count by date : " + JSON.stringify(countByDate));
 
-    stepUsageChart(countByDate);
-
+        stepUsageChart(countByDate);
+    }
 
 
     // #################################
@@ -562,6 +568,11 @@ function testCaseDoughNut() {
         }
     ]
     };
+    // Check if a chart already exists
+    if (ctx4 && ctx4.chart) {
+        // Destroy the existing chart
+        ctx4.chart.destroy();
+    }
     console.log("Context chart : " + JSON.stringify(data));
     ctx4.chart = new Chart(ctx4, {
         type: 'doughnut',
