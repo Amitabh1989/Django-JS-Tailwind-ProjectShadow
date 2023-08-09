@@ -510,9 +510,10 @@ function testStepDetails(jsonResponse) {
     // #################################
     const similarStep_Tcs = jsonResponse.similarStep_testCases;
     const tcHitInfo = similarStep_Tcs.length + " other Test Cases uses " + getLastTestStep()[jsonResponse["search_key"]].charAt(0).toUpperCase() +
-                        getLastTestStep()[jsonResponse["search_key"]].slice(1);
+                getLastTestStep()[jsonResponse["search_key"]].slice(1);
         // console.log("String to print : " + tcHitInfo);
-        const tcHitInfoHtml = `<ul><li> 🚀 <strong>${similarStep_Tcs.length}</strong> other Test Cases uses <strong>${getLastTestStep()[jsonResponse["search_key"]].charAt(0).toUpperCase() + getLastTestStep()[jsonResponse["search_key"]].slice(1)}</strong><br>with different params</strong></li></ul>`;
+        const tcHitInfoHtml = `<ul><li> 🚀 <strong>${similarStep_Tcs.length}</strong> other Test Cases uses <strong>${getLastTestStep()[jsonResponse["search_key"]].charAt(0).toUpperCase()
+                + getLastTestStep()[jsonResponse["search_key"]].slice(1)}</strong><br>with different params</strong></li></ul>`;
         const ctx1 = document.getElementById('myp-1');
         ctx1.innerHTML = "";
         ctx1.innerHTML = tcHitInfoHtml;
