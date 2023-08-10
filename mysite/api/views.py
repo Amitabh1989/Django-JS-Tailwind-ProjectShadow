@@ -19,6 +19,7 @@ import time
 import uuid
 from itertools import chain
 from copy import deepcopy
+from django.core.cache import cache
 
 # Create your views here.
 
@@ -238,16 +239,26 @@ class TestStepStats(viewsets.ModelViewSet):
 
     # def get(self, request, *args, **kwargs):
     def list(self, request, *args, **kwargs):
-        print("Request dict: {}".format(request.__dict__))
-        print("Request for stats from API: {}".format(request.GET))
-        print("Self.Request for stats : {}".format(self.request.GET))
-        print("Self.Request for body : {}".format(self.request.data))
+        print("Request dict in API VIEW   : {}".format(request.__dict__))
+        print("Request for stats from API : {}".format(request.GET))
+        print("Self.Request for stats     : {}".format(self.request.GET))
+        print("Self.Request for body      : {}".format(self.request.data))
         request_data = self.request.GET
         step = {key: value for key, value in request_data.items()}
-        print("Step is : {}".format(step))
-        print("Fetching Test Step Stats : step {}".format(step))
+        print("Step received in API is    : {}".format(step))
+        print("Fetching Test Step Stats   : {}".format(step))
 
+        cache_key = "_".join(step.values())
+        print(f"Cache key is : {cache_key}")
+        response = cache.get(cache_key)
+        cache_timeout = 3600  # 1 hour in seconds
+
+        if response:
+            print("Data Fetched from cache, returning from here")
+            return JsonResponse(response)
+        ########################################################
         # Contruct the user_query here:
+        ########################################################
         # Here 2 things are happening,
         # 1. Get exact test step match
         # 2. Get Similar test steps  
@@ -276,7 +287,7 @@ class TestStepStats(viewsets.ModelViewSet):
         print(f"Exact Step Test Cases List : {testCases_with_exact_step}")
 
         combined_testCases_with_exact_step = list(chain(*testCases_with_exact_step))
-        print(f"Exact Step Test Cases List Combined: {combined_testCases_with_exact_step}")
+        print(f"Exact Step Test Cases List Combined : {combined_testCases_with_exact_step}")
 
         # Get the test case details to create a hyperlink
         exact_step_testCase_details = [[tc.id, tc.cqid] for tc in combined_testCases_with_exact_step]
@@ -346,6 +357,7 @@ class TestStepStats(viewsets.ModelViewSet):
             "exactStep_testCases": exactStep_testCases,
             "similarStep_testCases": similarStep_testCases,
         }
+        cache.set(cache_key, response, cache_timeout)
         print("Response is : {}".format(response))
         return JsonResponse(response)
         # return Response(response, status=status.HTTP_200_OK)

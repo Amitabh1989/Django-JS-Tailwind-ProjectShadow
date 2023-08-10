@@ -519,7 +519,6 @@ function testStepDetails(jsonResponse) {
         ctx1.innerHTML = tcHitInfoHtml;
 
 
-
     // ##############################
     // CHART 3
     // ##############################
