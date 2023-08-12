@@ -16,21 +16,28 @@ from rest_framework.renderers import BrowsableAPIRenderer, TemplateHTMLRenderer
 from django.contrib.auth.models import AnonymousUser
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from rest_framework.authentication import TokenAuthentication
 
 # Create your views here.
 
 class ConfigViewSetAPI(viewsets.ModelViewSet):
     queryset = ConfigModel.objects.all()
     serializer_class = ConfigModelSerializer
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [authentication.SessionAuthentication]
-    renderer_classes = [BrowsableAPIRenderer] 
+    renderer_classes = [renderers.JSONRenderer, BrowsableAPIRenderer] 
     # permission_classes = [permissions.IsAuthenticated]
     # authentication_classes = [authentication.SessionAuthentication]
     # Override the renderers attribute to enforce JSON rendering
     # renderer_classes = [renderers.JSONRenderer]
     # renderer_classes = [TemplateHTMLRenderer]
     print("Config View set API called")
+
+    def dispatch(self, request, *args, **kwargs):
+        # user = request.META.get("HTTP_AUTHORIZATION", "").replace("Bearer ", "")
+        print(f"Config dispatch : request : {request.POST}")
+        print(f"Config dispatch : request.user : {request.user}")
+        return super().dispatch(request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
         # if isinstance(request.user, AnonymousUser):
