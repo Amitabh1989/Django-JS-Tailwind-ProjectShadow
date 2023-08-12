@@ -20,6 +20,7 @@ import uuid
 from itertools import chain
 from copy import deepcopy
 from django.core.cache import cache
+from config.views import ConfigViewSetAPI
 
 # Create your views here.
 
@@ -365,7 +366,7 @@ class TestStepStats(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         step_data = request.POST
         step_list = [json.loads(step) for step in step_data]
-        print(f"Step List : {step_list}")
+        # print(f"Step List : {step_list}")
         # Generate a random UUID
         generated_uuid = uuid.uuid4()
 
@@ -381,14 +382,14 @@ class TestStepStats(viewsets.ModelViewSet):
         print("test_case : {}".format(test_case))
         
         # Create and associate TestStep instances with the TestCase
-        for step in step_list[0]["moduleForm"]:
-            print(f"Sending step to save: {step}")
+        for i, step in enumerate(step_list[0]["moduleForm"]):
+            print(f"Sending step {i} to save: {step}")
             view_name = get_module_view_name(step["module_type"])
             url = reverse(view_name)
             print(f"URL is : {url}")
             # save_module_step(url, step, user=request.user)
             save_module_step(url, step, request)
-            del step["csrfmiddlewaretoken"]
+            # del step["csrfmiddlewaretoken"]
             test_step, created = TestStep.objects.get_or_create(step=step, user=request.user) #, defaults={'step': step})
             print(f"Value of Created is : {created}")
             test_step.test_cases.add(test_case)

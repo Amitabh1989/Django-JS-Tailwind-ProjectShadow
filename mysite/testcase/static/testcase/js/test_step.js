@@ -368,6 +368,7 @@ function submitToDB() {
         beforeSend: function(xhr) {
             console.log("Data is ready to be send : " + xhr);
             xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+            // xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
         },
         complete: function() {
             console.log("Request Complete");
