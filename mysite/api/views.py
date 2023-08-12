@@ -237,7 +237,6 @@ class TestStepStats(viewsets.ModelViewSet):
     authentication_classes = [SessionAuthentication]
     renderer_classes = [BrowsableAPIRenderer] #, TemplateHTMLRenderer]
 
-    # def get(self, request, *args, **kwargs):
     def list(self, request, *args, **kwargs):
         print("Request dict in API VIEW   : {}".format(request.__dict__))
         print("Request for stats from API : {}".format(request.GET))
