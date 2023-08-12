@@ -20,6 +20,7 @@ from rest_framework.response import Response
 from .serializers import TestCaseListSerializer
 from rest_framework import status
 from .renderers import TCRenderer
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 # Create your views here.
 
 class TestCaseView(View):
@@ -211,17 +212,28 @@ class TestCaseListRestAPI(viewsets.ModelViewSet):
         print(f"Request : {request.__dict__}")
         accepted_media_type = request.accepted_media_type
         print(f"Accepted media type : {accepted_media_type}")
+        paginator = Paginator(self.queryset, 25) # Show 25 contacts per page
         user = request.user
         tc_list = self.queryset.filter(user=user)
         serializer = self.serializer_class(instance=tc_list, many=True)
-        print(f"User is : {user}")
-        print(f"TC list is : {tc_list}")
-        print(f"Serializer is : {serializer}")
-        print(f"Serializer is : {serializer.data}")
+        print(f"TC List User is : {user}")
+        print(f"TC list is      : {tc_list}")
+        print(f"Serializer is   : {serializer}")
+        print(f"Serializer data : {serializer.data}")
+        try:
+            data = paginator.page(serializer.data)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            data = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            data = paginator.page(paginator.num_pages)
+
         # serializer.is_valid(raise_exception=True)
         # return Response({"data": serializer.data}, status=status.HTTP_201_CREATED)
         if accepted_media_type == 'text/html':
-            return render(request, self.template_name, {"data": serializer.data})
+            # return render(request, self.template_name, {"data": serializer.data})
+            return render(request, self.template_name, {"data": data})
         # return Response({"data": serializer.data}, status=status.HTTP_201_CREATED)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
         
@@ -231,12 +243,19 @@ class TestCaseListRestAPI(viewsets.ModelViewSet):
         tc_instance = self.get_object()
         accepted_media_type = request.accepted_media_type
         serializer = self.serializer_class(instance=tc_instance, many=False)
+        test_steps = tc_instance.test_steps_list.all()
+        step_details = [test_step.step for test_step in test_steps]
+        print(f"Test Steps of test case are : {test_steps}")
+        print(f"Test Steps details are : {step_details}")
         print(f"User is : {user}")
         print(f"TC detail is : {tc_instance}")
-        print(f"Serializer is : {serializer}")
+        print(f"Serializer is : {serializer.data}")
         # serializer.is_valid(raise_exception=True)
         if accepted_media_type == 'text/html':
-            return render(request, self.template_name, {"detail": serializer.data})
+            print("Returning Retrieved data as text/html")
+            # return render(request, self.template_name, {"detail": serializer.data})
+            return render(request, "testcase/tcdetail.html", {"detail": serializer.data})
+        print("Returning Retrieved data as serialized data")
         return Response({"data": serializer.data}, status=status.HTTP_201_CREATED)
 
     # def get_renderer_context(self):

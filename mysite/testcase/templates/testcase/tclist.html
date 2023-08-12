@@ -2,20 +2,97 @@
 
 {% block content %}
 
-<h2>Welcome to your testcase list</h2>
+<h2>Welcome to your tc list</h2>
 <h1>Test Case List</h1>
-<ul>
-    {% for testcase in data %}
+{% comment %} <ul>
+    {% for tc in data %}
     <li>
-        Test Case ID: {{ testcase.id }}
+        Test Case ID: {{ tc.id }}
         <br>
-        Test Case Name: {{ testcase.name }}
+        Test Case Name: {{ tc.title }}
         <!-- Add other fields you want to display here -->
         <br>
     </li>
     {% endfor %}
     <h1>Detail</h1>
     {{detail}}
-</ul>
+</ul> {% endcomment %}
+
+
+<div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+                <th scope="col" class="px-6 py-3">
+                    ID
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    CQID
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    TITLE
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    CREATED
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Action
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for tc in data %}
+                
+                <tr class="bg-white border-b dark:bg-gray-100 dark:border-gray-700 hover:bg-gray-200">
+                    {% comment %} # http://127.0.0.1:8000/tc/tcs/?page=2 {% endcomment %}
+                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-blue-800">
+                            <a href="{% url 'testcase:tcs-detail' tc.id %}">{{ tc.id }}</a>
+                        </th>
+                        <td class="px-6 py-4">
+                            {{ tc.cqid }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{ tc.title }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{ tc.created_on }}
+                        </td>
+
+                    <td class="px-6 py-4">
+                        <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="flex w-full flex-col-reverse">
+    <div class="pagination">
+        <span class="step-link">
+            {% if data.has_previous %}
+                <span class="bg-slate-500 p-2 text-gray-800 rounded-md m-auto">
+                    <a href="?page={{ data.previous_page_number }}">Previous</a>
+                </span>
+            {% endif %}
+
+            <span class="current">
+                Page {{ data.number }} of {{ data.paginator.num_pages }}.
+            </span>
+
+            {% if data.has_next %}
+                <span class="bg-slate-500 p-2 text-gray-800 rounded-md m-auto">
+                    <a href="?page={{ data.next_page_number }}">Next</a>
+                </span>
+            {% endif %}
+        </span>
+    </div>
+</div>
 
 {% endblock content %}
+
+<div class="flex w-full flex-col-reverse">
+    <div class="w-1/5 submit-step bg-green-500 px-2 py-2 text-white text-center text-sm font-bold rounded-sm mt-5 ml-auto mr-10">
+        <input type="submit" value="Submit Step" id="submit-step">
+    </div>
+</div>
