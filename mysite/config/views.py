@@ -40,14 +40,8 @@ class ConfigViewSetAPI(viewsets.ModelViewSet):
         return super().dispatch(request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
-        # if isinstance(request.user, AnonymousUser):
-        #     print("User is anonymous, redirecting")
-        #     return HttpResponseRedirect(reverse('auth:login'))
-        # print(f"RRequest session : {request.session}")
         print(f"Config create : User Authenticated : {self.request.user.is_authenticated}")
-        # _data =  dict(request.POST)
-        # _data =  json.loads(request.body.decode('utf-8'))
-        print("This is POST request")
+        print("This is POST request from CONFIG view")
         print("Request _data is : {}".format(self.request.data))
         _data =  dict(self.request.data)
         _data = {key: value[0] if isinstance(value, list) else value for key, value in _data.items()}
@@ -70,7 +64,7 @@ class ConfigViewSetAPI(viewsets.ModelViewSet):
             # Update the record with +1 use count
             instance = obj.first()
             instance._use_count += 1
-            instance.save()
+            instance.save(user=request.user)
             print(f"Instance is : {instance}")
             print(f"Instance use count : {instance._use_count}")
             # partial_update_data["_use_count"] = int(obj.first()._use_count+1)
@@ -82,10 +76,10 @@ class ConfigViewSetAPI(viewsets.ModelViewSet):
             # return self.partial_update(request, data=data, pk=obj.first().pk)
         print("After partial update, proceeding")
         serializer = self.serializer_class(data=_data)
-        if serializer.is_valid():
+        if serializer.is_valid(raise_exception=True):
             print(f"Config serialized data : {serializer.validated_data}")
             print(f"Config serialized errors : {serializer.errors}")
-            serializer.save()
+            serializer.save(user=request.user)
             return Response({"msg": "New config submitted"}, status=status.HTTP_201_CREATED)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 

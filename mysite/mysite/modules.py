@@ -120,10 +120,7 @@ def save_module_step(url, step, request):
     headers = {
         "Content-Type": "application/json",
         "Authorization": f"Bearer {get_tokens_for_user(request.user)}",
-        # "User": request.user # Assuming the user has an authentication token
-        # "Cookie": f"sessionid={request.COOKIES.get('sessionid', '')}"
     }
-    # step["user"] = request.user.email
     print(f"Step recevied in save_module_step : {step}")
     # response = requests.post(full_url, data=step, headers=headers)
     # response = requests.post(full_url, data=json.dumps(step), headers=headers)

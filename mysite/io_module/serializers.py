@@ -6,8 +6,9 @@ class IOModelSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = IOModel
-        fields = '__all__'
-        read_only_fields = ["module_type"]
+        exclude = ['_use_count', 'module_type']
+        # fields = '__all__'
+        # read_only_fields = ["module_type"]
 
     # def get_fields(self):
     #     fields = super().get_fields()
