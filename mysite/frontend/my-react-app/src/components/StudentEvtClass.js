@@ -50,7 +50,8 @@ class StudentEvtClass extends Component {
     render() {
         return(
             <React.Fragment>
-                <h1>Hey Amitabh</h1>
+                <h1>Hey Amitabh - class</h1>
+                <h3>Class Based Event handling</h3>
                 <button onClick={this.handleClick} id="btnNew">Reveal City</button>
             </React.Fragment>
         )
