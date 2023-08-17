@@ -1,17 +1,16 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom";
+import Student from "./components/Student";
+import StudentConstructor from "./components/StudentConstructor";
+import StudentEvtClass from "./components/StudentEvtClass";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+// Rendering Component
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+ReactDOM.render(<Student roll="102" />, document.getElementById("root"));
+ReactDOM.render(<StudentEvtClass city="Dhanbad" />, document.getElementById("root"));
+
+// Create a new elemnent to render this
+const newDiv = document.createElement("div");
+newDiv.setAttribute("id", "newDivId");
+document.body.appendChild(newDiv);
+ReactDOM.render(<StudentConstructor roll="104"/>, document.getElementById("newDivId"));

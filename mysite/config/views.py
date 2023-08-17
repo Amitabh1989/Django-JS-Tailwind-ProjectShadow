@@ -1,5 +1,5 @@
 from typing import Any, Dict
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from rest_framework import viewsets
 from config.models import ConfigModel
 from config.serializers import ConfigModelSerializer
@@ -44,47 +44,42 @@ class ConfigViewSetAPI(viewsets.ModelViewSet):
         print("This is POST request from CONFIG view")
         print("Request _data is : {}".format(self.request.data))
         _data =  dict(self.request.data)
+        user = self.request.user
         _data = {key: value[0] if isinstance(value, list) else value for key, value in _data.items()}
         partial_update_data = {}
         query = Q()
-        del _data['csrfmiddlewaretoken']
+        # del _data['csrfmiddlewaretoken']
         for field, value in _data.items():
             print(f"Field name : {field}  Value : {value}")
-            if field == "module_type":
+            if field in ("module_type", "csrfmiddlewaretoken"):
                 continue
             query &= Q(**{f'{field}': value})
         print(f"Query is : {query}")
 
-        obj = self.queryset.filter(query)
+        obj = self.queryset.filter(query).filter(user=self.request.user).first()
         print(f"OBJ : {obj}")
 
-        if obj.exists():
-            print(f"Obj {obj.first()} already exists, not creating again : {obj.first().pk}")
-            print(f"Obj {obj.first()} use count : {obj.first()._use_count}")
+        if obj:
+            print(f"Obj {obj} already exists, not creating again : {obj.pk}")
+            print(f"Obj {obj} use count : {obj._use_count}")
             # Update the record with +1 use count
-            instance = obj.first()
-            instance._use_count += 1
-            instance.save(user=request.user)
+            instance = obj
+            # instance._use_count += 1
+            instance.save()
             print(f"Instance is : {instance}")
             print(f"Instance use count : {instance._use_count}")
-            # partial_update_data["_use_count"] = int(obj.first()._use_count+1)
-            # resp = self.partial_update(request, data=partial_update_data, pk=obj.first().pk)
-            # print(f"Resp seen is : {resp}")
-            # instance.save()
             return Response({"msg": "Partial update done"})
-            # return resp
-            # return self.partial_update(request, data=data, pk=obj.first().pk)
         print("After partial update, proceeding")
+        _data["user"] = user.id 
         serializer = self.serializer_class(data=_data)
         if serializer.is_valid(raise_exception=True):
             print(f"Config serialized data : {serializer.validated_data}")
             print(f"Config serialized errors : {serializer.errors}")
-            serializer.save(user=request.user)
+            serializer.save()
             return Response({"msg": "New config submitted"}, status=status.HTTP_201_CREATED)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def partial_update(self, request, data=None, pk=None, **kwargs):
-        # return super().partial_update(request, *args, **kwargs)
         print("partial_update from config.views is invoked")
         model = self.queryset.get(pk=pk)
         # model = self.get_object()
