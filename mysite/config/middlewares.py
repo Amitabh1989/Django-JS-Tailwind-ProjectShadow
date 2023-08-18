@@ -1,6 +1,8 @@
 from typing import Any
 import json
 
+# Not used currently
+
 class ConfigMiddleWare:
     def __init__(self, get_response):
         self.get_response = get_response
