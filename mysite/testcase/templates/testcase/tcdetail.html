@@ -3,16 +3,44 @@
 {% block content %}
 
 <h1>Test case detail</h1>
-<ul>
-    {% for field in data %}
-    <li>
-        Test Case ID: {{ field.id }}
-        <br>
-        Test Case Name: {{ field.name }}
-        <!-- Add other fields you want to display here -->
-        <br>
-    </li>
-    {% endfor %}
-</ul>
+
+<div class="container mx-auto p-6">
+    <h1 class="text-2xl font-semibold mb-4">Test Case Detail</h1>
+    
+    <!-- Display Test Case Details -->
+    <div class="bg-white p-6 rounded-lg shadow mb-6">
+        <h2 class="text-xl font-semibold mb-4">Test Case {{ detail.cqid }} details</h2>
+        <div class="border-t border-gray-300 pt-4">
+            <div class="grid grid-cols-2 gap-4">
+                <div class="font-medium">CQID:</div>
+                <div>{{ detail.cqid }}</div>
+                <div class="font-medium">Title:</div>
+                <div>{{ detail.title }}</div>
+                <div class="font-medium">Summary:</div>
+                <div>{{ detail.summary }}</div>
+            </div>
+        </div>
+        <h3 class="text-lg font-semibold mt-4">Test Steps:</h3>
+        <ul class="list-disc pl-6 mt-2">
+            {% for step in detail.test_steps_list %}
+                <li>
+                    {{ step }}
+                    <button class="ml-2 text-blue-500 hover:underline" type="button">Edit</button>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Buttons for Actions -->
+    <div class="flex justify-between space-x-2">
+        <button class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg focus:outline-none">Save</button>
+        <button class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg focus:outline-none">Edit</button>
+        <button class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg focus:outline-none">Delete</button>
+    </div>
+    <div class="flex justify-between mt-2 space-x-2">
+        <button class="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg focus:outline-none">Save As</button>
+        <button class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg focus:outline-none">Download</button>
+    </div>
+</div>
 
 {% endblock content %}

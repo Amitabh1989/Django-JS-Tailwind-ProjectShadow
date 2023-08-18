@@ -6,4 +6,4 @@ class ConfigModelSerializer(serializers.ModelSerializer):
         model = ConfigModel
         # fields = '__all__'
         # read_only_fields = ["module_type", "user"]
-        exclude = ["user", "module_type", "_use_count"]
+        exclude = ["module_type", "_use_count"]

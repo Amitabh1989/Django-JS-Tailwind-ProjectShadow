@@ -64,7 +64,7 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
-    "config.middlewares.ConfigMiddleWare"
+    # "config.middlewares.ConfigMiddleWare"
 ]
 
 ROOT_URLCONF = "mysite.urls"
@@ -131,11 +131,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Asia/Kolkata"
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
@@ -235,3 +235,11 @@ CORS_ALLOWED_ORIGINS = [
 
 # BASE URL
 BASE_URL = os.environ.get('BASE_URL')
+
+# CACHE SETTING
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'step_stats'
+    }
+}

@@ -114,21 +114,21 @@ def get_module_url(module):
 
 def save_module_step(url, step, request):
     # Submitting the data to the URL
-    print(f"Step recevied : {step}")
+    # print(f"Step recevied : {step}")
     full_url = BASE_URL + url
+    # print(f"user_token = user.auth_token.key : {request.user.auth_token.key}")
     headers = {
         "Content-Type": "application/json",
-        "Authorization": f"Bearer {get_tokens_for_user(request.user)}"  # Assuming the user has an authentication token
-        # "Cookie": f"sessionid={request.COOKIES.get('sessionid', '')}"
+        "Authorization": f"Bearer {get_tokens_for_user(request.user)}",
     }
-    # step["user"] = request.user.email
     print(f"Step recevied in save_module_step : {step}")
     # response = requests.post(full_url, data=step, headers=headers)
     # response = requests.post(full_url, data=json.dumps(step), headers=headers)
-    response = requests.post(full_url, data=json.dumps(step), headers=headers, params={'user': request.user.id})
+    # response = requests.post(full_url, data=json.dumps(step), headers=headers, params={'user': request.user.id}, cookies=request.COOKIES)
+    response = requests.post(full_url, data=step, cookies=request.COOKIES)
 
     
-    if response.status_code > 200 and response.status_code < 300:
+    if response.status_code >= 200 and response.status_code < 300:
         # Successfully submitted the data, retrieve the response
         print(f"Response : {response}")
         # Process the response data as needed

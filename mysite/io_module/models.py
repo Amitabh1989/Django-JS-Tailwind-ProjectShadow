@@ -9,7 +9,7 @@ class IOModel(models.Model):
         ('chaos', 'Chaos'),
         ('medusa', 'Medusa'),
     ]
-    user = models.ForeignKey(User, on_delete=models.CASCADE, editable=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     module_type = models.CharField(max_length=10, default='io', editable=False)
     tool = models.CharField(max_length=10, choices=TOOL_CHOICES)
     qd = models.IntegerField(default=1)
@@ -29,4 +29,23 @@ class IOModel(models.Model):
 
     def __str__(self):
         return f'{self.tool} step submitted'
+    
+    def save(self, *args, **kwargs):
+        print(f"Kwargs received in IO save is : {kwargs}")
+        # Request received in Config save is : {'_state': <django.db.models.base.ModelState object at 0x7fdf5394d810>,
+        # 'id': 1, 'user_id': 1, 'module_type': 'config', 'raid': 'r0', 'vdcount': 1,
+        # 'spans': 0, 'stripe': 64, 'pdcount': 1, 'size': 12, 'dtabcount': 0, 'hotspare': 0,
+        # 'init': 'full', 'readpolicy': 'ra', 'writepolicy': 'wb', 'repeat': 1, '_use_count': 2}
+        
+        # Need to do 2 things here.
+        # 1. Check if record exists. If so, just update the use count and updated_time
+        # 2. If record does not exist, save new record and update use count and time created
+
+        # Check if record exists
+        
+        self._use_count += 1
+        super().save(*args, **kwargs)
+
+        print(f"Request received in Config save is : {self.__dict__}")
+
 
