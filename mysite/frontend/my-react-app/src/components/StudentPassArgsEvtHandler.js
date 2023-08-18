@@ -29,6 +29,7 @@ class StudentEvtArgs extends Component {
                     >
                         Reveal (anonymous function)
                 </button>
+                <button onClick={this.handleClick.bind(this, this.state.roll)}>Reveal (bind method)</button>
             </div>
         )
     }
