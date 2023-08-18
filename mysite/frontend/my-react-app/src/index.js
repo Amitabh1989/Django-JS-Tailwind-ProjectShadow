@@ -7,6 +7,7 @@ import StudentEvtFunction from "./components/StudentEvtFunction";
 import StudentEvtFunPreventDefault from "./components/StudentFunEvtPreventDefault";
 import StudentSetState from "./components/StudentState";
 import StudentSetStateFunction from "./components/StudentSetStateFunction";
+import StudentEvtArgs from "./components/StudentPassArgsEvtHandler";
 
 // Rendering Component
 
@@ -46,3 +47,9 @@ const newDivState = document.createElement("div");
 newDivState.setAttribute("id", "newDivState");
 document.getElementById("root").appendChild(newDivState);
 ReactDOM.render(<StudentSetStateFunction name="Aadu Mera Dil" roll="1" />, document.getElementById("newDivState"));
+
+// Create new element for Student Evt Args
+const evtArgsDiv = document.createElement("div");
+evtArgsDiv.setAttribute("id", "evtArgsDiv");
+document.getElementById("root").appendChild(evtArgsDiv);
+ReactDOM.render(<StudentEvtArgs roll="120" />, document.getElementById("evtArgsDiv"));
