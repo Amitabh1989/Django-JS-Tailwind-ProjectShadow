@@ -8,6 +8,7 @@ import StudentEvtFunPreventDefault from "./components/StudentFunEvtPreventDefaul
 import StudentSetState from "./components/StudentState";
 import StudentSetStateFunction from "./components/StudentSetStateFunction";
 import StudentEvtArgs from "./components/StudentPassArgsEvtHandler";
+import StudentCompLifeCycle from "./components/StudentComponentLifeCycle";
 
 // Rendering Component
 
@@ -53,3 +54,10 @@ const evtArgsDiv = document.createElement("div");
 evtArgsDiv.setAttribute("id", "evtArgsDiv");
 document.getElementById("root").appendChild(evtArgsDiv);
 ReactDOM.render(<StudentEvtArgs roll="120" />, document.getElementById("evtArgsDiv"));
+
+
+// New Div for StudentComponentLifeCycle
+const compLifeCycle = document.createElement("div");
+compLifeCycle.setAttribute("id", "compLifeCycle");
+document.getElementById("root").appendChild(compLifeCycle);
+ReactDOM.render(<StudentCompLifeCycle name="Amitabh" age="29" />, document.getElementById("compLifeCycle"));
