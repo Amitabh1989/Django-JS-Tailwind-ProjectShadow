@@ -21,6 +21,11 @@ export default class StudentCompLifeCycle extends Component {
         console.log("Handle click called");
     }
 
+    componentDidMount() {
+        console.log("Parent Component did mount called")
+    }
+
+
     render() {
         console.log("Render called");
         return (
