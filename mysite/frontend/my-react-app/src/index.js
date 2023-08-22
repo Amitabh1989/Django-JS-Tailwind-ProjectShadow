@@ -9,6 +9,7 @@ import StudentSetState from "./components/StudentState";
 import StudentSetStateFunction from "./components/StudentSetStateFunction";
 import StudentEvtArgs from "./components/StudentPassArgsEvtHandler";
 import StudentCompLifeCycle from "./components/StudentComponentLifeCycle";
+import StudentUpdate from "./components/StudentUpdateDemo";
 
 // Rendering Component
 
@@ -61,3 +62,9 @@ const compLifeCycle = document.createElement("div");
 compLifeCycle.setAttribute("id", "compLifeCycle");
 document.getElementById("root").appendChild(compLifeCycle);
 ReactDOM.render(<StudentCompLifeCycle name="Amitabh" age="29" />, document.getElementById("compLifeCycle"));
+
+// New Div for marks
+const mmarks = document.createElement("div")
+mmarks.setAttribute("id", "mmarks")
+document.getElementById("root").appendChild(mmarks)
+ReactDOM.render(<StudentUpdate marks="1034" />, document.getElementById("mmarks"))
