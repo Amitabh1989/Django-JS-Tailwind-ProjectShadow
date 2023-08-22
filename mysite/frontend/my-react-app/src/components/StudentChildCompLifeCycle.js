@@ -15,6 +15,11 @@ export default class StudentChildCompLifeCycle extends Component {
         return null;
     }
 
+    componentDidMount() {
+        // Get data from server and setState. All AJAX query comes here
+        console.log("Child Component did mount called")
+    }
+
     render() {
         console.log("Child class Render called");
         return (
