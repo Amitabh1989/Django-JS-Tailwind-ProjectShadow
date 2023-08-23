@@ -1,0 +1,36 @@
+Sure, here's the order in which the major React lifecycle methods are called:
+
+1. **Mounting Phase:**
+   These methods are called when an instance of a component is being created and inserted into the DOM.
+
+   - `constructor()`
+   - `static getDerivedStateFromProps()`
+   - `render()`
+   - `componentDidMount()`
+
+2. **Updating Phase:**
+   These methods are called when a component is being re-rendered due to changes in props or state.
+
+   - `static getDerivedStateFromProps()`
+   - `shouldComponentUpdate()`
+   - `render()`
+   - `getSnapshotBeforeUpdate()`
+   - `componentDidUpdate()`
+
+3. **Unmounting Phase:**
+   This method is called when a component is being removed from the DOM.
+
+   - `componentWillUnmount()`
+
+4. **Error Handling Phase:**
+   These methods are called when there's an error during rendering, in a lifecycle method, or in the constructor of any child component.
+
+   - `static getDerivedStateFromError()`
+   - `componentDidCatch()`
+
+Note:
+- The methods prefixed with `static` are class methods, meaning they are defined on the class itself, not on instances of the class. They don't have access to `this` and are primarily used for derived state calculations.
+- `render()` is the only required method in a component. It should not modify the component's state or perform side effects.
+- Lifecycle methods like `componentWillReceiveProps()` and `componentWillUpdate()` are considered legacy and may be deprecated in future versions of React.
+
+Keep in mind that with the introduction of React Hooks, there's a shift towards using functional components and Hooks for managing component lifecycles and state. While class-based components still support these lifecycle methods, functional components can achieve similar behavior with Hooks like `useState`, `useEffect`, `useContext`, etc.

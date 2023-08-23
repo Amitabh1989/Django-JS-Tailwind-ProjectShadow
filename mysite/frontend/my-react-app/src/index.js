@@ -1,5 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import App from "./App";
+import StudentUnmount from "./components/StudentUnmount";
 import Student from "./components/Student";
 import StudentConstructor from "./components/StudentConstructor";
 import StudentEvtClass from "./components/StudentEvtClass";
@@ -12,7 +14,6 @@ import StudentCompLifeCycle from "./components/StudentComponentLifeCycle";
 import StudentUpdate from "./components/StudentUpdateDemo";
 
 // Rendering Component
-
 ReactDOM.render(<Student roll="102" />, document.getElementById("root"));
 ReactDOM.render(<StudentEvtClass city="Dhanbad" />, document.getElementById("root"));
 
@@ -67,4 +68,10 @@ ReactDOM.render(<StudentCompLifeCycle name="Amitabh" age="29" />, document.getEl
 const mmarks = document.createElement("div")
 mmarks.setAttribute("id", "mmarks")
 document.getElementById("root").appendChild(mmarks)
-ReactDOM.render(<StudentUpdate marks="1034" />, document.getElementById("mmarks"))
+ReactDOM.render(<StudentUpdate marks={1034} />, document.getElementById("mmarks"))
+
+
+// ReactDOM will unmount
+ReactDOM.render(< App />, document.getElementById("root"));
+ReactDOM.render(< StudentUnmount />, document.getElementById("stu"));
+ReactDOM.unmountComponentAtNode(document.getElementById("root"));
