@@ -16,8 +16,14 @@ export default class StudentUpdate extends Component {
 
     clickHandler = () => {
         console.log("Clicked");
-        this.setState({marks: "10234"})
+        // this.setState({marks: "10234"})
+        this.setState({marks: this.state.marks+2})
     }
+
+    componentDidMount() {
+        console.log("Parent Component did update called")
+    }
+
     render() {
         console.log("Parent Render called")
         return (
