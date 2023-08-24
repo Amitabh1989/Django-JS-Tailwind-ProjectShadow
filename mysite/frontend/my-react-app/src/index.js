@@ -13,6 +13,7 @@ import StudentEvtArgs from "./components/StudentPassArgsEvtHandler";
 import StudentCompLifeCycle from "./components/StudentComponentLifeCycle";
 import StudentUpdate from "./components/StudentUpdateDemo";
 import StateHook from "./components/UseStateHook";
+import StateEffect from "./components/UseEffectHook";
 
 // Rendering Component
 ReactDOM.render(<Student roll="102" />, document.getElementById("root"));
@@ -78,8 +79,15 @@ ReactDOM.render(< StudentUnmount />, document.getElementById("stu"));
 ReactDOM.unmountComponentAtNode(document.getElementById("root"));
 
 
-// StateHook
+// UseStateHook
 const stateHook = document.createElement("stateHook")
 stateHook.setAttribute("id", "stateHook")
 document.getElementById("root").appendChild(stateHook)
 ReactDOM.render(<StateHook />, document.getElementById("stateHook"))
+
+
+// useEffect StateHook
+const effectHook = document.createElement("effectHook")
+effectHook.setAttribute("id", "effectHook")
+document.getElementById("root").appendChild(effectHook)
+ReactDOM.render(<StateEffect />, document.getElementById("effectHook"))
