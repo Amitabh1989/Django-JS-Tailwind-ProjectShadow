@@ -12,6 +12,7 @@ import StudentSetStateFunction from "./components/StudentSetStateFunction";
 import StudentEvtArgs from "./components/StudentPassArgsEvtHandler";
 import StudentCompLifeCycle from "./components/StudentComponentLifeCycle";
 import StudentUpdate from "./components/StudentUpdateDemo";
+import StateHook from "./components/UseStateHook";
 
 // Rendering Component
 ReactDOM.render(<Student roll="102" />, document.getElementById("root"));
@@ -75,3 +76,10 @@ ReactDOM.render(<StudentUpdate marks={1034} />, document.getElementById("mmarks"
 ReactDOM.render(< App />, document.getElementById("root"));
 ReactDOM.render(< StudentUnmount />, document.getElementById("stu"));
 ReactDOM.unmountComponentAtNode(document.getElementById("root"));
+
+
+// StateHook
+const stateHook = document.createElement("stateHook")
+stateHook.setAttribute("id", "stateHook")
+document.getElementById("root").appendChild(stateHook)
+ReactDOM.render(<StateHook />, document.getElementById("stateHook"))
