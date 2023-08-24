@@ -14,10 +14,13 @@ import StudentCompLifeCycle from "./components/StudentComponentLifeCycle";
 import StudentUpdate from "./components/StudentUpdateDemo";
 import StateHook from "./components/UseStateHook";
 import StateEffect from "./components/UseEffectHook";
+import StateEffectSameButton from "./components/UseEffectHookSameElement";
 
+
+ReactDOM.render(<App />, document.getElementById("root"))
 // Rendering Component
-ReactDOM.render(<Student roll="102" />, document.getElementById("root"));
-ReactDOM.render(<StudentEvtClass city="Dhanbad" />, document.getElementById("root"));
+// ReactDOM.render(<Student roll="102" />, document.getElementById("root"));
+// ReactDOM.render(<StudentEvtClass city="Dhanbad" />, document.getElementById("root"));
 
 
 // Create a new elemnent to render this
@@ -74,9 +77,9 @@ ReactDOM.render(<StudentUpdate marks={1034} />, document.getElementById("mmarks"
 
 
 // ReactDOM will unmount
-ReactDOM.render(< App />, document.getElementById("root"));
-ReactDOM.render(< StudentUnmount />, document.getElementById("stu"));
-ReactDOM.unmountComponentAtNode(document.getElementById("root"));
+// ReactDOM.render(< App />, document.getElementById("root"));
+// ReactDOM.render(< StudentUnmount />, document.getElementById("stu"));
+// ReactDOM.unmountComponentAtNode(document.getElementById("root"));
 
 
 // UseStateHook
@@ -91,3 +94,9 @@ const effectHook = document.createElement("effectHook")
 effectHook.setAttribute("id", "effectHook")
 document.getElementById("root").appendChild(effectHook)
 ReactDOM.render(<StateEffect />, document.getElementById("effectHook"))
+
+// useEffect StateHook same button
+const effectHooksb = document.createElement("effectHooksb")
+effectHooksb.setAttribute("id", "effectHooksb")
+document.getElementById("root").appendChild(effectHooksb)
+ReactDOM.render(<StateEffectSameButton />, document.getElementById("effectHooksb"))
