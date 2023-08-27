@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import useCustomCounter from "./components/CustomHooks";
+import User from './user/User';
+import Guest from './user/Guest';
 
 class App extends Component {
     componentDidMount() {
@@ -10,13 +12,26 @@ class App extends Component {
         console.log("App will unmount")
     }
 
+    // handleLogout = () => {
+    //     console.log("Hanlding Logout")
+    //     this.setState({loggedIn: false})
+    // }
+
     render() {
-        return (
-            <React.Fragment>
-                <h1>Hello from App render"</h1>
-                <CountNumber />
-            </React.Fragment>
-        )
+        const isRegistered = this.props.consumer
+        const isPrime = this.props.isPrime
+        if (isRegistered) {
+            return (
+                <React.Fragment>
+                    {/* <User loggedIn={true} /> */}
+                    {/* <button onClick={this.handleLogout}>Logout</button> */}
+                    <h1>Hello from App render"</h1>
+                    {isPrime && <User loggedIn={true} />}
+                    <CountNumber />
+                </React.Fragment>
+            )
+        }
+        return <Guest loggedIn={false} />
     }
 }
 
