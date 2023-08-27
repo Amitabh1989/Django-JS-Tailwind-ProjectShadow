@@ -17,7 +17,7 @@ import StateEffect from "./components/UseEffectHook";
 import StateEffectSameButton from "./components/UseEffectHookSameElement";
 
 
-ReactDOM.render(<App />, document.getElementById("root"))
+ReactDOM.render(<App consumer={true} isPrime={true}/>, document.getElementById("root"))
 // Rendering Component
 // ReactDOM.render(<Student roll="102" />, document.getElementById("root"));
 // ReactDOM.render(<StudentEvtClass city="Dhanbad" />, document.getElementById("root"));
