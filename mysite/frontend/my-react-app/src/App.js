@@ -1,54 +1,82 @@
-import React, { Component } from 'react';
-import useCustomCounter from "./components/CustomHooks";
-import User from './user/User';
-import Guest from './user/Guest';
+import React, { Component } from 'react'
+import User_2 from './user/User_2';
 
-class App extends Component {
-    componentDidMount() {
-        console.log("App mounted")
-    }
 
-    componentWillUnmount() {
-        console.log("App will unmount")
-    }
+// JS OUTSIDE RETURN STATEMENT
+// export default class App extends Component {
+//     render() {
+//         const arr = [10, 20, 30 , 40];
+//         const newArr = arr.map(num => {
+//             return <li>{num*2}</li>
+//         });
+//     return (
+//       <div>{newArr}</div>
+//         )
+//     }
+// }
 
-    // handleLogout = () => {
-    //     console.log("Hanlding Logout")
-    //     this.setState({loggedIn: false})
-    // }
 
-    render() {
-        const isRegistered = this.props.consumer
-        const isPrime = this.props.isPrime
-        if (isRegistered) {
-            return (
-                <React.Fragment>
-                    {/* <User loggedIn={true} /> */}
-                    {/* <button onClick={this.handleLogout}>Logout</button> */}
-                    <h1>Hello from App render"</h1>
-                    {isPrime && <User loggedIn={true} />}
-                    <CountNumber />
-                </React.Fragment>
-            )
-        }
-        return <Guest loggedIn={false} />
-    }
-}
 
-function CountNumber() {
-    const count = useCustomCounter();
-    const count1 = useCustomCounter();
+// JS INSIDE RETURN STATEMENT
+// export default class App extends Component {
+//     render() {
+//         const arr = [10, 20, 30 , 40];
+//         return (
+//             <ul>
+//                 {
+//                     arr.map(num => {
+//                         return <li>{num * 2}</li>
+//                     })
+//                 }
+//             </ul>
+//         )
+//     }
+// }
 
-    return(
-        <React.Fragment>
-            <h1>CusotmHook Count {count.count}</h1>
-            <button onClick={count.handleCount}>Count up</button>
 
-            <h1>CusotmHook Count {count1.count}</h1>
-            <button onClick={count1.handleCount}>Count up</button>
-        </React.Fragment>
+// // TAKING ARR VAL FROM PROPS
+// export default class App extends Component {
+//     render() {
+//         const arr = this.props.arr;
+//         return (
+//             <ul>
+//                 {
+//                     arr.map(num => {
+//                         return <li>{num * 2}</li>
+//                     })
+//                 }
+//             </ul>
+//         )
+//     }
+// }
+
+
+// PASSING PROPS TO USER MODULE TO LIST OUT USERS, WITH KEY
+export default class App extends Component {
+    state = {
+        user: [
+            {"id" : 1, name: "Amitabh", city: "Dhanbad"},
+            {"id" : 2, name: "Shweta", city: "Patna"},
+            {"id" : 3, name: "Aadya", city: "Bangalore"},
+            {"id" : 4, name: "Dhruv", city: "Bangalore"},
+        ]
+      }
+  render() {
+    const userData = this.state.user;
+    return (
+      <div>
+        <ul>
+            {
+                userData.map((user) => 
+                    (
+                        <React.Fragment>
+                            <li key={user.id}>ID: {user.id} Name: {user.name} City : {user.city}</li>
+                            <User_2 value={user}/>
+                        </React.Fragment>
+                    ))
+            }
+        </ul>
+      </div>
     )
+  }
 }
-
-// export { App, CountNumber };
-export default App;

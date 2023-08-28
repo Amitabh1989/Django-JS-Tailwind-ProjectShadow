@@ -1,10 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
-import StudentUnmount from "./components/StudentUnmount";
-import Student from "./components/Student";
+// import StudentUnmount from "./components/StudentUnmount";
+// import Student from "./components/Student";
 import StudentConstructor from "./components/StudentConstructor";
-import StudentEvtClass from "./components/StudentEvtClass";
+// import StudentEvtClass from "./components/StudentEvtClass";
 import StudentEvtFunction from "./components/StudentEvtFunction";
 import StudentEvtFunPreventDefault from "./components/StudentFunEvtPreventDefault";
 import StudentSetState from "./components/StudentState";
@@ -15,13 +15,23 @@ import StudentUpdate from "./components/StudentUpdateDemo";
 import StateHook from "./components/UseStateHook";
 import StateEffect from "./components/UseEffectHook";
 import StateEffectSameButton from "./components/UseEffectHookSameElement";
+import StudentStateMap from "./components/StudentStateMap";
 
 
-ReactDOM.render(<App consumer={true} isPrime={true}/>, document.getElementById("root"))
+// ReactDOM.render(<App consumer={true} isPrime={true}/>, document.getElementById("root"))
+const nums = [10, 20, 30, 40];
+ReactDOM.render(<App arr={nums}/>, document.getElementById("root"))
+// ReactDOM.render(<App arr={[10, 20, 30, 40]}/>, document.getElementById("root"))
 // Rendering Component
 // ReactDOM.render(<Student roll="102" />, document.getElementById("root"));
 // ReactDOM.render(<StudentEvtClass city="Dhanbad" />, document.getElementById("root"));
 
+
+// Create a new elemnent to render this
+const newMapDiv = document.createElement("div");
+newMapDiv.setAttribute("id", "newMapDiv");
+document.body.appendChild(newMapDiv);
+ReactDOM.render(<StudentStateMap />, document.getElementById("newMapDiv"));
 
 // Create a new elemnent to render this
 const newDiv = document.createElement("div");
