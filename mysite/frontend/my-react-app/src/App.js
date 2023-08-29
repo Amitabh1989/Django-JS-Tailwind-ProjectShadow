@@ -59,10 +59,27 @@ export default class App extends Component {
             {"id" : 2, name: "Shweta", city: "Patna"},
             {"id" : 3, name: "Aadya", city: "Bangalore"},
             {"id" : 4, name: "Dhruv", city: "Bangalore"},
-        ]
+        ],
+        changeStyle: false
       }
+    clickHandle = () => {
+        if (this.state.changeStyle) {
+            this.setState({changeStyle: false})
+        } else {
+            this.setState({changeStyle: true})
+        }
+    }
   render() {
     const userData = this.state.user;
+    const btnStyle = {
+        color: "red",
+        backgroundColor: "blue"
+    }
+    if (this.state.changeStyle) {
+        btnStyle.color = "white"
+    } else {
+        btnStyle.color = "red"
+    }
     return (
       <div>
         <ul>
@@ -72,6 +89,7 @@ export default class App extends Component {
                         <React.Fragment>
                             <li key={user.id}>ID: {user.id} Name: {user.name} City : {user.city}</li>
                             <User_2 value={user}/>
+                            <button style={btnStyle} onClick={this.clickHandle}>Click to change</button>
                         </React.Fragment>
                     ))
             }
