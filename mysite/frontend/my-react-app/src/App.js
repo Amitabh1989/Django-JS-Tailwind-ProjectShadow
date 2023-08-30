@@ -77,12 +77,13 @@ export default class App extends Component {
     const userData = this.state.user;
     const btnStyle1 = {
         color: "red",
-        backgroundColor: "blue"
+        backgroundColor: "blue",
+        fontSize: "100px"
     }
 
     const btnStyle2 = {
         color: "red",
-        backgroundColor: "white"
+        fontSize: "10px"
     }
     
     // if (this.state.changeStyle) {
@@ -98,9 +99,9 @@ export default class App extends Component {
                 userData.map((user) => 
                     (
                         <React.Fragment>
-                            <li key={user.id} className='txt'>ID: {user.id} Name: {user.name} City : {user.city}</li>
+                            <li key={user.id} className='txt txts'>ID: {user.id} Name: {user.name} City : {user.city}</li>
                             <User_2 value={user}/>
-                            <button style={this.state.clickedUserId === user.id ? btnStyle1 : btnStyle2} onClick={() => this.clickHandle(user.id)}>Click to change</button>
+                            <button style={this.state.clickedUserId === user.id ? {...btnStyle1, ...btnStyle1} : btnStyle2} onClick={() => this.clickHandle(user.id)}>Click to change</button>
                         </React.Fragment>
                     ))
             }
