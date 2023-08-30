@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import User_2 from './user/User_2';
+import "./App.css";
 
 
 // JS OUTSIDE RETURN STATEMENT
@@ -60,26 +61,37 @@ export default class App extends Component {
             {"id" : 3, name: "Aadya", city: "Bangalore"},
             {"id" : 4, name: "Dhruv", city: "Bangalore"},
         ],
-        changeStyle: false
+        changeStyle: false,
+        clickedUserId: null
       }
-    clickHandle = () => {
+    clickHandle = (userId) => {
         if (this.state.changeStyle) {
             this.setState({changeStyle: false})
+            this.setState({clickedUserId: userId})
         } else {
             this.setState({changeStyle: true})
+            this.setState({clickedUserId: null})
         }
     }
   render() {
     const userData = this.state.user;
-    const btnStyle = {
+    const btnStyle1 = {
         color: "red",
-        backgroundColor: "blue"
+        backgroundColor: "blue",
+        fontSize: "100px"
     }
-    if (this.state.changeStyle) {
-        btnStyle.color = "white"
-    } else {
-        btnStyle.color = "red"
+
+    const btnStyle2 = {
+        color: "red",
+        fontSize: "10px"
     }
+    
+    // if (this.state.changeStyle) {
+    //     btnStyle.color = "white"
+    // } else {
+    //     btnStyle.color = "red"
+    // }
+
     return (
       <div>
         <ul>
@@ -87,9 +99,9 @@ export default class App extends Component {
                 userData.map((user) => 
                     (
                         <React.Fragment>
-                            <li key={user.id}>ID: {user.id} Name: {user.name} City : {user.city}</li>
+                            <li key={user.id} className='txt txts'>ID: {user.id} Name: {user.name} City : {user.city}</li>
                             <User_2 value={user}/>
-                            <button style={btnStyle} onClick={this.clickHandle}>Click to change</button>
+                            <button style={this.state.clickedUserId === user.id ? {...btnStyle1, ...btnStyle1} : btnStyle2} onClick={() => this.clickHandle(user.id)}>Click to change</button>
                         </React.Fragment>
                     ))
             }
