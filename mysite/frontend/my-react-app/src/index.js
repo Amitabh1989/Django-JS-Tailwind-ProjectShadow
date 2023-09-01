@@ -16,6 +16,8 @@ import StateHook from "./components/UseStateHook";
 import StateEffect from "./components/UseEffectHook";
 import StateEffectSameButton from "./components/UseEffectHookSameElement";
 import StudentStateMap from "./components/StudentStateMap";
+import ControlledComponents from "./components/ControlledComponents";
+import MultiControlledComponent from "./components/MultiControlledComponent";
 
 
 // ReactDOM.render(<App consumer={true} isPrime={true}/>, document.getElementById("root"))
@@ -25,6 +27,18 @@ ReactDOM.render(<App arr={nums}/>, document.getElementById("root"))
 // Rendering Component
 // ReactDOM.render(<Student roll="102" />, document.getElementById("root"));
 // ReactDOM.render(<StudentEvtClass city="Dhanbad" />, document.getElementById("root"));
+
+// Create a new elemnent to render this
+const contCompDiv = document.createElement("div");
+contCompDiv.setAttribute("id", "contCompDiv");
+document.body.appendChild(contCompDiv);
+ReactDOM.render(<ControlledComponents />, document.getElementById("contCompDiv"));
+
+// Create a new elemnent to render this
+const multiContCompDiv = document.createElement("div");
+multiContCompDiv.setAttribute("id", "multiContCompDiv");
+document.body.appendChild(multiContCompDiv);
+ReactDOM.render(<MultiControlledComponent />, document.getElementById("multiContCompDiv"));
 
 
 // Create a new elemnent to render this
