@@ -13,10 +13,15 @@ export default class MultiControlledComponent extends Component {
                 : evt.target.value;
             this.setState({ [evt.target.name]: val })
     };
+
+    handleSubmit = (evt) => {
+        console.log("Event is : ", evt);
+        evt.preventDefault();
+    }
     render() {
     return (
       <div>
-        <form action="">
+        <form action="" onSubmit={this.handleSubmit}>
             <label htmlFor="">
                 Name: <input type="text" value={this.state.name} name="name" onChange={this.handleChange} />
             </label>
@@ -24,6 +29,7 @@ export default class MultiControlledComponent extends Component {
             <label htmlFor="">
                 Password: <input type="text" value={this.state.password} name="password" onChange={this.handleChange} />
             </label>
+            <button>Submit</button>
         </form>
       </div>
     )
