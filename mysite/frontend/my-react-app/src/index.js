@@ -18,6 +18,7 @@ import StateEffectSameButton from "./components/UseEffectHookSameElement";
 import StudentStateMap from "./components/StudentStateMap";
 import ControlledComponents from "./components/ControlledComponents";
 import MultiControlledComponent from "./components/MultiControlledComponent";
+import RefsExample from "./components/RefsExample";
 
 
 // ReactDOM.render(<App consumer={true} isPrime={true}/>, document.getElementById("root"))
@@ -124,3 +125,8 @@ const effectHooksb = document.createElement("effectHooksb")
 effectHooksb.setAttribute("id", "effectHooksb")
 document.getElementById("root").appendChild(effectHooksb)
 ReactDOM.render(<StateEffectSameButton />, document.getElementById("effectHooksb"))
+
+const uncontrollerComp = document.createElement("uncontrollerComp")
+uncontrollerComp.setAttribute("id", "uncontrollerComp")
+document.getElementById("root").appendChild(uncontrollerComp)
+ReactDOM.render(<RefsExample />, document.getElementById("uncontrollerComp"))
