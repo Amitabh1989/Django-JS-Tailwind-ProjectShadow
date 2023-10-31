@@ -15,7 +15,7 @@ export default class MultiControlledComponent extends Component {
     };
 
     handleSubmit = (evt) => {
-        console.log("Event is : ", evt);
+        console.log("Event is : ", evt.target[1]);
         evt.preventDefault();
     }
     render() {

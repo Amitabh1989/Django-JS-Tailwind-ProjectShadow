@@ -19,6 +19,8 @@ import StudentStateMap from "./components/StudentStateMap";
 import ControlledComponents from "./components/ControlledComponents";
 import MultiControlledComponent from "./components/MultiControlledComponent";
 import RefsExample from "./components/RefsExample";
+import RefCallback from "./components/RefCallback";
+import ContextParent from "./components/ContextParent";
 
 
 // ReactDOM.render(<App consumer={true} isPrime={true}/>, document.getElementById("root"))
@@ -130,3 +132,14 @@ const uncontrollerComp = document.createElement("uncontrollerComp")
 uncontrollerComp.setAttribute("id", "uncontrollerComp")
 document.getElementById("root").appendChild(uncontrollerComp)
 ReactDOM.render(<RefsExample />, document.getElementById("uncontrollerComp"))
+
+const refCallbackDiv = document.createElement("refCallbackDiv")
+refCallbackDiv.setAttribute("id", "refCallbackDiv")
+document.getElementById("root").appendChild(refCallbackDiv)
+ReactDOM.render(<RefCallback />, document.getElementById("refCallbackDiv"))
+
+
+const contextDiv = document.createElement("contextDiv")
+contextDiv.setAttribute("id", "contextDiv")
+document.getElementById("root").appendChild(contextDiv)
+ReactDOM.render(<ContextParent />, document.getElementById("contextDiv"))
